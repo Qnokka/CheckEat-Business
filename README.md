@@ -1,5 +1,5 @@
 # CheckEat-Business
-
+## 2025 채용연계형 부트캠프 - 최종 프로젝트
 #### CheckEat! 사업자용 FE 작업
 
 ### 레포지토리 가져오기
@@ -7,6 +7,12 @@
 git clone https://github.com/Qnokka/CheckEat-Business.git
 cd <PROJECT_FOLDER>
 ```
+
+<br/>
+<br/>
+Period : 25.07.01 ~ 08.22
+<br/>
+<br/>
 Language
 <br/>
 <img src="https://img.shields.io/badge/swift-%23FA7343.svg?&style=for-the-badge&logo=swift&logoColor=white" />
