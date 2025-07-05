@@ -17,11 +17,9 @@ Language
 <br/>
 <img src="https://img.shields.io/badge/swift-%23FA7343.svg?&style=for-the-badge&logo=swift&logoColor=white" />
 <br/>
-<br/>
 Framework
 <br/>
 <img src="https://img.shields.io/badge/swiftUI-%23FA7343.svg?&style=for-the-badge&logo=swift&logoColor=white" />
-
 Communication
 <br/>
 <img src="https://img.shields.io/badge/github-%23181717.svg?&style=for-the-badge&logo=github&logoColor=white" />
