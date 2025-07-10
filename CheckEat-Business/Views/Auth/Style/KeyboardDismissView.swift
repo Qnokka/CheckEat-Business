@@ -27,8 +27,8 @@ struct KeyboardDismissView: UIViewRepresentable {
         @objc func handleTap(_ sender: UITapGestureRecognizer) {
             let location = sender.location(in: sender.view)
             if let hitView = sender.view?.hitTest(location, with: nil) {
-                // UIControl(버튼, 텍스트필드) 또는 UIImageView(이미지) 영역 터치 시 키보드 유지
-                if hitView is UIControl || hitView is UIImageView {
+                // UIControl(버튼, 텍스트필드) 영역 터치 시 키보드 유지
+                if hitView is UIControl {
                     return
                 }
             }
