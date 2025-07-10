@@ -16,9 +16,8 @@ struct LoginView: View {
     @State private var showFindPwd: Bool = false
     
     var body: some View {
-        
-        GeometryReader { geo in
-            NavigationStack {
+        NavigationStack {
+            ZStack {
                 VStack(alignment: .leading) {
                     Text("로그인")
                         .bold20()
@@ -26,11 +25,10 @@ struct LoginView: View {
                     
                     Text("아이디")
                         .semibold16()
-                    TextField("아이디를 입력해주세요", text: $userId)
+                    UnderLinedTextField(placeholder: "아이디를 입력해주세요", text: $userId)
                         .regular14()
                         .autocorrectionDisabled(true)
                         .textInputAutocapitalization(.never)
-                        .padding(.bottom)
                         .padding(.bottom)
                     
                     Text("비밀번호")
@@ -38,15 +36,16 @@ struct LoginView: View {
                     HStack {
                         Group {
                             if isPasswordVisible {
-                                TextField("비밀번호를 입력해주세요", text: $userPassword)
+                                UnderLinedTextField(placeholder: "비밀번호를 입력해주세요", text: $userPassword)
                                     .textContentType(.password)
                                     .autocapitalization(.none)
                                     .disableAutocorrection(true)
                             } else {
-                                SecureField("비밀번호를 입력해주세요", text: $userPassword)
+                                UnderLinedTextField(placeholder: "비밀번호를 입력해주세요", isSecure: true, text: $userPassword)
                                     .textContentType(.password)
                                     .autocapitalization(.none)
                                     .disableAutocorrection(true)
+                                    .tapToDismissKeyboard()
                             }
                         }
                         .padding(.bottom)
@@ -54,7 +53,7 @@ struct LoginView: View {
                         Button {
                             isPasswordVisible.toggle()
                         } label: {
-                            Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                            Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
                                 .foregroundColor(.gray)
                         }
                     }
@@ -62,7 +61,7 @@ struct LoginView: View {
                     .padding(.bottom, 24)
                     
                     Button {
-                        // 로그인 화면으로 이동
+                        // 로그인 다음 단계로 이동
                     } label: {
                         Text("로그인")
                             .primaryButtonStyle()
@@ -75,19 +74,18 @@ struct LoginView: View {
                             showFindId = true
                         } label: {
                             Text("아이디 찾기")
-                                .foregroundStyle(.buttonTime)
+                                .foregroundStyle(.buttonOP50)
                         }
                         .fullScreenCover(isPresented: $showFindId) {
-                            LoginView()
-                            // 아이디 찾기 화면 호출
+                            FindIDView()
                         }
                         Text(" | ")
-                            .foregroundStyle(.buttonTime)
+                            .foregroundStyle(.buttonOP50)
                         Button {
                             showFindPwd = true
                         } label: {
                             Text("비밀번호 재설정")
-                                .foregroundStyle(.buttonTime)
+                                .foregroundStyle(.buttonOP50)
                         }
                         .fullScreenCover(isPresented: $showFindPwd) {
                             FindPwdView()
@@ -97,17 +95,23 @@ struct LoginView: View {
                     .regular14()
                     .padding()
                     
+                    
                     Spacer()
                 }
                 .padding()
+                .navigationTitle("")
+                .navigationBarHidden(true)
                 
+            }
+            .tapToDismissKeyboard()
+            .safeAreaInset(edge: .bottom) {
                 VStack {
                     HStack {
                         Spacer()
                         Text("아직 회원이 아니신가요?")
                             .regular14()
                         Button {
-                            
+                            // 회원가입 화면 이동
                         } label: {
                             Text("회원가입")
                                 .semibold14()
@@ -115,11 +119,15 @@ struct LoginView: View {
                         }
                         Spacer()
                     }
+                    .padding(.vertical)
                 }
-                .padding()
+                .padding(.horizontal)
             }
+            .ignoresSafeArea(.keyboard)
         }
     }
+    
+    
 }
 
 #Preview {

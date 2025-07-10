@@ -1,187 +1,232 @@
 //
-//  FindIDViewStep1.swift
+//  FindIDView.swift
 //  CheckEat-Business
 //
-//  Created by 최준영 on 7/5/25.
+//  Created by 최준영 on 7/10/25.
 //
+
 import SwiftUI
 
-
 struct FindIDView: View {
-    @State var email: String = ""
-    @State private var showVerificationField = false
-    @State private var verificationCode = ""
-    @State private var isVerificationCodeValid: Bool = false
-    @State private var timeRemaining = 30
-    @State private var timerActive = false
-    @State private var infoMessage = "가입시 등록하신 이메일을 입력해주세요."
+    
+    @State private var userId: String = ""
+    @State private var userEmail: String = ""
+    @State private var authCode: String = ""
+    @State private var infoMsg = "가입시 등록하신 이메일을 입력해주세요."
+    
+    @State private var isFieldVisible: Bool = false
+    @State private var authCodeIsValid: Bool? = nil
     @State private var isEmailValid: Bool = false
     @State private var goFindIDComplete = false
-    @State private var showCodeErrorMessage: Bool = false
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    var isButtonEnabled: Bool {
-        if showVerificationField {
-            return isEmailValid && !verificationCode.isEmpty
-        } else {
-            return isEmailValid
-        }
+    @State private var goToLogin: Bool = false
+    
+    @State private var timeRemaining = 30
+    @State private var timerActive: Bool = false
+    
+    @FocusState private var fieldIsFocused: Bool
+    
+    @Environment(\.dismiss) private var dismiss
+    
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private let correctAuthCode = "1234"
+
+    private var isUserEmailValid: Bool {
+        !userEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && isEmailValid
     }
+    
+    private var canRequestAuthCode: Bool {
+        !authCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    
     var body: some View {
-        GeometryReader { _ in
-            NavigationStack {
-                VStack (alignment: .leading) {
-                    Text("아이디를 잊으셨나요?").font(.system(size: 20,weight: .bold))
-                        .padding(.top, 3)
-                    Text(infoMessage)
-                        .font(.system(size: 16, weight: .light))
-                        .padding(.top, 3)
-                    Text("이메일")
-                        .font(.system(size: 14, weight: .bold))
-                        .padding(.top, 20)
-                    UnderLinedTextField(placeholder: "이메일을 입력해 주세요.", text: $email)
-                        .keyboardType(.emailAddress)
-                        .onChange(of: email) { newValue in
-                            isEmailValid = isValidEmailAddress(email: newValue)
-                        }
-                        .font(.system(size: 14))
-                        .padding(.top, 2)
-                    
-                    if showVerificationField {
-                        VStack(alignment: .leading){
-                            Text("인증코드")
-                                .font(.system(size: 14, weight: .bold))
-                                .padding(.top, 10)
-                            UnderLinedTextField(placeholder: "인증코드를 입력해 주세요.", text: $verificationCode)
-                                .onChange(of: verificationCode){ newValue in
-                                    isVerificationCodeValid = (newValue == "1234")
-                                    showCodeErrorMessage = !isVerificationCodeValid && !newValue.isEmpty
-                                }
-                                .font(.system(size: 14))
-                                .padding(.top, 2)
-                            
-                            if showCodeErrorMessage {
-                                Text("잘못된 코드입니다. 다시 시도해 주세요.")
-                                    .foregroundColor(.red)
-                                    .font(.system(size: 12))
-                            }
-
-                        }
-                        HStack(spacing: 8) {
-                            Button {
-                                resendCode()
-                            } label: {
-                                if timerActive {
-                                    Text("인증코드 다시 보내기")
-                                        .font(.system(size: 16, weight: .bold))
-                                        .foregroundColor(Color("Button_OP70"))
-                                        .padding(.top, 20)
-                                        .padding(.leading, 80)
-                                } else {
-                                    (Text("인증코드를 받지 못했어요  ")
-                                        .font(.system(size: 16, weight: .light)) +
-                                     Text("  인증코드 다시받기")
-                                        .font(.system(size: 16, weight: .bold)))
-                                    .foregroundColor(Color.black)
-                                    .padding(.top, 20)
-                                    .padding(.leading, 30)
-                                }
-                            }
-                            if timerActive {
-                                Text(formatTime(timeRemaining))
-                                    .font(.system(size: 16))
-                                    .foregroundColor(Color("Button_OP70"))
-                                    .padding(.top, 20)
-                            }
-                        }
-                    }
-                    Button {
-                        if showVerificationField {
-                            if isVerificationCodeValid {
-                                goFindIDComplete = true
-                            }
-                        } else {
-                            withAnimation {
-                                showVerificationField = true
-                                startTimer()
-                                infoMessage = "입력하신 이메일로 인증코드를 전송했습니다."
-                            }
-                        }
+        
+        NavigationStack {
+            ZStack {
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        Text("아이디를 잊으셨나요?")
+                            .bold20()
+                            .padding(.top, 35)
+                            .padding(.bottom, 3)
                         
-                    } label: {
-                        Text(showVerificationField ? "완료" : "인증코드 받기")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(width: 362, height: 56, alignment: .center)
-                            .background(Color(showVerificationField ?  "Button_Enable" : "Button_Disable"))
-                            .cornerRadius(6)
-                            .padding(.top, 20)
+                        Text(infoMsg)
+                            .regular16()
+                            .padding(.bottom, 35)
+                        
+                        Text("이메일")
+                            .semibold16()
+                        UnderLinedTextField(placeholder: "이메일을 입력해주세요", text: $userEmail)
+                            .regular14()
+                            .keyboardType(.emailAddress)
+                            .autocorrectionDisabled(true)
+                            .textInputAutocapitalization(.never)
+                            .focused($fieldIsFocused)
+                            .onChange(of: userEmail) { newValue in
+                                isValidEmailAddress(email: newValue)
+                            }
                     }
-                    .disabled(!isButtonEnabled)
-                    .fullScreenCover(isPresented: $goFindIDComplete) {
-                        FindIDComplete(userID: "test1234")
-                    }
-                    Spacer()
-                    
-                }
-                .padding(.top, 50)
-                .padding(.leading, 15)
-                .navigationTitle("아이디 찾기")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            //로그인페이지로 이동
-                        } label: {
-                            Image(systemName: "chevron.backward")
-                                .foregroundStyle(.black)
+                    .navigationTitle("아이디 찾기")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarBackButtonHidden(true)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button {
+                                dismiss()
+                            } label: {
+                                Image(systemName: "chevron.backward")
+                                    .foregroundStyle(.black)
+                            }
                         }
                     }
-                }
-                VStack(alignment: .center) {
-                    Button {
-                        //로그인페이지로 이동
-                    } label: {
-                        Text("아이디가 기억나셨나요? ").font(.system(size: 14 ,weight: .light))
-                            .foregroundStyle(Color.black) +
-                        Text(" 로그인").font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(Color.black)
-                    }
-                    .padding(.bottom, 30)
-                }
-            }
-            .onReceive(timer) { _ in
-                guard timerActive else { return }
-                if timeRemaining > 0 {
-                    timeRemaining -= 1
-                } else {
-                    timerActive = false
-                }
-            }
-            
-        }
-    }
+                    
+                    VStack {
+                        if !isFieldVisible {
+                            Button {
+                                withAnimation {
+                                    infoMsg = "입력하신 이메일로 인증코드를 전송했습니다."
+                                    isFieldVisible = true
+                                    authCodeIsValid = nil
+                                    resendCode()
+                                }
+                            } label: {
+                                Text("인증코드 받기")
+                                    .primaryButtonStyle(isEnabled: isUserEmailValid)
+                                    .semibold16()
+                            }
+                            .disabled(!isUserEmailValid)
+                            .padding(.top, 24)
+                            
+                        } else {
+                            VStack(alignment: .leading) {
+                                Text("인증코드")
+                                    .semibold16()
+                                UnderLinedTextField(placeholder: "인증코드를 입력해주세요", text: $authCode)
+                                    .regular14()
+                                    .focused($fieldIsFocused)
+                                
+                                if authCodeIsValid == false {
+                                    VStack(alignment: .leading) {
+                                        Text("잘못된 코드입니다. 다시 시도해주세요.")
+                                            .regular12()
+                                            .foregroundStyle(.red)
+                                    }
+                                }
+                                if timerActive {
+                                    HStack {
+                                        Spacer()
+                                        Button {
+                                            resendCode()
+                                        } label: {
+                                            Text("인증코드 다시 보내기")
+                                                .bold14()
+                                                .foregroundStyle(.buttonAuth)
+                                        }
+                                        Text(formatTime(timeRemaining))
+                                            .monospacedDigit()
+                                            .regular14()
+                                        Spacer()
+                                    }
+                                    .padding(.vertical, 24)
+                                } else {
+                                    HStack {
+                                        Spacer()
+                                        Text("인증코드를 받지 못했어요")
+                                            .regular14()
+                                        Button {
+                                            authCode = ""
+                                            authCodeIsValid = nil
+                                            resendCode()
+                                        } label: {
+                                            Text("인증코드 다시 받기")
+                                                .bold14()
+                                                .foregroundStyle(.buttonAuth)
+                                        }
+                                        Spacer()
+                                    }
+                                    .padding(.vertical, 24)
+                                }
 
-        func formatTime(_ seconds: Int)-> String {
-            let minutes = seconds / 60
-            let secs = seconds % 60
-            return String(format: "%02d:%02d", minutes, secs)
-        }
-        
-        func startTimer() {
-            timeRemaining = 30
-            timerActive = true
-        }
-        func resendCode() {
-            //인증 재요청 로직
-            startTimer()
-        }
-        func isValidEmailAddress(email: String) -> Bool {
-            let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-            let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegex)
-            return emailPredicate.evaluate(with: email)
+                            }
+                            HStack {
+                                Button {
+                                    if authCode == correctAuthCode {
+                                        authCodeIsValid = true
+                                        goFindIDComplete = true
+                                    } else {
+                                        authCodeIsValid = false
+                                    }
+                                } label: {
+                                    Text("완료")
+                                        .primaryButtonStyle(isEnabled: canRequestAuthCode)
+                                        .semibold16()
+                                }
+                                .disabled(authCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                                .fullScreenCover(isPresented: $goFindIDComplete) {
+                                    FindIDComplete(userID: "test1234")
+                                }
+                            }
+                        }
+                    }
+                    .padding(.vertical)
+                }
+                .onTapGesture {
+                    fieldIsFocused = false
+                }
+                .scrollDismissesKeyboard(.interactively)
+                .safeAreaInset(edge: .bottom) {
+                    VStack {
+                        HStack {
+                            Text("아이디가 기억나셨나요?")
+                                .regular14()
+                            Button {
+                                goToLogin = true
+                            } label: {
+                                Text("로그인")
+                                    .semibold14()
+                                    .foregroundStyle(.buttonAuth)
+                            }
+                        }
+                        .fullScreenCover(isPresented: $goToLogin) {
+                            LoginView()
+                        }
+                    }
+                    .padding(.bottom)
+                }
+                .ignoresSafeArea(.keyboard)
+                .onReceive(timer) { _ in
+                    guard timerActive else { return }
+                    if timeRemaining > 0 {
+                        timeRemaining -= 1
+                    } else {
+                        timerActive = false
+                    }
+                }
+            }
+            .padding(.horizontal)
         }
         
     }
+    
+    func formatTime(_ seconds: Int)-> String {
+        let minutes = seconds / 60
+        let secs = seconds % 60
+        return String(format: "%02d:%02d", minutes, secs)
+    }
+    
+    func startTimer() {
+        timeRemaining = 30
+        timerActive = true
+    }
+    func resendCode() {
+        //인증 재요청 로직
+        startTimer()
+    }
+    func isValidEmailAddress(email: String) {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegex)
+        isEmailValid = emailPredicate.evaluate(with: email)
+    }
+}
 
 #Preview {
     FindIDView()
