@@ -25,7 +25,10 @@ struct ChangePasswordView: View {
     @FocusState private var isNewPasswordFocused: Bool
     @FocusState private var isConfirmPasswordFocused: Bool
     
+    @Environment(\.dismiss) private var dismiss
+    
     var body: some View {
+        
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading) {
@@ -42,13 +45,13 @@ struct ChangePasswordView: View {
                     HStack {
                         Group {
                             if isNewPasswordVisible {
-                                TextField("새로운 비밀번호를 입력해주세요", text: $newPassword)
+                                UnderLinedTextField(placeholder: "새로운 비밀번호를 입력해주세요", text: $newPassword)
                                     .focused($isNewPasswordFocused)
                                     .textContentType(.newPassword)
                                     .autocapitalization(.none)
                                     .disableAutocorrection(true)
                             } else {
-                                SecureField("새로운 비밀번호를 입력해주세요", text: $newPassword)
+                                UnderLinedTextField(placeholder: "새로운 비밀번호를 입력해주세요", isSecure: true, text: $newPassword)
                                     .focused($isNewPasswordFocused)
                                     .textContentType(.newPassword)
                             }
@@ -57,20 +60,21 @@ struct ChangePasswordView: View {
                         Button {
                             isNewPasswordVisible.toggle()
                         } label: {
-                            Image(systemName: isNewPasswordVisible ? "eye.slash" : "eye")
+                            Image(systemName: isNewPasswordVisible ? "eye" : "eye.slash")
                                 .foregroundColor(.gray)
                         }
                     }
                     .regular14()
                     
+                    
                     VStack(alignment: .leading) {
                         HStack {
-                            Image(systemName: isLengthValid ? "checkmark.circle.fill" : "circle")
+                            Image(systemName: isLengthValid ? "checkmark" : "checkmark")
                                 .foregroundColor(isLengthValid ? .green : .gray)
                             Text("8자 이상")
                                 .foregroundColor(isLengthValid ? .green : .gray)
                             
-                            Image(systemName: isUpperLowerNumberSpecialValid ? "checkmark.circle.fill" : "circle")
+                            Image(systemName: isUpperLowerNumberSpecialValid ? "checkmark" : "checkmark")
                                 .foregroundColor(isUpperLowerNumberSpecialValid ? .green : .gray)
                             Text("대소문자, 숫자, 특수문자 포함")
                                 .foregroundColor(isUpperLowerNumberSpecialValid ? .green : .gray)
@@ -86,13 +90,13 @@ struct ChangePasswordView: View {
                     HStack {
                         Group {
                             if isConfirmPasswordVisible {
-                                TextField("비밀번호를 한 번 더 입력해주세요", text: $confirmPassword)
+                                UnderLinedTextField(placeholder: "비밀번호를 한 번 더 입력해주세요", text: $confirmPassword)
                                     .focused($isConfirmPasswordFocused)
                                     .textContentType(.newPassword)
                                     .autocapitalization(.none)
                                     .disableAutocorrection(true)
                             } else {
-                                SecureField("비밀번호를 한 번 더 입력해주세요", text: $confirmPassword)
+                                UnderLinedTextField(placeholder: "비밀번호를 한 번 더 입력해주세요", isSecure: true, text: $confirmPassword)
                                     .focused($isConfirmPasswordFocused)
                                     .textContentType(.newPassword)
                             }
@@ -101,7 +105,7 @@ struct ChangePasswordView: View {
                         Button {
                             isConfirmPasswordVisible.toggle()
                         } label: {
-                            Image(systemName: isConfirmPasswordVisible ? "eye.slash" : "eye")
+                            Image(systemName: isConfirmPasswordVisible ? "eye" : "eye.slash")
                                 .foregroundColor(.gray)
                         }
                     }
@@ -109,7 +113,7 @@ struct ChangePasswordView: View {
                     
                     VStack(alignment: .leading) {
                         HStack {
-                            Image(systemName: isPasswordAgreement ? "checkmark.circle.fill" : "circle")
+                            Image(systemName: isPasswordAgreement ? "checkmark" : "checkmark")
                                 .foregroundColor(isPasswordAgreement ? .green : .gray)
                             Text("비밀번호 일치")
                                 .foregroundColor(isPasswordAgreement ? .green : .gray)
@@ -131,8 +135,20 @@ struct ChangePasswordView: View {
                 }
                 .tapToDismissKeyboard()
             }
+            .padding(.horizontal)
             .navigationTitle("비밀번호 재설정")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.backward")
+                            .foregroundStyle(.black)
+                    }
+                }
+            }
             .onChange(of: newPassword) {
                 validatePassword()
             }

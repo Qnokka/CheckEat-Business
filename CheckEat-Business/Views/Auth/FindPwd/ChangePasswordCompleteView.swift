@@ -26,7 +26,6 @@ struct ChangePasswordCompleteView: View {
                 .padding(.bottom)
             
             Button {
-                // 로그인 화면으로 이동
                 goToLogin = true
             } label: {
                 Text("로그인")
@@ -38,6 +37,7 @@ struct ChangePasswordCompleteView: View {
             }
         }
         .padding()
+        .padding(.bottom, 200)
     }
 }
 
