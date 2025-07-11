@@ -14,7 +14,7 @@ struct FindIDComplete: View {
     var body: some View {
         
         VStack(spacing: 8) {
-            Image(systemName: "checkmark.circle")
+            Image("CheckMark")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 50, height: 50)
