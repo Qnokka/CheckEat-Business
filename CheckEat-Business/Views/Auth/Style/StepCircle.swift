@@ -7,30 +7,21 @@
 
 import SwiftUI
 
-struct StepCircleHeader: View {
+struct StepCircle: View {
     let number: Int
     let fillColor: Color
     let textColor: Color
     
     var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color.buttonEnable)
-                .frame(width: 20, height: 20)
-            Text("1")
-                .foregroundColor(.white)
-                .font(.system(size: 14, weight: .semibold))
-        }
-        .padding(.top, 20)
-        ZStack {
-            Circle()
-                .fill(Color.buttonEnable)
-                .frame(width: 20, height: 20)
-            Text("2")
-                .foregroundColor(.white)
-                .font(.system(size: 14, weight: .semibold ))
-        }
-        .padding(.top, 20)
+            ZStack {
+                Circle()
+                    .fill(fillColor)
+                    .frame(width: 20, height: 20)
+                Text("\(number)")
+                    .foregroundColor(textColor)
+                    .font(.system(size: 14, weight: .semibold))
+            }
+            .padding(.top, 20)
     }
 }
 
