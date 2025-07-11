@@ -13,16 +13,18 @@ struct BusinessRegistrationComplete: View {
     
     var body: some View {
         
-        VStack(spacing: 24) {
+        VStack(spacing: 8) {
             Image("CheckMark")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 50, height: 50)
                 .foregroundStyle(.green)
-            Text("회원가입이\n완료되었습니다.")
-                .multilineTextAlignment(.center)
-                .bold20()
                 .padding(.bottom)
+            Group {
+                Text("회원가입이")
+                Text("완료되었습니다.")
+            }
+            .bold20()
             
             Button {
                 goToLogin = true
@@ -30,6 +32,7 @@ struct BusinessRegistrationComplete: View {
                 Text("로그인")
                     .primaryButtonStyle()
                     .semibold16()
+                    .padding(.vertical, 24)
             }
             .fullScreenCover(isPresented: $goToLogin) {
                 LoginView()
