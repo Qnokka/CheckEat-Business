@@ -26,6 +26,7 @@ struct JoinView: View {
     @State private var isChecked2:Bool = false
     @State private var isChecked3:Bool = false
     @State private var goBusinessRegistrationView = false
+    @Environment(\.dismiss) private var dismiss
     private var isFormValid: Bool {
         return !id.isEmpty && !password.isEmpty && !passwordConfirm.isEmpty && !email.isEmpty && !verificationCode.isEmpty && !phoneNumber.isEmpty && isChecked && isChecked2 && isChecked3
     }
@@ -113,7 +114,7 @@ struct JoinView: View {
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) {
                             Button {
-                                //로그인페이지로 이동
+                                dismiss()
                             } label: {
                                 Image(systemName: "chevron.backward")
                                     .foregroundStyle(.black)
