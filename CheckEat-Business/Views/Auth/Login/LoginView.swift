@@ -14,6 +14,7 @@ struct LoginView: View {
     @State private var isPasswordVisible: Bool = false
     @State private var showFindId: Bool = false
     @State private var showFindPwd: Bool = false
+    @State private var showJoin: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -111,11 +112,14 @@ struct LoginView: View {
                         Text("아직 회원이 아니신가요?")
                             .regular14()
                         Button {
-                            // 회원가입 화면 이동
+                            showJoin = true
                         } label: {
                             Text("회원가입")
                                 .semibold14()
                                 .foregroundStyle(.buttonAuth)
+                        }
+                        .fullScreenCover(isPresented: $showJoin) {
+                            JoinView()
                         }
                         Spacer()
                     }
