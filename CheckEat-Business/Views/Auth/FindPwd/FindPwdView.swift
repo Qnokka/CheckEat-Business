@@ -33,13 +33,13 @@ struct FindPwdView: View {
     private var isUserIdValid: Bool {
         !userId.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
-
+    
     private var isUserEmailValid: Bool {
         !userEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && isEmailValid
     }
     
     private var canRequestCode: Bool {
-            isUserIdValid && isUserEmailValid
+        isUserIdValid && isUserEmailValid
     }
     
     private var canRequestAuthCode: Bool {
@@ -96,93 +96,96 @@ struct FindPwdView: View {
                     }
                     
                     VStack {
-                        if !isFieldVisible {
-                            Button {
-                                withAnimation {
+                        Group {
+                            if !isFieldVisible {
+                                Button {
                                     infoMsg = "입력하신 이메일로 인증코드를 전송했습니다."
                                     isFieldVisible = true
                                     authCodeIsValid = nil
                                     resendCode()
-                                }
-                            } label: {
-                                Text("인증코드 받기")
-                                    .primaryButtonStyle(isEnabled: canRequestCode)
-                                    .semibold16()
-                            }
-                            .disabled(!canRequestCode)
-                            .padding(.top, 24)
-                            
-                        } else {
-                            VStack(alignment: .leading) {
-                                Text("인증코드")
-                                    .semibold16()
-                                UnderLinedTextField(placeholder: "인증코드를 입력해주세요", text: $authCode)
-                                    .regular14()
-                                    .focused($fieldIsFocused)
-                                
-                                if authCodeIsValid == false {
-                                    VStack(alignment: .leading) {
-                                        Text("잘못된 코드입니다. 다시 시도해주세요.")
-                                            .regular12()
-                                            .foregroundStyle(.red)
-                                    }
-                                }
-                                if timerActive {
-                                    HStack {
-                                        Spacer()
-                                        Button {
-                                            resendCode()
-                                        } label: {
-                                            Text("인증코드 다시 보내기")
-                                                .bold14()
-                                                .foregroundStyle(.buttonAuth)
-                                        }
-                                        Text(formatTime(timeRemaining))
-                                            .monospacedDigit()
-                                            .regular14()
-                                        Spacer()
-                                    }
-                                    .padding(.vertical, 24)
-                                } else {
-                                    HStack {
-                                        Spacer()
-                                        Text("인증코드를 받지 못했어요")
-                                            .regular14()
-                                        Button {
-                                            authCode = ""
-                                            authCodeIsValid = nil
-                                            resendCode()
-                                        } label: {
-                                            Text("인증코드 다시 받기")
-                                                .bold14()
-                                                .foregroundStyle(.buttonAuth)
-                                        }
-                                        Spacer()
-                                    }
-                                    .padding(.vertical, 24)
-                                }
-
-                            }
-                            HStack {
-                                Button {
-                                    if authCode == correctAuthCode {
-                                        authCodeIsValid = true
-                                        shouldNavigate = true
-                                    } else {
-                                        authCodeIsValid = false
-                                    }
                                 } label: {
-                                    Text("완료")
-                                        .primaryButtonStyle(isEnabled: canRequestAuthCode)
+                                    Text("인증코드 받기")
+                                        .primaryButtonStyle(isEnabled: canRequestCode)
                                         .semibold16()
                                 }
-                                .disabled(authCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                                .navigationDestination(isPresented: $shouldNavigate) {
-                                    ChangePasswordView()
+                                .disabled(!canRequestCode)
+                                .padding(.top, 24)
+                                
+                            } else {
+                                VStack(alignment: .leading) {
+                                    Text("인증코드")
+                                        .semibold16()
+                                    UnderLinedTextField(placeholder: "인증코드를 입력해주세요", text: $authCode)
+                                        .regular14()
+                                        .focused($fieldIsFocused)
+                                    
+                                    if authCodeIsValid == false {
+                                        VStack(alignment: .leading) {
+                                            Text("잘못된 코드입니다. 다시 시도해주세요.")
+                                                .regular12()
+                                                .foregroundStyle(.red)
+                                        }
+                                    }
+                                    if timerActive {
+                                        HStack {
+                                            Spacer()
+                                            Button {
+                                                resendCode()
+                                            } label: {
+                                                Text("인증코드 다시 보내기")
+                                                    .bold14()
+                                                    .foregroundStyle(.buttonAuth)
+                                            }
+                                            Text(formatTime(timeRemaining))
+                                                .monospacedDigit()
+                                                .regular14()
+                                            Spacer()
+                                        }
+                                        .padding(.vertical, 24)
+                                    } else {
+                                        HStack {
+                                            Spacer()
+                                            Text("인증코드를 받지 못했어요")
+                                                .regular14()
+                                            Button {
+                                                authCode = ""
+                                                authCodeIsValid = nil
+                                                resendCode()
+                                            } label: {
+                                                Text("인증코드 다시 받기")
+                                                    .bold14()
+                                                    .foregroundStyle(.buttonAuth)
+                                            }
+                                            Spacer()
+                                        }
+                                        .padding(.vertical, 24)
+                                    }
+                                    
+                                }
+                                HStack {
+                                    Button {
+                                        if authCode == correctAuthCode {
+                                            authCodeIsValid = true
+                                            shouldNavigate = true
+                                        } else {
+                                            authCodeIsValid = false
+                                        }
+                                    } label: {
+                                        Text("완료")
+                                            .primaryButtonStyle(isEnabled: canRequestAuthCode)
+                                            .semibold16()
+                                    }
+                                    .disabled(authCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                                    .navigationDestination(isPresented: $shouldNavigate) {
+                                        ChangePasswordView()
+                                    }
                                 }
                             }
                         }
+                        .offset(y: isFieldVisible ? 0 : -30)
+                        
                     }
+                    .animation(.easeInOut(duration: 0.7), value: isFieldVisible)
                     .padding(.vertical)
                 }
                 .onTapGesture {
