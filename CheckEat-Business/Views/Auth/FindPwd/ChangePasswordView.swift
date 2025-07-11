@@ -62,6 +62,8 @@ struct ChangePasswordView: View {
                         } label: {
                             Image(systemName: isNewPasswordVisible ? "eye" : "eye.slash")
                                 .foregroundColor(.gray)
+                                .padding(8)
+                                .contentShape(Rectangle())
                         }
                     }
                     .regular14()
@@ -107,6 +109,8 @@ struct ChangePasswordView: View {
                         } label: {
                             Image(systemName: isConfirmPasswordVisible ? "eye" : "eye.slash")
                                 .foregroundColor(.gray)
+                                .padding(8)
+                                .contentShape(Rectangle())
                         }
                     }
                     .regular14()

@@ -56,6 +56,8 @@ struct LoginView: View {
                         } label: {
                             Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
                                 .foregroundColor(.gray)
+                                .padding(8)
+                                .contentShape(Rectangle())
                         }
                     }
                     .regular14()

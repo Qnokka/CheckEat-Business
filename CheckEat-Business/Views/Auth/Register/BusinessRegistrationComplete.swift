@@ -8,45 +8,47 @@
 import SwiftUI
 
 struct BusinessRegistrationComplete: View {
+    
+    @State private var goToLogin: Bool = false
+    
     var body: some View {
-        VStack(alignment: .center) {
-                Image("CheckMark")
-                    .resizable()
-                    .frame(width: 40, height: 40)
-                    .foregroundColor(.green)
-                    .padding(.top, 170)
+        
+        VStack(spacing: 8) {
+            Image("CheckMark")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 50, height: 50)
+                .foregroundStyle(.green)
+                .padding(.bottom)
+            Group {
                 Text("회원가입이")
-                .font(.system(size: 20, weight: .bold))
-                    .padding(.top, 20)
-                    .padding(.bottom, 2)
                 Text("완료되었습니다.")
-                .font(.system(size: 20, weight: .bold))
+            }
+            .bold20()
             
             Button {
-                
+                goToLogin = true
             } label: {
                 Text("로그인")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
-                    .frame(width: 362, height: 56, alignment: .center)
-                    .background(Color("Button_Enable"))
-                    .cornerRadius(6)
-                    .padding(.top, 20)
+                    .primaryButtonStyle()
+                    .semibold16()
+                    .padding(.vertical, 24)
             }
-
+            .fullScreenCover(isPresented: $goToLogin) {
+                LoginView()
+            }
+            
             Button {
                 //메뉴등록페이지로 이동
             } label: {
                 Text("메뉴 정보 등록하기")
-                    .font(.system(size: 16, weight: .semibold))
+                    .semibold16()
                     .foregroundStyle(Color("Button_Enable"))
-                    .padding(.top, 20)
 
             }
-
-            }
-                Spacer()
-            
+        }
+        .padding()
+        .padding(.bottom, 200)
        
     }
 }

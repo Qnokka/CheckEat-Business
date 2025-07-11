@@ -14,16 +14,18 @@ struct ChangePasswordCompleteView: View {
     
     var body: some View {
         
-        VStack(spacing: 24) {
-            Image(systemName: "checkmark.circle")
+        VStack(spacing: 8) {
+            Image("CheckMark")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 50, height: 50)
                 .foregroundStyle(.green)
-            Text("비밀번호가\n성공적으로 변경되었습니다")
-                .multilineTextAlignment(.center)
-                .bold20()
                 .padding(.bottom)
+            Group {
+                Text("비밀번호가")
+                Text("성공적으로 변경되었습니다.")
+            }
+            .bold20()
             
             Button {
                 goToLogin = true
@@ -31,6 +33,7 @@ struct ChangePasswordCompleteView: View {
                 Text("로그인")
                     .primaryButtonStyle()
                     .semibold16()
+                    .padding(.vertical, 24)
             }
             .fullScreenCover(isPresented: $goToLogin) {
                 LoginView()
