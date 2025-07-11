@@ -15,7 +15,7 @@ struct BusinessRegistrationView: View {
                 VStack {
                     HStack {
                         Text("기본 정보 입력")
-                            .font(.system(size: 16, weight: .semibold))
+                            .semibold16()
                             .foregroundColor(.buttonEnable)
                             .padding(.top, 20)
                             .padding(.leading, 17)
@@ -26,7 +26,7 @@ struct BusinessRegistrationView: View {
                                 .frame(width: 20, height: 20)
                             Text("1")
                                 .foregroundColor(.white)
-                                .font(.system(size: 14, weight: .semibold))
+                                .semibold14()
                         }
                         .padding(.top, 20)
                         ZStack {

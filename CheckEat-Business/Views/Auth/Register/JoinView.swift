@@ -101,7 +101,7 @@ struct JoinView: View {
                                 .padding(.top, 30)
                                 .padding(.leading, 20)
                         }
-                        
+                        .disabled(!isFormValid)
                         NavigationLink(destination: BusinessRegistrationView(), isActive: $goBusinessRegistrationView) {
                             EmptyView()
                         }
