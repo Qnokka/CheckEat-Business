@@ -8,7 +8,7 @@ import SwiftUI
 
 
 struct FindIDView: View {
-    @State var email: String = ""
+    @State private var email: String = ""
     @State private var showVerificationField = false
     @State private var verificationCode = ""
     @State private var isVerificationCodeValid: Bool = false
@@ -36,7 +36,7 @@ struct FindIDView: View {
                         .font(.system(size: 16, weight: .light))
                         .padding(.top, 3)
                     Text("이메일")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 14, weight: .semibold))
                         .padding(.top, 20)
                     UnderLinedTextField(placeholder: "이메일을 입력해 주세요.", text: $email)
                         .keyboardType(.emailAddress)
@@ -47,52 +47,17 @@ struct FindIDView: View {
                         .padding(.top, 2)
                     
                     if showVerificationField {
-                        VStack(alignment: .leading){
-                            Text("인증코드")
-                                .font(.system(size: 14, weight: .bold))
-                                .padding(.top, 10)
-                            UnderLinedTextField(placeholder: "인증코드를 입력해 주세요.", text: $verificationCode)
-                                .onChange(of: verificationCode){ newValue in
-                                    isVerificationCodeValid = (newValue == "1234")
-                                    showCodeErrorMessage = !isVerificationCodeValid && !newValue.isEmpty
-                                }
-                                .font(.system(size: 14))
-                                .padding(.top, 2)
-                            
-                            if showCodeErrorMessage {
-                                Text("잘못된 코드입니다. 다시 시도해 주세요.")
-                                    .foregroundColor(.red)
-                                    .font(.system(size: 12))
+                        VerificationCodeSection(
+                            verificationCode: $verificationCode,
+                            isVerificationCodeValid: $isVerificationCodeValid,
+                            showCodeErrorMessage: $showCodeErrorMessage,
+                            timeRemaining: $timeRemaining, timerActive: $timerActive,
+                            resendCodeAction: {
+                                startTimer()
+                                // 여기에 인증 재요청 API 호출도 같이 넣을 수 있음
                             }
-
-                        }
-                        HStack(spacing: 8) {
-                            Button {
-                                resendCode()
-                            } label: {
-                                if timerActive {
-                                    Text("인증코드 다시 보내기")
-                                        .font(.system(size: 16, weight: .bold))
-                                        .foregroundColor(Color("Button_OP70"))
-                                        .padding(.top, 20)
-                                        .padding(.leading, 80)
-                                } else {
-                                    (Text("인증코드를 받지 못했어요  ")
-                                        .font(.system(size: 16, weight: .light)) +
-                                     Text("  인증코드 다시받기")
-                                        .font(.system(size: 16, weight: .bold)))
-                                    .foregroundColor(Color.black)
-                                    .padding(.top, 20)
-                                    .padding(.leading, 30)
-                                }
-                            }
-                            if timerActive {
-                                Text(formatTime(timeRemaining))
-                                    .font(.system(size: 16))
-                                    .foregroundColor(Color("Button_OP70"))
-                                    .padding(.top, 20)
-                            }
-                        }
+                        )
+                        
                     }
                     Button {
                         if showVerificationField {
@@ -109,10 +74,10 @@ struct FindIDView: View {
                         
                     } label: {
                         Text(showVerificationField ? "완료" : "인증코드 받기")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(width: 362, height: 56, alignment: .center)
-                            .background(Color(showVerificationField ?  "Button_Enable" : "Button_Disable"))
+                            .background(Color(isButtonEnabled ?  "Button_Enable" : "Button_Disable"))
                             .cornerRadius(6)
                             .padding(.top, 20)
                     }
@@ -123,6 +88,7 @@ struct FindIDView: View {
                     Spacer()
                     
                 }
+                
                 .padding(.top, 50)
                 .padding(.leading, 15)
                 .navigationTitle("아이디 찾기")
@@ -137,18 +103,22 @@ struct FindIDView: View {
                         }
                     }
                 }
-                VStack(alignment: .center) {
-                    Button {
-                        //로그인페이지로 이동
-                    } label: {
-                        Text("아이디가 기억나셨나요? ").font(.system(size: 14 ,weight: .light))
-                            .foregroundStyle(Color.black) +
-                        Text(" 로그인").font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(Color.black)
+                .safeAreaInset(edge: .bottom) {
+                    VStack(alignment: .center) {
+                        Button {
+                            //로그인페이지로 이동
+                        } label: {
+                            Text("아이디가 기억나셨나요? ").font(.system(size: 14 ,weight: .light))
+                                .foregroundStyle(Color.black) +
+                            Text(" 로그인").font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.black)
+                        }
+                        .padding(.bottom, 30)
                     }
-                    .padding(.bottom, 30)
                 }
+                .ignoresSafeArea(.keyboard)
             }
+                
             .onReceive(timer) { _ in
                 guard timerActive else { return }
                 if timeRemaining > 0 {
@@ -160,28 +130,17 @@ struct FindIDView: View {
             
         }
     }
-
-        func formatTime(_ seconds: Int)-> String {
-            let minutes = seconds / 60
-            let secs = seconds % 60
-            return String(format: "%02d:%02d", minutes, secs)
-        }
-        
-        func startTimer() {
-            timeRemaining = 30
-            timerActive = true
-        }
-        func resendCode() {
-            //인증 재요청 로직
-            startTimer()
-        }
-        func isValidEmailAddress(email: String) -> Bool {
-            let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-            let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegex)
-            return emailPredicate.evaluate(with: email)
-        }
-        
+    func startTimer() {
+        timeRemaining = 30
+        timerActive = true
     }
+    
+    func isValidEmailAddress(email: String) -> Bool {
+        let emailRegex = "^[A-Z0-9a-z._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$"
+        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegex)
+        return emailPredicate.evaluate(with: email)
+    }
+}
 
 #Preview {
     FindIDView()

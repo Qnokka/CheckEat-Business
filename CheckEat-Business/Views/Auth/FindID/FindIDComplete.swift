@@ -11,7 +11,7 @@ struct FindIDComplete: View {
     let userID: String
     var body: some View {
         VStack {
-                Image(systemName: "checkmark.circle")
+            Image("CheckMark")
                     .resizable()
                     .frame(width: 40, height: 40)
                     .foregroundColor(.green)
