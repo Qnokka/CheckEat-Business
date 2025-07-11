@@ -10,9 +10,11 @@ import SwiftUI
 struct ContactVerificationSection: View {
     @Binding var phoneNumber: String
     @Binding var email: String
-    @State private var isEmailValid: Bool = true
+    @State private var isEmailValid: Bool = false
     @Binding var verificationCode: String
     @Binding var didSendCode: Bool
+    private let correctAuthCode = "1234"
+    @State private var isVerificationCodeValid: Bool = false
     var body: some View {
         VStack(alignment: .leading){
             Text("휴대폰 번호")
@@ -61,19 +63,22 @@ struct ContactVerificationSection: View {
                         .font(.system(size: 14))
                         .padding(.leading, 17)
                         .padding(.top, 5)
+                        .onChange(of: verificationCode) { newValue in
+                            isVerificationCodeValid = (newValue == correctAuthCode)
+                        }
                     Button {
-                        //이메일인증코드 인증
+                        
                     } label: {
                         Text("인증하기")
                             .frame(width: 97, height: 34)
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.black)
-                            .background(Color("Button_soft"))
+                            .background(isVerificationCodeValid ? Color("Button_soft") : Color.gray.opacity(0.3))
                             .cornerRadius(5)
                             .padding(.bottom, 13)
                             .padding(.trailing, 20)
-                        
                     }
+                    .disabled(!isVerificationCodeValid)
                 }
             }
         }

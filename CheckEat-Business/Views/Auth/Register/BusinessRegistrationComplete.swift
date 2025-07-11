@@ -19,7 +19,7 @@ struct BusinessRegistrationComplete: View {
                 .scaledToFit()
                 .frame(width: 50, height: 50)
                 .foregroundStyle(.green)
-            Text("회원가입이\n완료되었습니다")
+            Text("회원가입이\n완료되었습니다.")
                 .multilineTextAlignment(.center)
                 .bold20()
                 .padding(.bottom)
