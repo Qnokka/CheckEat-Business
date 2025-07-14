@@ -15,6 +15,11 @@ struct LoginView: View {
     @State private var showFindId: Bool = false
     @State private var showFindPwd: Bool = false
     @State private var showJoin: Bool = false
+    @State private var goToMyPage: Bool = false
+    @State private var loginError: String = ""
+    
+    private let testId = "user"
+    private let testPassword = "Qwer1234!"
     
     var body: some View {
         NavigationStack {
@@ -61,14 +66,27 @@ struct LoginView: View {
                         }
                     }
                     .regular14()
-                    .padding(.bottom, 24)
+                    
+                    Text(loginError)
+                        .regular12()
+                        .foregroundStyle(.red)
+                        .padding(.bottom, 24)
                     
                     Button {
-                        // 로그인 다음 단계로 이동
+                        //TODO: 로그인 인증 로직 구현
+                        //MARK: - 우선은 테스트용 아이디, 비밀번호로 테스트
+                        if(testId == userId && testPassword == userPassword) {
+                            goToMyPage = true
+                        } else {
+                            loginError = "입력하신 정보가 일치하지 않습니다. 다시 확인해주세요"
+                        }
                     } label: {
                         Text("로그인")
                             .primaryButtonStyle()
                             .semibold16()
+                    }
+                    .fullScreenCover(isPresented: $goToMyPage) {
+                        MyPageView()
                     }
                     
                     HStack {
