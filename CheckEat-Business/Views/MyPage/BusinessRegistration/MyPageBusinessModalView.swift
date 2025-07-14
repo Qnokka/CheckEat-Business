@@ -27,10 +27,34 @@ struct MyPageBusinessModalView: View {
                 .regular16()
                 .padding(.top, 10)
                 .multilineTextAlignment(.leading)
-            Spacer()
+                .padding(.bottom, 15)
+            ZStack(alignment: .leading) {
+                Rectangle()
+                    .fill(Color("Button_OP"))
+                    .frame(width: 362, height: 114)
+                    .cornerRadius(5)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("· 상호명 또는 대표자명 변경 ")
+                    Text("· 사업장 주소 변경 ")
+                    Text("· 기타 사업자등록증 정보 변경 또는 오류 수정")
+                }
+                .padding(.leading, 20)
+                .regular14()
+            
+            }
+            Button {
+                //스캔OCR 이동
+            } label: {
+                Text("사업자 등록증 스캔하기")
+                    .semibold16()
+                    .primaryButtonStyle()
+                    .padding(.vertical)
+            }
+
         }
         .padding(.horizontal)
         .padding(.top, 50)
+        Spacer()
     }
 }
 
