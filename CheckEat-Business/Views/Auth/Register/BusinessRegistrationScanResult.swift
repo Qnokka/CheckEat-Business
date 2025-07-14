@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct BusinessRegistrationStep1: View {
+struct BusinessRegistrationScanResult: View {
     @Environment(\.dismiss) private var dismiss
     @State private var businessNumber: String = ""
     @State private var storeName: String = ""
@@ -104,5 +104,5 @@ struct BusinessRegistrationStep1: View {
 }
 
 #Preview {
-    BusinessRegistrationStep1()
+    BusinessRegistrationScanResult()
 }
