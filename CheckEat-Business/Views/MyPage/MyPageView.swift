@@ -15,6 +15,7 @@ struct MyPageView: View {
     @State private var showWithdrawAlert: Bool = false
     @State private var showDeleteCompany: Bool = false
     @State private var showChangePasswordModal = false
+    @State private var showManageCompanyModal = false
     @State private var selectedDestination: SettingDestination? = nil
     
     @State private var showMoreMenu = false
@@ -72,7 +73,11 @@ struct MyPageView: View {
                                 title: "업체정보",
                                 buttons: [(title: "업체정보 관리", destination: .manageCompany)]
                             ) { destination in
-                                selectedDestination = destination
+                                if destination == .manageCompany {
+                                    showManageCompanyModal = true
+                                } else {
+                                    selectedDestination = destination
+                                }
                             }
                             
                             SectionView(
@@ -127,6 +132,11 @@ struct MyPageView: View {
                             MyPageChangePasswordModalView()
                                 .presentationDragIndicator(.visible)
                                 .presentationDetents([.height(450)])
+                        }
+                        .sheet(isPresented: $showManageCompanyModal ) {
+                            ManageCompanyModalView()
+                                .presentationDragIndicator(.visible)
+                                .presentationDetents([.height(350)])
                         }
 
                     }
