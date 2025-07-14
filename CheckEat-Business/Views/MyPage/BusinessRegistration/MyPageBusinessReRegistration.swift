@@ -81,7 +81,6 @@ struct MyPageBusinessReRegistration: View {
                         }
                         .sheet(isPresented: $showSheet) {
                             MyPageBusinessModalView()
-                                .presentationDragIndicator(.visible)
                                 .presentationDetents([.height(400)])
                         }
                  
