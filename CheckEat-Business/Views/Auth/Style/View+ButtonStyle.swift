@@ -18,4 +18,16 @@ extension View {
             .foregroundColor(.white)
             .cornerRadius(8)
     }
+    
+    func subButtonStyle(isEnabled: Bool? = nil) -> some View {
+        return self
+            .frame(maxWidth: .infinity)
+            .padding()
+            .foregroundColor(.primary)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.buttonOP50, lineWidth: 1)
+            )
+    }
 }
