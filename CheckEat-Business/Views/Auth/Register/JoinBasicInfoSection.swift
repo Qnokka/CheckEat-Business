@@ -30,7 +30,7 @@ struct JoinBasicInfoSection: View {
                         .padding(.leading, 17)
                 }
                 Button {
-                    //아이디 중복확인 로직
+                    //TODO: 아이디 중복 확인 로직 구현
                 } label: {
                     Text("중복 확인")
                         .frame(width: 83, height: 34)

@@ -14,6 +14,7 @@ struct MyPageView: View {
     @State private var goToLogin: Bool = false
     @State private var showWithdrawAlert: Bool = false
     @State private var showDeleteCompany: Bool = false
+    @State private var showChangePasswordModal = false
     @State private var selectedDestination: SettingDestination? = nil
     
     @State private var showMoreMenu = false
@@ -78,7 +79,11 @@ struct MyPageView: View {
                                 title: "계정",
                                 buttons: [(title: "비밀번호 변경", destination: .changePassword)]
                             ) { destination in
-                                selectedDestination = destination
+                                if destination == .changePassword {
+                                    showChangePasswordModal = true
+                                } else {
+                                    selectedDestination = destination
+                                }
                             }
                             
                             SectionView(
@@ -118,7 +123,12 @@ struct MyPageView: View {
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.bottom, 40)
+                        .sheet(isPresented: $showChangePasswordModal) {
+                            MyPageChangePasswordModalView()
+                                .presentationDragIndicator(.visible)
+                                .presentationDetents([.height(450)])
+                        }
+
                     }
                 }
                 .alert("업체삭제", isPresented: $showDeleteCompany) {
@@ -171,7 +181,7 @@ struct MyPageView: View {
                 case .manageHoliday:
                     ChangePasswordView()
                 case .manageLicense:
-                    ChangePasswordView()
+                    MyPageBusinessRegistation()
                 }
             }
         }

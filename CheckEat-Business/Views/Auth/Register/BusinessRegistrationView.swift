@@ -40,7 +40,8 @@ struct BusinessRegistrationView: View {
                         Text("정확성을 보장하지 않습니다.")
                             .foregroundColor(Color(.buttonOP50))
                         Button {
-                            
+                            //TODO: OCR 스캔 로직 구현
+                            //MARK: - 우선은 버튼 누르면 다음 화면으로 이동
                         } label: {
                             Text("사업자 등록증 스캔하기")
                                 .semibold16()

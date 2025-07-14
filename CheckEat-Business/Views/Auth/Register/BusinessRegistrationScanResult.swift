@@ -64,7 +64,7 @@ struct BusinessRegistrationScanResult: View {
                     
                     VStack(alignment: .center) {
                         Button {
-                            
+                            //TODO: 사업자등록증 등록 완료 페이지로 이동
                         } label: {
                             Text("완료")
                                 .semibold16()

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+//MARK: 마이페이지 커스텀 더보기 메뉴 코드 뜯어보기
 struct MyPageMoreMenu: View {
     @Binding var isPresented: Bool
     let actions: [(title: String, action: () -> Void)]

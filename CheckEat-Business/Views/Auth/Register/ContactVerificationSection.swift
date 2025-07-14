@@ -38,7 +38,7 @@ struct ContactVerificationSection: View {
                         isEmailValid = isValidEmailAddress(email: newValue)
                     }
                 Button {
-                    //이메일 인증코드받기
+                    //TODO: 이메일 인증코드 받는 로직 구현
                     didSendCode = true
                 } label: {
                     Text(didSendCode ? "재전송" : "인증코드 받기")
