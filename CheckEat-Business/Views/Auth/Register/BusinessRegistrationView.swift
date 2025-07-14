@@ -18,57 +18,38 @@ struct BusinessRegistrationView: View {
                             .semibold16()
                             .foregroundColor(.buttonEnable)
                             .padding(.top, 20)
-                            .padding(.leading, 17)
                         Spacer()
-                        ZStack {
-                            Circle()
-                                .fill(Color.buttonEnable)
-                                .frame(width: 20, height: 20)
-                            Text("1")
-                                .foregroundColor(.white)
-                                .semibold14()
-                        }
-                        .padding(.top, 20)
-                        ZStack {
-                            Circle()
-                                .fill(Color.buttonEnable)
-                                .frame(width: 20, height: 20)
-                            Text("2")
-                                .foregroundColor(.white)
-                                .font(.system(size: 14, weight: .semibold ))
-                        }
-                        .padding(.top, 20)
-                        .padding(.trailing, 20)
+                        
+                        StepCircle(number: 1, fillColor: .buttonEnable, textColor: .white)
+                        StepCircle(number: 2, fillColor: .buttonEnable, textColor: .white)
                     }
+                    .padding(.horizontal)
+                    
                     VStack(alignment: .center) {
                         Image("ScanImage")
                             .padding(.top, 70)
                         Text("사업자 등록증을")
-                            .font(.system(size: 20, weight: .bold))
+                            .bold20()
                             .padding(.top, 15)
                         Text("스캔해 주세요.")
-                            .font(.system(size: 20, weight: .bold))
+                            .bold20()
                             .padding(.top, 1)
                         Text("※추출된 정보는 100%")
-                            .font(.system(size: 16, weight: .regular))
                             .foregroundColor(Color(.buttonOP50))
                             .padding(.top, 10)
                         Text("정확성을 보장하지 않습니다.")
-                            .font(.system(size: 16, weight: .regular))
                             .foregroundColor(Color(.buttonOP50))
                         Button {
                             
                         } label: {
                             Text("사업자 등록증 스캔하기")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.white)
-                                .frame(width: 362, height: 56, alignment: .center)
-                                .background(Color("Button_Enable"))
-                                .cornerRadius(5)
-                                .padding(.top, 20)
+                                .semibold16()
+                                .primaryButtonStyle()
+                                .padding(.vertical, 24)
                         }
                     }
                 }
+                .padding(.horizontal)
                     .navigationTitle("회원가입")
                     .navigationBarTitleDisplayMode(.inline)
                     .navigationBarBackButtonHidden(true)
