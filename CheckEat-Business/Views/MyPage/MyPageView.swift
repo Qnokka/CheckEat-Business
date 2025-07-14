@@ -181,7 +181,7 @@ struct MyPageView: View {
                 case .manageHoliday:
                     ChangePasswordView()
                 case .manageLicense:
-                    MyPageBusinessRegistation()
+                    MyPageBusinessReRegistration()
                 }
             }
         }

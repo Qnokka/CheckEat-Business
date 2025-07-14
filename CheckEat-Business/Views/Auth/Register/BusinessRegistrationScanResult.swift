@@ -13,6 +13,7 @@ struct BusinessRegistrationScanResult: View {
     @State private var storeName: String = ""
     @State private var typeofBusiness: String = ""
     @State private var adress: String = ""
+    @State private var goToBusinessRestration: Bool = false
     private var isFormValid: Bool {
         return !businessNumber.isEmpty && !storeName.isEmpty && !typeofBusiness.isEmpty && !adress.isEmpty
     }
@@ -64,7 +65,7 @@ struct BusinessRegistrationScanResult: View {
                     
                     VStack(alignment: .center) {
                         Button {
-                            //TODO: 사업자등록증 등록 완료 페이지로 이동
+                            goToBusinessRestration = true
                         } label: {
                             Text("완료")
                                 .semibold16()
@@ -82,6 +83,9 @@ struct BusinessRegistrationScanResult: View {
                     }
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
+                }
+                .fullScreenCover(isPresented: $goToBusinessRestration) {
+                    BusinessRegistrationComplete()
                 }
                 .padding(.horizontal)
             }

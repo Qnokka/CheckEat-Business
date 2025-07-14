@@ -27,12 +27,15 @@ struct MyPageBusinessRegistationComplete: View {
             .bold20()
             
             Button {
-                //TODO: 마이페이지 이동
+                goToMyPage = true
             } label: {
                 Text("마이페이지")
                     .primaryButtonStyle()
                     .semibold16()
                     .padding(.vertical, 24)
+            }
+            .fullScreenCover(isPresented: $goToMyPage) {
+                MyPageView()
             }
             
         }

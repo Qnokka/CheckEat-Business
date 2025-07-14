@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct MyPageBusinessModalView: View {
+    
+    @State private var OCRScanSuccess: Bool = false
     @Environment(\.dismiss) var dissmiss
+    
     var body: some View {
         VStack(alignment: .leading){
             HStack {
@@ -44,17 +47,22 @@ struct MyPageBusinessModalView: View {
             }
             Button {
                 //TODO: OCR 스캔 로직 구현
+                //MARK: - 우선은 버튼 누르면 다음 화면으로 이동
+                OCRScanSuccess = true
             } label: {
                 Text("사업자 등록증 스캔하기")
                     .semibold16()
                     .primaryButtonStyle()
                     .padding(.vertical)
             }
-
         }
+        
         .padding(.horizontal)
         .padding(.top, 50)
         Spacer()
+            .fullScreenCover(isPresented: $OCRScanSuccess) {
+                MyPageBusinessRegistation()
+            }
     }
 }
 
