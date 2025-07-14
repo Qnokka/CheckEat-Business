@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct MyPageBusinessRegistationComplete: View {
+    
+    @State private var goToMyPage: Bool = false
+    
     var body: some View {
         
         VStack(spacing: 8) {
@@ -24,7 +27,7 @@ struct MyPageBusinessRegistationComplete: View {
             .bold20()
             
             Button {
-                //마이페이지 이동
+                //TODO: 마이페이지 이동
             } label: {
                 Text("마이페이지")
                     .primaryButtonStyle()

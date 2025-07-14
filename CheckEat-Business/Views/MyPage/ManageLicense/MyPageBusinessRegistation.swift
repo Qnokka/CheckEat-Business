@@ -63,7 +63,8 @@ struct MyPageBusinessRegistation: View {
                     
                     VStack(alignment: .center) {
                         Button {
-                            
+                            //TODO: 입력한 정보 바탕으로 회원가입 로직 구현
+                            //MARK: - 우선은 버튼 누르면 다음 화면으로 이동
                         } label: {
                             Text("완료")
                                 .semibold16()
@@ -75,7 +76,7 @@ struct MyPageBusinessRegistation: View {
 
                         }
                         Button {
-                            
+                            //TODO: OCR 스캔 로직 구현
                         } label: {
                             Text("스캔 다시하기")
                                 .semibold16()

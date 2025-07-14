@@ -43,7 +43,7 @@ struct MyPageBusinessModalView: View {
             
             }
             Button {
-                //스캔OCR 이동
+                //TODO: OCR 스캔 로직 구현
             } label: {
                 Text("사업자 등록증 스캔하기")
                     .semibold16()
