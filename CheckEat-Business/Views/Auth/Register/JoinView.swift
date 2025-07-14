@@ -37,7 +37,7 @@ struct JoinView: View {
                     VStack(alignment: .leading, spacing: 4){
                         HStack {
                             Text("기본 정보 입력")
-                                .font(.system(size: 16, weight: .semibold))
+                                .semibold16()
                                 .foregroundColor(.buttonEnable)
                                 .padding(.top, 20)
                                 .padding(.leading, 17)

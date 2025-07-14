@@ -18,20 +18,20 @@ struct ContactVerificationSection: View {
     var body: some View {
         VStack(alignment: .leading){
             Text("휴대폰 번호")
-                .font(.system(size: 14, weight: .semibold))
+                .semibold16()
                 .padding(.leading, 17)
                 .padding(.top, 10)
             UnderLinedTextField(placeholder: "휴대폰번호를 입력해 주세요.", text: $phoneNumber)
-                .font(.system(size: 14))
+                .regular14()
                 .padding(.leading, 17)
                 .padding(.top, 5)
             Text("이메일")
-                .font(.system(size: 14, weight: .semibold))
+                .semibold16()
                 .padding(.leading, 17)
                 .padding(.top, 10)
             ZStack(alignment: .trailing) {
                 UnderLinedTextField(placeholder: "이메일을 입력해 주세요", text: $email)
-                    .font(.system(size: 14))
+                    .regular14()
                     .padding(.leading, 17)
                     .padding(.top, 5)
                     .onChange(of: email) { newValue in
@@ -43,7 +43,7 @@ struct ContactVerificationSection: View {
                 } label: {
                     Text(didSendCode ? "재전송" : "인증코드 받기")
                         .frame(width: 97, height: 34)
-                        .font(.system(size: 14, weight: .bold))
+                        .bold14()
                         .foregroundColor(.black)
                         .background(Color(didSendCode ? "Button_OP20" : "Button_soft"))
                         .cornerRadius(5)
@@ -55,12 +55,12 @@ struct ContactVerificationSection: View {
             }
             if didSendCode {
                 Text("인증코드")
-                    .font(.system(size: 14, weight: .semibold))
+                    .semibold16()
                     .padding(.leading, 17)
                     .padding(.top, 10)
                 ZStack(alignment: .trailing) {
                     UnderLinedTextField(placeholder: "인증코드를 입력해 주세요.", text: $verificationCode)
-                        .font(.system(size: 14))
+                        .regular14()
                         .padding(.leading, 17)
                         .padding(.top, 5)
                         .onChange(of: verificationCode) { newValue in
@@ -71,7 +71,7 @@ struct ContactVerificationSection: View {
                     } label: {
                         Text("인증하기")
                             .frame(width: 97, height: 34)
-                            .font(.system(size: 14, weight: .bold))
+                            .bold14()
                             .foregroundColor(.black)
                             .background(isVerificationCodeValid ? Color("Button_soft") : Color.gray.opacity(0.3))
                             .cornerRadius(5)

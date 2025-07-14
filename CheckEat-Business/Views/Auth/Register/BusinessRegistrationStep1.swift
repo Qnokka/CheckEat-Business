@@ -22,81 +22,68 @@ struct BusinessRegistrationStep1: View {
                 VStack(alignment: .leading) {
                     HStack {
                         Text("사업자 등록증 스캔")
-                            .font(.system(size: 16, weight: .semibold))
+                            .semibold16()
                             .foregroundColor(.buttonEnable)
                             .padding(.top, 20)
-                            .padding(.leading, 17)
                         Spacer()
                         StepCircle(number: 1, fillColor: .buttonEnable, textColor: .white)
                         StepCircle(number: 2, fillColor: .buttonEnable, textColor: .white)
-                            .padding(.trailing, 20)
                     }
+                    .padding(.horizontal)
                     VStack(alignment: .center, spacing: 1) {
                         Text("인식된 정보를 꼭 확인하시어")
                         Text("올바른 내용으로 등록해 주세요.")
                             .padding(.top, 5)
                     }
-                    .font(.system(size: 16, weight: .regular))
+                    .regular16()
                     .foregroundColor(.buttonOP50)
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
-                    .padding(.top, 30)
+                    .padding(.vertical, 35)
                     
                     Text("사업자등록번호")
-                        .font(.system(size: 14, weight: .semibold))
-                        .padding(.top, 30)
-                        .padding(.leading, 17)
+                        .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $businessNumber)
-                        .font(.system(size: 14))
-                        .padding(.top, 5)
-                        .padding(.leading, 17)
+                        .regular14()
+                        .padding(.bottom)
                     Text("업체명")
-                        .font(.system(size: 14, weight: .semibold))
-                        .padding(.top, 10)
-                        .padding(.leading, 17)
+                        .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $storeName)
-                        .font(.system(size: 14))
-                        .padding(.leading, 17)
+                        .regular14()
+                        .padding(.bottom)
                     Text("업태")
-                        .font(.system(size: 14, weight: .semibold))
-                        .padding(.top, 10)
-                        .padding(.leading, 17)
+                        .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $typeofBusiness)
-                        .font(.system(size: 14))
-                        .padding(.leading, 17)
+                        .regular14()
+                        .padding(.bottom)
                     Text("주소")
-                        .font(.system(size: 14, weight: .semibold))
-                        .padding(.top, 10)
-                        .padding(.leading, 17)
+                        .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $adress)
-                        .font(.system(size: 14))
-                        .padding(.leading, 17)
+                        .regular14()
+                        .padding(.bottom)
                     
                     VStack(alignment: .center) {
                         Button {
                             
                         } label: {
                             Text("완료")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.white)
-                                .frame(width: 362, height: 56, alignment: .center)
-                                .background(isFormValid ? Color("Button_Enable") : Color("Button_Disable"))
-                                .cornerRadius(5)
-                                .padding(.top, 20)
-
+                                .semibold16()
+                                .primaryButtonStyle(isEnabled: isFormValid)
+                                .padding(.top, 24)
                         }
                         Button {
                             
                         } label: {
                             Text("스캔 다시하기")
-                                .font(.system(size: 16, weight: .bold))
+                                .semibold16()
                                 .foregroundColor(.buttonEnable)
-                                .padding(.top, 20) 
+                                .padding(.vertical, 24)
                         }
                     }
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
                 }
+                .padding(.horizontal)
             }
             .navigationTitle("회원가입")
             .navigationBarTitleDisplayMode(.inline)
