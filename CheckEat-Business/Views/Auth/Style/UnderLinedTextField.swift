@@ -16,10 +16,12 @@ struct UnderLinedTextField: View {
         VStack(alignment: .leading, spacing: 4){
             if isSecure {
                 SecureField(placeholder, text: $text)
+                    .multilineTextAlignment(.leading)
                     .padding(.vertical, 8)
                     .focused($isFocused)
             } else {
                 TextField(placeholder, text: $text)
+                    .multilineTextAlignment(.leading)
                     .padding(.vertical, 8)
                     .focused($isFocused)
             }
