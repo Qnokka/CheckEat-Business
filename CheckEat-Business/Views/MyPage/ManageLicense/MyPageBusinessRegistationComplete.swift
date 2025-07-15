@@ -9,6 +9,8 @@ import SwiftUI
 
 struct MyPageBusinessRegistationComplete: View {
     
+    let onComplete: () -> Void
+    
     @State private var goToMyPage: Bool = false
     
     var body: some View {
@@ -27,17 +29,13 @@ struct MyPageBusinessRegistationComplete: View {
             .bold20()
             
             Button {
-                goToMyPage = true
+                onComplete()
             } label: {
                 Text("마이페이지")
                     .primaryButtonStyle()
                     .semibold16()
                     .padding(.vertical, 24)
             }
-            .fullScreenCover(isPresented: $goToMyPage) {
-                MyPageView()
-            }
-            
         }
         .padding()
         .padding(.bottom, 200)
@@ -45,5 +43,5 @@ struct MyPageBusinessRegistationComplete: View {
 }
 
 #Preview {
-    MyPageBusinessRegistationComplete()
+    MyPageBusinessRegistationComplete(onComplete: {})
 }

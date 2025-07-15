@@ -138,7 +138,7 @@ struct MyPageView: View {
                                 .presentationDragIndicator(.visible)
                                 .presentationDetents([.height(350)])
                         }
-
+                        
                     }
                 }
                 .alert("업체삭제", isPresented: $showDeleteCompany) {
@@ -191,7 +191,7 @@ struct MyPageView: View {
                 case .manageHoliday:
                     ChangePasswordView()
                 case .manageLicense:
-                    MyPageBusinessReRegistration()
+                    MyPageBusinessReRegistration(onComplete: {})
                 }
             }
         }

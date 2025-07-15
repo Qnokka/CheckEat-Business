@@ -14,6 +14,9 @@ struct MyPageBusinessReRegistration: View {
     @State private var typeofBusiness: String = "음식점"
     @State private var adress: String = "서울특별시 강남구 테헤란로 1~"
     @State private var showSheet = false
+    
+    let onComplete: () -> Void
+    
     private var isFormValid: Bool {
         return !businessNumber.isEmpty && !storeName.isEmpty && !typeofBusiness.isEmpty && !adress.isEmpty
     }
@@ -80,11 +83,15 @@ struct MyPageBusinessReRegistration: View {
                                 .padding(.top, 30)
                         }
                         .sheet(isPresented: $showSheet) {
-                            MyPageBusinessModalView()
-                                .presentationDragIndicator(.visible)
-                                .presentationDetents([.height(400)])
+                            MyPageBusinessModalView(onComplete: {
+                                showSheet = false
+                                dismiss()
+                                onComplete()
+                            })
+                            .presentationDragIndicator(.visible)
+                            .presentationDetents([.height(400)])
                         }
-                 
+                        
                     }
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
@@ -108,5 +115,5 @@ struct MyPageBusinessReRegistration: View {
 }
 
 #Preview {
-    MyPageBusinessReRegistration()
+    MyPageBusinessReRegistration(onComplete: {})
 }

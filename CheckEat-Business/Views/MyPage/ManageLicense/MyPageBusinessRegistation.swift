@@ -13,7 +13,10 @@ struct MyPageBusinessRegistation: View {
     @State private var storeName: String = ""
     @State private var typeofBusiness: String = ""
     @State private var adress: String = ""
-    @State private var OCRScanSuccess: Bool = false
+    @State private var showCompletion: Bool = false
+    
+    let onCompletion: () -> Void
+    
     private var isFormValid: Bool {
         return !businessNumber.isEmpty && !storeName.isEmpty && !typeofBusiness.isEmpty && !adress.isEmpty
     }
@@ -34,12 +37,13 @@ struct MyPageBusinessRegistation: View {
                     
                     Text("사업자등록번호")
                         .semibold14()
-                        .padding(.top, 30)
-                        
+                        .padding(.top, 10)
+                        .padding(.leading, 17)
+                    
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $businessNumber)
                         .font(.system(size: 14))
-                        .padding(.top, 5)
-                        
+                        .padding(.leading, 17)
+                    
                     Text("업체명")
                         .semibold14()
                         .padding(.top, 10)
@@ -66,13 +70,13 @@ struct MyPageBusinessRegistation: View {
                         Button {
                             //TODO: 입력한 정보 바탕으로 회원가입 로직 구현
                             //MARK: - 우선은 버튼 누르면 다음 화면으로 이동
-                            OCRScanSuccess = true
+                            showCompletion = true
                         } label: {
                             Text("완료")
                                 .semibold16()
                                 .primaryButtonStyle(isEnabled: isFormValid)
                                 .padding(.vertical, 24)
-
+                            
                         }
                         Button {
                             //TODO: OCR 스캔 로직 구현
@@ -87,8 +91,11 @@ struct MyPageBusinessRegistation: View {
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
                 }
-                .fullScreenCover(isPresented: $OCRScanSuccess) {
-                    MyPageBusinessRegistationComplete()
+                .fullScreenCover(isPresented: $showCompletion) {
+                    MyPageBusinessRegistationComplete(onComplete: {
+                        dismiss()
+                        onCompletion()
+                    })
                 }
             }
             .padding(.horizontal)
@@ -107,10 +114,9 @@ struct MyPageBusinessRegistation: View {
                 }
             }
         }
-        
     }
 }
 
 #Preview {
-    MyPageBusinessRegistation()
+    MyPageBusinessRegistation(onComplete: {})
 }

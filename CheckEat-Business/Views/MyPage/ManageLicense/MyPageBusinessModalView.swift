@@ -9,8 +9,10 @@ import SwiftUI
 
 struct MyPageBusinessModalView: View {
     
-    @State private var OCRScanSuccess: Bool = false
-    @Environment(\.dismiss) var dissmiss
+    @State var OCRScanSuccess: Bool = false
+    @Environment(\.dismiss) var dismiss
+    
+    let onComplete: () -> Void
     
     var body: some View {
         VStack(alignment: .leading){
@@ -19,7 +21,7 @@ struct MyPageBusinessModalView: View {
                     .bold20()
                 Spacer()
                 Button {
-                   dissmiss()
+                    dismiss()
                 } label: {
                     Image("xmark")
                     
@@ -43,7 +45,7 @@ struct MyPageBusinessModalView: View {
                 }
                 .padding(.leading, 20)
                 .regular14()
-            
+                
             }
             Button {
                 //TODO: OCR 스캔 로직 구현
@@ -56,16 +58,21 @@ struct MyPageBusinessModalView: View {
                     .padding(.vertical)
             }
         }
-        
+        .onAppear {
+            OCRScanSuccess = false
+        }
         .padding(.horizontal)
         .padding(.top, 50)
         Spacer()
-            .fullScreenCover(isPresented: $OCRScanSuccess) {
-                MyPageBusinessRegistation()
-            }
+        .fullScreenCover(isPresented: $OCRScanSuccess) {
+            MyPageBusinessRegistation(onCompletion: {
+                dismiss()
+                onComplete()
+            })
+        }
     }
 }
 
 #Preview {
-    MyPageBusinessModalView()
+    MyPageBusinessModalView(onComplete: {})
 }
