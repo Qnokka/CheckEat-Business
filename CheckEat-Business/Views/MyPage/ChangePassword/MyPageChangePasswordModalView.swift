@@ -26,7 +26,7 @@ struct MyPageChangePasswordModalView: View {
     @FocusState private var isNewPasswordFocused: Bool
     @FocusState private var isConfirmPasswordFocused: Bool
     
-    @Environment(\.dismiss) var dissmiss
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         
@@ -37,7 +37,7 @@ struct MyPageChangePasswordModalView: View {
                     .bold20()
                 Spacer()
                 Button {
-                    dissmiss()
+                    dismiss()
                 } label: {
                     Image("xmark")
                 }

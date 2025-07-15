@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ManageCompanyModalView: View {
     
-    @Environment(\.dismiss) var dissmiss
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack(alignment: .leading){
@@ -45,7 +45,7 @@ struct ManageCompanyModalView: View {
             .medium16()
             
             Button {
-                dissmiss()
+                dismiss()
             } label: {
                 Text("닫기")
                     .subButtonStyle()
