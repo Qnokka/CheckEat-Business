@@ -17,6 +17,7 @@ struct JoinBasicInfoSection: View {
     @Binding var isLengthValid: Bool
     @FocusState.Binding var isPasswordFocused: Bool
     @FocusState.Binding var isPasswordConfirmFocused: Bool
+    @FocusState.Binding var fieldIsFocused: Bool
     var body: some View {
         VStack(alignment: .leading) {
             Text("아이디")
@@ -28,6 +29,7 @@ struct JoinBasicInfoSection: View {
                     UnderLinedTextField(placeholder: "아이디를 입력해 주세요.", text: $id)
                         .font(.system(size: 14))
                         .padding(.leading, 17)
+                        .focused($fieldIsFocused)
                 }
                 Button {
                     //TODO: 아이디 중복 확인 로직 구현
@@ -57,6 +59,7 @@ struct JoinBasicInfoSection: View {
                 }
                 .font(.system(size: 14))
                 .padding(.leading, 17)
+                .focused($fieldIsFocused)
 
                 .focused($isPasswordFocused)
                 .frame(height: 36)
@@ -107,6 +110,7 @@ struct JoinBasicInfoSection: View {
                         SecureField("비밀번호를 한번더 입력해주세요", text: $passwordConfirm)
                     }
                 }
+                .focused($fieldIsFocused)
                 .font(.system(size: 14))
                 .padding(.leading, 17)
                 .padding(.top, 5)
@@ -147,6 +151,9 @@ struct JoinBasicInfoSection: View {
                 .padding(.leading, 17)
                 .padding(.top, 5)
             }
+        }
+        .onTapGesture {
+            fieldIsFocused = false
         }
         
     }

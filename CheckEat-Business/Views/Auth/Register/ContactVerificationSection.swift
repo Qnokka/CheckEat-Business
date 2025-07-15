@@ -15,6 +15,7 @@ struct ContactVerificationSection: View {
     @Binding var didSendCode: Bool
     private let correctAuthCode = "1234"
     @State private var isVerificationCodeValid: Bool = false
+    @FocusState.Binding var fieldIsFocused: Bool
     var body: some View {
         VStack(alignment: .leading){
             Text("휴대폰 번호")
@@ -25,6 +26,7 @@ struct ContactVerificationSection: View {
                 .regular14()
                 .padding(.leading, 17)
                 .padding(.top, 5)
+                .focused($fieldIsFocused)
             Text("이메일")
                 .semibold16()
                 .padding(.leading, 17)
@@ -37,6 +39,7 @@ struct ContactVerificationSection: View {
                     .onChange(of: email) { newValue in
                         isEmailValid = isValidEmailAddress(email: newValue)
                     }
+                    .focused($fieldIsFocused)
                 Button {
                     //TODO: 이메일 인증코드 받는 로직 구현
                     didSendCode = true
@@ -66,6 +69,7 @@ struct ContactVerificationSection: View {
                         .onChange(of: verificationCode) { newValue in
                             isVerificationCodeValid = (newValue == correctAuthCode)
                         }
+                        .focused($fieldIsFocused)
                     Button {
                         
                     } label: {
@@ -81,6 +85,9 @@ struct ContactVerificationSection: View {
                     .disabled(!isVerificationCodeValid)
                 }
             }
+        }
+        .onTapGesture {
+            fieldIsFocused = false
         }
     }
     func isValidEmailAddress(email: String) -> Bool {

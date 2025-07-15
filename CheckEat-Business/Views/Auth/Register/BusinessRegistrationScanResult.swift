@@ -14,12 +14,13 @@ struct BusinessRegistrationScanResult: View {
     @State private var typeofBusiness: String = ""
     @State private var adress: String = ""
     @State private var goToBusinessRestration: Bool = false
+    @FocusState private var fieldIsFocused: Bool
     private var isFormValid: Bool {
         return !businessNumber.isEmpty && !storeName.isEmpty && !typeofBusiness.isEmpty && !adress.isEmpty
     }
     var body: some View {
         NavigationStack{
-            GeometryReader { _ in
+            ScrollView {
                 VStack(alignment: .leading) {
                     HStack {
                         Text("사업자 등록증 스캔")
@@ -47,21 +48,25 @@ struct BusinessRegistrationScanResult: View {
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $businessNumber)
                         .regular14()
                         .padding(.bottom)
+                        .focused($fieldIsFocused)
                     Text("업체명")
                         .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $storeName)
                         .regular14()
                         .padding(.bottom)
+                        .focused($fieldIsFocused)
                     Text("업태")
                         .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $typeofBusiness)
                         .regular14()
                         .padding(.bottom)
+                        .focused($fieldIsFocused)
                     Text("주소")
                         .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $adress)
                         .regular14()
                         .padding(.bottom)
+                        .focused($fieldIsFocused)
                     
                     VStack(alignment: .center) {
                         Button {
@@ -70,16 +75,16 @@ struct BusinessRegistrationScanResult: View {
                             Text("완료")
                                 .semibold16()
                                 .primaryButtonStyle(isEnabled: isFormValid)
-                                .padding(.top, 24)
                         }
+                        .padding(.vertical, 24)
                         Button {
                             
                         } label: {
                             Text("스캔 다시하기")
                                 .semibold16()
                                 .foregroundColor(.buttonEnable)
-                                .padding(.vertical, 24)
                         }
+                        .padding(.vertical)
                     }
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
@@ -88,6 +93,9 @@ struct BusinessRegistrationScanResult: View {
                     BusinessRegistrationComplete()
                 }
                 .padding(.horizontal)
+            }
+            .onTapGesture {
+                fieldIsFocused = false
             }
             .navigationTitle("회원가입")
             .navigationBarTitleDisplayMode(.inline)

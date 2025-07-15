@@ -32,8 +32,8 @@ struct BusinessRegistrationComplete: View {
                 Text("로그인")
                     .primaryButtonStyle()
                     .semibold16()
-                    .padding(.vertical, 24)
             }
+            .padding(.vertical, 24)
             .fullScreenCover(isPresented: $goToLogin) {
                 LoginView()
             }
