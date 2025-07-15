@@ -81,15 +81,19 @@ struct MyPageBusinessRegistation: View {
                             Text("완료")
                                 .semibold16()
                                 .primaryButtonStyle(isEnabled:isFormValid)
-                                .padding(.vertical, 24)
                         }
+                        .padding(.vertical, 24)
                         Button {
-                            // 스캔 다시하기 기능 구현 예정
+                            //TODO: OCR 스캔 (다시)
+                            isPresented = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                parentIsPresented = true
+                            }
                         } label: {
                             Text("스캔 다시하기")
                                 .semibold16()
                                 .foregroundColor(.buttonEnable)
-                                .padding(.top)
+                                .padding(.vertical)
                         }
                     }
                     .frame(maxWidth: .infinity)

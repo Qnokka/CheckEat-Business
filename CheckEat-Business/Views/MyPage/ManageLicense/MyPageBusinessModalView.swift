@@ -53,7 +53,7 @@ struct MyPageBusinessModalView: View {
             }
             
             Button {
-                //OCR 스캔 성공 가정
+                //TODO: OCR 스캔 성공 판단 여부 로직 구현
                 OCRScanSuccess = true
             } label: {
                 Text("사업자 등록증 스캔하기")
