@@ -9,12 +9,10 @@ import SwiftUI
 
 struct MyPageBusinessRegistationComplete: View {
     
+    @Binding var isPresented: Bool
     let onComplete: () -> Void
     
-    @State private var goToMyPage: Bool = false
-    
     var body: some View {
-        
         VStack(spacing: 8) {
             Image("CheckMark")
                 .resizable()
@@ -22,6 +20,7 @@ struct MyPageBusinessRegistationComplete: View {
                 .frame(width: 50, height: 50)
                 .foregroundStyle(.green)
                 .padding(.bottom)
+            
             Group {
                 Text("사업자등록증이")
                 Text("성공적으로 변경되었습니다")
@@ -29,6 +28,7 @@ struct MyPageBusinessRegistationComplete: View {
             .bold20()
             
             Button {
+                isPresented = false
                 onComplete()
             } label: {
                 Text("마이페이지")
@@ -43,5 +43,5 @@ struct MyPageBusinessRegistationComplete: View {
 }
 
 #Preview {
-    MyPageBusinessRegistationComplete(onComplete: {})
+    MyPageBusinessRegistationComplete(isPresented: .constant(false), onComplete: {})
 }

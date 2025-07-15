@@ -8,21 +8,29 @@
 import SwiftUI
 
 struct MyPageBusinessRegistation: View {
+    
+    @Binding var isPresented: Bool
+    @Binding var parentIsPresented: Bool
+    //MyPageBusinessReRegistration의 isPresented
+    let onCompletion: () -> Void
+    
     @Environment(\.dismiss) private var dismiss
     @State private var businessNumber: String = ""
-    @State private var storeName: String = ""
+    @State private var storeNameKo: String = ""
+    @State private var storeNameEn: String = ""
     @State private var typeofBusiness: String = ""
     @State private var adress: String = ""
     @State private var showCompletion: Bool = false
     
-    let onCompletion: () -> Void
+    @FocusState private var fieldIsFocused: Bool
     
     private var isFormValid: Bool {
-        return !businessNumber.isEmpty && !storeName.isEmpty && !typeofBusiness.isEmpty && !adress.isEmpty
+        !businessNumber.isEmpty && !storeNameKo.isEmpty && !typeofBusiness.isEmpty && !adress.isEmpty
     }
+    
     var body: some View {
         NavigationStack {
-            GeometryReader { _ in
+            ScrollView {
                 VStack(alignment: .leading) {
                     VStack(alignment: .center, spacing: 1) {
                         Text("인식된 정보를 꼭 확인하시어")
@@ -33,90 +41,87 @@ struct MyPageBusinessRegistation: View {
                     .foregroundColor(.buttonOP50)
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
-                    .padding(.top, 30)
+                    .padding(.vertical, 35)
                     
                     Text("사업자등록번호")
-                        .semibold14()
-                        .padding(.top, 10)
-                        .padding(.leading, 17)
-                    
+                        .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $businessNumber)
-                        .font(.system(size: 14))
-                        .padding(.leading, 17)
-                    
+                        .regular14()
+                        .padding(.bottom)
+                        .focused($fieldIsFocused)
                     Text("업체명")
-                        .semibold14()
-                        .padding(.top, 10)
-                        .padding(.leading, 17)
-                    UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $storeName)
-                        .font(.system(size: 14))
-                        .padding(.leading, 17)
+                        .semibold16()
+                    UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $storeNameKo)
+                        .regular14()
+                        .padding(.bottom)
+                        .focused($fieldIsFocused)
+                    Text("영문 업체명 (선택)")
+                        .semibold16()
+                    UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $storeNameEn)
+                        .regular14()
+                        .padding(.bottom)
+                        .focused($fieldIsFocused)
                     Text("업태")
-                        .semibold14()
-                        .padding(.top, 10)
-                        .padding(.leading, 17)
+                        .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $typeofBusiness)
-                        .font(.system(size: 14))
-                        .padding(.leading, 17)
+                        .regular14()
+                        .padding(.bottom)
+                        .focused($fieldIsFocused)
                     Text("주소")
-                        .semibold14()
-                        .padding(.top, 10)
-                        .padding(.leading, 17)
+                        .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $adress)
-                        .font(.system(size: 14))
-                        .padding(.leading, 17)
+                        .regular14()
+                        .padding(.bottom)
+                        .focused($fieldIsFocused)
                     
                     VStack(alignment: .center) {
                         Button {
-                            //TODO: 입력한 정보 바탕으로 회원가입 로직 구현
-                            //MARK: - 우선은 버튼 누르면 다음 화면으로 이동
                             showCompletion = true
                         } label: {
                             Text("완료")
                                 .semibold16()
-                                .primaryButtonStyle(isEnabled: isFormValid)
+                                .primaryButtonStyle(isEnabled:isFormValid)
                                 .padding(.vertical, 24)
-                            
                         }
                         Button {
-                            //TODO: OCR 스캔 로직 구현
-                            dismiss()
+                            // 스캔 다시하기 기능 구현 예정
                         } label: {
                             Text("스캔 다시하기")
                                 .semibold16()
                                 .foregroundColor(.buttonEnable)
-                                .padding(.top, 20)
+                                .padding(.top)
                         }
                     }
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
                 }
                 .fullScreenCover(isPresented: $showCompletion) {
-                    MyPageBusinessRegistationComplete(onComplete: {
-                        dismiss()
-                        onCompletion()
-                    })
+                    MyPageBusinessRegistationComplete(isPresented: $parentIsPresented, onComplete: onCompletion)
                 }
+                .padding(.horizontal)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .navigationTitle("사업자 등록 관리")
+            .navigationTitle("사업자 정보 확인 및 등록")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        dismiss()
+                        isPresented = false
                     } label: {
                         Image(systemName: "chevron.backward")
                             .foregroundStyle(.black)
                     }
                 }
             }
+            .onTapGesture {
+                fieldIsFocused = false
+            }
+            .scrollDismissesKeyboard(.interactively)
         }
     }
 }
 
 #Preview {
-    MyPageBusinessRegistation(onComplete: {})
+    MyPageBusinessRegistation(isPresented: .constant(true), parentIsPresented: .constant(true), onCompletion: {})
 }

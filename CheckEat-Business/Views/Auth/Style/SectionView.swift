@@ -7,17 +7,6 @@
 
 import SwiftUI
 
-enum SettingDestination: Hashable, Identifiable {
-    case manageCompany
-    case changePassword
-    case manageMenu
-    case manageBusinessHours
-    case manageHoliday
-    case manageLicense
-
-    var id: Self { self }
-}
-
 struct SectionView: View {
     let title: String
     let buttons: [(title: String, destination: SettingDestination)]
