@@ -8,17 +8,29 @@
 import SwiftUI
 
 struct MyPageHeaderView: View {
+    
     let business: String
     let userEmail: String
     @Binding var showMoreMenu: Bool
+    @Binding var showManageCompanyModal: Bool
     
     var body: some View {
         HStack(alignment: .top) {
-            Image(systemName: "person.crop.circle")
-                .resizable()
-                .frame(width: 60, height: 60)
-                .padding(.trailing, 10)
-            
+            Button {
+                showManageCompanyModal = true
+            } label: {
+                Image(systemName: "person.crop.circle")
+                    .resizable()
+                    .frame(width: 60, height: 60)
+                    .padding(.trailing, 10)
+            }
+            .foregroundStyle(.primary)
+            .sheet(isPresented: $showManageCompanyModal) {
+                ManageCompanyModalView()
+                    .presentationDragIndicator(.visible)
+                    .presentationDetents([.height(350)])
+            }
+
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 10) {
                     Text(business).bold20()

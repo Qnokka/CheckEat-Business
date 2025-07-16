@@ -34,7 +34,7 @@ struct MyPageBusinessRegistation: View {
                 VStack(alignment: .leading) {
                     VStack(alignment: .center, spacing: 1) {
                         Text("인식된 정보를 꼭 확인하시어")
-                        Text("올바른 내용으로 등록해 주세요.")
+                        Text("올바른 내용으로 등록해 주세요")
                             .padding(.top, 5)
                     }
                     .regular16()
@@ -105,7 +105,7 @@ struct MyPageBusinessRegistation: View {
                 .padding(.horizontal)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .navigationTitle("사업자 정보 확인 및 등록")
+            .navigationTitle("사업자 정보 확인")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .toolbar {
