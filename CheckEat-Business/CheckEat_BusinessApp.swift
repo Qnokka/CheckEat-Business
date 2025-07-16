@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct CheckEat_BusinessApp: App {
+    //TODO: 언어 설정 값 가져오는 로직 구현
     var body: some Scene {
         WindowGroup {
             LoginView()
