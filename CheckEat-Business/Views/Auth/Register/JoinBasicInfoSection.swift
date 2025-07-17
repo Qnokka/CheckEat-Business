@@ -22,13 +22,11 @@ struct JoinBasicInfoSection: View {
         VStack(alignment: .leading) {
             Text("아이디")
                 .font(.system(size: 14, weight: .semibold))
-                .padding(.leading, 17)
                 .padding(.top, 25)
             ZStack(alignment: .trailing) {
                 VStack {
                     UnderLinedTextField(placeholder: "아이디를 입력해 주세요.", text: $id)
                         .font(.system(size: 14))
-                        .padding(.leading, 17)
                         .focused($fieldIsFocused)
                 }
                 Button {
@@ -41,13 +39,11 @@ struct JoinBasicInfoSection: View {
                         .background(Color("Button_soft"))
                         .cornerRadius(5)
                         .padding(.bottom, 13)
-                        .padding(.trailing, 20)
                     
                 }
             }
             Text("비밀번호")
                 .font(.system(size: 14, weight: .semibold))
-                .padding(.leading, 17)
                 .padding(.top, 15)
             ZStack(alignment: .trailing) {
                 Group {
@@ -58,7 +54,6 @@ struct JoinBasicInfoSection: View {
                     }
                 }
                 .font(.system(size: 14))
-                .padding(.leading, 17)
                 .focused($fieldIsFocused)
 
                 .focused($isPasswordFocused)
@@ -73,26 +68,22 @@ struct JoinBasicInfoSection: View {
                     Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
                         .frame(width: 20, height: 20)
                         .foregroundColor(.buttonOP50)
-                        .padding(.trailing, 30)
                 }
             }
             Rectangle()
                 .frame(width: 362, height: 1)
-                .padding(.leading, 17)
                 .foregroundColor(isPasswordFocused || !password.isEmpty ? .black : Color(red: 0.85, green: 0.85, blue: 0.85))
                 .animation(.easeInOut(duration: 0.1), value: isPasswordFocused)
             HStack {
                 Image(systemName: "checkmark")
                     .frame(width: 16, height: 16)
                     .foregroundColor(isLengthValid ? .green : .buttonOP20)
-                    .padding(.leading, 20)
                 Text("8자 이상")
                     .font(.system(size: 12))
                     .foregroundColor(isLengthValid ? .green : .buttonOP20)
                 Image(systemName: "checkmark")
                     .frame(width: 16, height: 16)
                     .foregroundColor(isPasswordValid ? .green : .buttonOP20)
-                    .padding(.leading)
                 Text("대소문자, 숫자, 특수문자 포함")
                     .font(.system(size: 12))
                     .foregroundColor(isPasswordValid ? .green : .buttonOP20)
@@ -100,7 +91,6 @@ struct JoinBasicInfoSection: View {
             .padding(.top, 10)
             Text("비밀번호 확인")
                 .font(.system(size: 14, weight: .semibold))
-                .padding(.leading, 17)
                 .padding(.top, 15)
             ZStack(alignment: .trailing) {
                 Group {
@@ -112,7 +102,6 @@ struct JoinBasicInfoSection: View {
                 }
                 .focused($fieldIsFocused)
                 .font(.system(size: 14))
-                .padding(.leading, 17)
                 .padding(.top, 5)
                 .focused($isPasswordConfirmFocused)
                 .frame(height: 40)
@@ -122,12 +111,10 @@ struct JoinBasicInfoSection: View {
                     Image(systemName: isPasswordConfirmVisible ? "eye" : "eye.slash")
                         .frame(width: 20, height: 20)
                         .foregroundColor(.buttonOP50)
-                        .padding(.trailing, 30)
                 }
             }
             Rectangle()
                 .frame(width: 362, height: 1)
-                .padding(.leading, 17)
                 .foregroundColor(isPasswordConfirmFocused || !passwordConfirm.isEmpty ? .black : Color(red: 0.85, green: 0.85, blue: 0.85))
                 .animation(.easeInOut(duration: 0.1), value: isPasswordConfirmFocused)
             if !passwordConfirm.isEmpty {
@@ -148,10 +135,10 @@ struct JoinBasicInfoSection: View {
                             .foregroundColor(.red)
                     }
                 }
-                .padding(.leading, 17)
                 .padding(.top, 5)
             }
         }
+        .padding(.horizontal)
         .onTapGesture {
             fieldIsFocused = false
         }

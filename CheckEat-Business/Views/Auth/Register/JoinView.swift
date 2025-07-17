@@ -40,17 +40,17 @@ struct JoinView: View {
                             .semibold16()
                             .foregroundColor(.buttonEnable)
                             .padding(.top, 20)
-                            .padding(.leading, 17)
                         Spacer()
+                        
                         StepCircle(number: 1, fillColor: .buttonEnable, textColor: .white)
                         StepCircle(number: 2, fillColor: .buttonSoft, textColor: .buttonEnable)
-                            .padding(.trailing, 20)
                     }
+                    .padding(.horizontal)
                     //아이디,비밀번호,비밀번호확인
                     JoinBasicInfoSection(id: $id, password: $password, passwordConfirm: $passwordConfirm, isPasswordVisible: $isPasswordVisible, isPasswordConfirmVisible: $isPasswordConfirmVisible, isPasswordValid: $isPasswordValid, isLengthValid: $isLengthValid, isPasswordFocused: $isPasswordFocused, isPasswordConfirmFocused: $isPasswordConfirmFocused, fieldIsFocused: $fieldIsFocused)
                     //휴대폰번호,이메일,인증코드
                     ContactVerificationSection(phoneNumber: $phoneNumber, email: $email, verificationCode: $verificationCode, didSendCode: $didSendCode, fieldIsFocused: $fieldIsFocused)
-                    
+                    VStack(alignment: .leading) {
                     HStack {
                         CheckBoxButton(ischecked: $isChecked) {
                             isChecked2 = isChecked
@@ -102,6 +102,8 @@ struct JoinView: View {
                             .padding(.leading, 20)
                     }
                     .disabled(!isFormValid)
+                }
+                    
                     NavigationLink(destination: BusinessRegistrationView(), isActive: $goBusinessRegistrationView) {
                         EmptyView()
                     }
@@ -109,6 +111,7 @@ struct JoinView: View {
                     Spacer()
                     
                 }
+                .padding(.horizontal)
                 .navigationTitle("회원가입")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
