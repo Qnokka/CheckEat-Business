@@ -115,6 +115,6 @@ struct BusinessRegistrationScanResult: View {
     }
 }
 
-#Preview {
-    BusinessRegistrationScanResult()
-}
+//#Preview {
+//    BusinessRegistrationScanResult()
+//}

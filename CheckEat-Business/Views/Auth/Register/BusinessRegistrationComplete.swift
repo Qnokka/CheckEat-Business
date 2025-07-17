@@ -53,6 +53,6 @@ struct BusinessRegistrationComplete: View {
     }
 }
 
-#Preview {
-    BusinessRegistrationComplete()
-}
+//#Preview {
+//    BusinessRegistrationComplete()
+//}
