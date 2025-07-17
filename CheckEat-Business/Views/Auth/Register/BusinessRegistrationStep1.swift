@@ -10,11 +10,12 @@ import SwiftUI
 struct BusinessRegistrationStep1: View {
     @Environment(\.dismiss) private var dismiss
     @State private var businessNumber: String = ""
-    @State private var storeName: String = ""
+    @State private var storeNameKo: String = ""
     @State private var typeofBusiness: String = ""
     @State private var adress: String = ""
+    @State private var storeNameEN: String = ""
     private var isFormValid: Bool {
-        return !businessNumber.isEmpty && !storeName.isEmpty && !typeofBusiness.isEmpty && !adress.isEmpty
+        return !businessNumber.isEmpty && !storeNameKo.isEmpty && !typeofBusiness.isEmpty && !adress.isEmpty
     }
     var body: some View {
         NavigationStack{
@@ -48,7 +49,12 @@ struct BusinessRegistrationStep1: View {
                         .padding(.bottom)
                     Text("업체명")
                         .semibold16()
-                    UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $storeName)
+                    UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $storeNameKo)
+                        .regular14()
+                        .padding(.bottom)
+                    Text("영문업체명(선택)")
+                        .semibold16()
+                    UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $storeNameEN)
                         .regular14()
                         .padding(.bottom)
                     Text("업태")
