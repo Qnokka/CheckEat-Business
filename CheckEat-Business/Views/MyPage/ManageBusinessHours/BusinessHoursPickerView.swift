@@ -92,7 +92,7 @@ struct BusinessHoursPickerView: View {
                         savedOpenTime = openTime
                         savedCloseTime = closeTime
                         openTime = midnight
-                        closeTime = midnight
+                        closeTime = Calendar.current.date(byAdding: .day, value: 1, to: midnight)!
                     } else {
                         if let savedOpenTime, let savedCloseTime {
                             openTime = savedOpenTime
@@ -100,6 +100,7 @@ struct BusinessHoursPickerView: View {
                         }
                     }
                     is24Hours.toggle()
+                    checkForSameTime()
                 } label: {
                     Text("24시간\n운영")
                         .multilineTextAlignment(.center)
@@ -113,8 +114,9 @@ struct BusinessHoursPickerView: View {
             .onChange(of: closeTime) { _ in
                 checkForSameTime()
             }
+            .padding(.vertical, 2)
             if showTimeWarning {
-                Text(" 오픈 시간과 마감 시간은 같을 수 없습니다.")
+                Text(" [등록 불가] 오픈 시간과 마감 시간은 같을 수 없습니다.")
                     .foregroundColor(.red)
                     .regular12()
                     .padding(.bottom, 8)
@@ -123,6 +125,10 @@ struct BusinessHoursPickerView: View {
     }
     
     private func checkForSameTime() {
-        showTimeWarning = openTime == closeTime
+        if !is24Hours {
+            showTimeWarning = openTime == closeTime
+        } else {
+            showTimeWarning = false
+        }
     }
 }
