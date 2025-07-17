@@ -18,7 +18,7 @@ struct ContactVerificationSection: View {
     var body: some View {
         VStack(alignment: .leading){
             Text("휴대폰 번호")
-                .semibold16()
+                .semibold14()
                 .padding(.leading, 17)
                 .padding(.top, 10)
             UnderLinedTextField(placeholder: "휴대폰번호를 입력해 주세요.", text: $phoneNumber)
@@ -26,7 +26,7 @@ struct ContactVerificationSection: View {
                 .padding(.leading, 17)
                 .padding(.top, 5)
             Text("이메일")
-                .semibold16()
+                .semibold14()
                 .padding(.leading, 17)
                 .padding(.top, 10)
             ZStack(alignment: .trailing) {

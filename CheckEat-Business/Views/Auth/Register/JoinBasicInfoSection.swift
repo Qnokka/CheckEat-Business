@@ -20,7 +20,7 @@ struct JoinBasicInfoSection: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text("아이디")
-                .font(.system(size: 14, weight: .semibold))
+                .semibold14()
                 .padding(.leading, 17)
                 .padding(.top, 25)
             ZStack(alignment: .trailing) {
@@ -44,7 +44,7 @@ struct JoinBasicInfoSection: View {
                 }
             }
             Text("비밀번호")
-                .font(.system(size: 14, weight: .semibold))
+                .semibold14()
                 .padding(.leading, 17)
                 .padding(.top, 15)
             ZStack(alignment: .trailing) {
@@ -96,7 +96,7 @@ struct JoinBasicInfoSection: View {
             }
             .padding(.top, 10)
             Text("비밀번호 확인")
-                .font(.system(size: 14, weight: .semibold))
+                .semibold14()
                 .padding(.leading, 17)
                 .padding(.top, 15)
             ZStack(alignment: .trailing) {
