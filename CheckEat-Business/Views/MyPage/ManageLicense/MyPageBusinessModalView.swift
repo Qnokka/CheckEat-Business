@@ -73,6 +73,6 @@ struct MyPageBusinessModalView: View {
     }
 }
 
-#Preview {
-    MyPageBusinessModalView(isPresented: .constant(true), parentIsPresented: .constant(true), onComplete: {})
-}
+//#Preview {
+//    MyPageBusinessModalView(isPresented: .constant(true), parentIsPresented: .constant(true), onComplete: {})
+//}

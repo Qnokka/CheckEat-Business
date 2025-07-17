@@ -182,6 +182,6 @@ struct MyPageChangePasswordModalView: View {
     }
 }
 
-#Preview {
-    MyPageChangePasswordModalView()
-}
+//#Preview {
+//    MyPageChangePasswordModalView()
+//}

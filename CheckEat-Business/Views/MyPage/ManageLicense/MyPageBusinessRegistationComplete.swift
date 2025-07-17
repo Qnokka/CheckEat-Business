@@ -42,6 +42,6 @@ struct MyPageBusinessRegistationComplete: View {
     }
 }
 
-#Preview {
-    MyPageBusinessRegistationComplete(isPresented: .constant(false), onComplete: {})
-}
+//#Preview {
+//    MyPageBusinessRegistationComplete(isPresented: .constant(false), onComplete: {})
+//}

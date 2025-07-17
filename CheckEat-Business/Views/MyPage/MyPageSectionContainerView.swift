@@ -66,7 +66,7 @@ struct MyPageSectionContainerView: View {
     }
 }
 
-#Preview {
-    MyPageSectionContainerView { _ in }
-}
+//#Preview {
+//    MyPageSectionContainerView { _ in }
+//}
 

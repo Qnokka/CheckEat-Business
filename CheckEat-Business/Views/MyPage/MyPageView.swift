@@ -154,6 +154,6 @@ struct MyPageView: View {
     }
 }
 
-#Preview {
-    MyPageView()
-}
+//#Preview {
+//    MyPageView()
+//}

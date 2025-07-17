@@ -126,6 +126,6 @@ struct MyPageBusinessRegistation: View {
     }
 }
 
-#Preview {
-    MyPageBusinessRegistation(isPresented: .constant(true), parentIsPresented: .constant(true), onCompletion: {})
-}
+//#Preview {
+//    MyPageBusinessRegistation(isPresented: .constant(true), parentIsPresented: .constant(true), onCompletion: {})
+//}

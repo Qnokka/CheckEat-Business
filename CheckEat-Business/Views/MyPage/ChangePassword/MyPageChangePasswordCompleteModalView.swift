@@ -45,6 +45,6 @@ struct MyPageChangePasswordCompleteModalView: View {
     }
 }
 
-#Preview {
-    MyPageChangePasswordCompleteModalView()
-}
+//#Preview {
+//    MyPageChangePasswordCompleteModalView()
+//}

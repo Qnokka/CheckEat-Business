@@ -117,6 +117,6 @@ struct ManageCompanyView: View {
     }
 }
 
-#Preview {
-    ManageCompanyView()
-}
+//#Preview {
+//    ManageCompanyView()
+//}

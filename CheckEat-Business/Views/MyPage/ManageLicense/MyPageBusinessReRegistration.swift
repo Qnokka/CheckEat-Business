@@ -94,9 +94,9 @@ struct MyPageBusinessReRegistration: View {
     }
 }
 
-#Preview {
-    MyPageBusinessReRegistration(
-        isPresented: .constant(true),
-        onComplete: {}
-    )
-}
+//#Preview {
+//    MyPageBusinessReRegistration(
+//        isPresented: .constant(true),
+//        onComplete: {}
+//    )
+//}
