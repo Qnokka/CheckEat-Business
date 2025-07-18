@@ -104,7 +104,7 @@ struct MyPageView: View {
             //MARK: - 화면 전환 후, 추가 흐름이 있는 경우, 다음 방식으로 구현
             .fullScreenCover(isPresented: $isPresented) {
                 MyPageBusinessReRegistration(isPresented: $isPresented, onComplete:
-                                                {
+                {
                     selectedDestination = nil
                 })
             }
@@ -125,7 +125,7 @@ struct MyPageView: View {
                 case .manageMenu:
                     EmptyView()
                 case .manageBusinessHours:
-                    EmptyView()
+                    ManageBusinessHoursView()
                 case .manageHoliday:
                     EmptyView()
                 default:
@@ -154,6 +154,6 @@ struct MyPageView: View {
     }
 }
 
-//#Preview {
-//    MyPageView()
-//}
+#Preview {
+    MyPageView()
+}
