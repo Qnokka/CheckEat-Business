@@ -15,30 +15,29 @@ struct ContactVerificationSection: View {
     @Binding var didSendCode: Bool
     private let correctAuthCode = "1234"
     @State private var isVerificationCodeValid: Bool = false
+    @FocusState.Binding var fieldIsFocused: Bool
     var body: some View {
         VStack(alignment: .leading){
             Text("휴대폰 번호")
                 .semibold16()
-                .padding(.leading, 17)
                 .padding(.top, 10)
             UnderLinedTextField(placeholder: "휴대폰번호를 입력해 주세요.", text: $phoneNumber)
                 .regular14()
-                .padding(.leading, 17)
                 .padding(.top, 5)
+                .focused($fieldIsFocused)
             Text("이메일")
                 .semibold16()
-                .padding(.leading, 17)
                 .padding(.top, 10)
             ZStack(alignment: .trailing) {
                 UnderLinedTextField(placeholder: "이메일을 입력해 주세요", text: $email)
                     .regular14()
-                    .padding(.leading, 17)
                     .padding(.top, 5)
                     .onChange(of: email) { newValue in
                         isEmailValid = isValidEmailAddress(email: newValue)
                     }
+                    .focused($fieldIsFocused)
                 Button {
-                    //이메일 인증코드받기
+                    //TODO: 이메일 인증코드 받는 로직 구현
                     didSendCode = true
                 } label: {
                     Text(didSendCode ? "재전송" : "인증코드 받기")
@@ -48,7 +47,6 @@ struct ContactVerificationSection: View {
                         .background(Color(didSendCode ? "Button_OP20" : "Button_soft"))
                         .cornerRadius(5)
                         .padding(.bottom, 13)
-                        .padding(.trailing, 20)
                 }
                 .disabled(!isEmailValid)
 
@@ -56,16 +54,15 @@ struct ContactVerificationSection: View {
             if didSendCode {
                 Text("인증코드")
                     .semibold16()
-                    .padding(.leading, 17)
                     .padding(.top, 10)
                 ZStack(alignment: .trailing) {
                     UnderLinedTextField(placeholder: "인증코드를 입력해 주세요.", text: $verificationCode)
                         .regular14()
-                        .padding(.leading, 17)
                         .padding(.top, 5)
                         .onChange(of: verificationCode) { newValue in
                             isVerificationCodeValid = (newValue == correctAuthCode)
                         }
+                        .focused($fieldIsFocused)
                     Button {
                         
                     } label: {
@@ -76,11 +73,14 @@ struct ContactVerificationSection: View {
                             .background(isVerificationCodeValid ? Color("Button_soft") : Color.gray.opacity(0.3))
                             .cornerRadius(5)
                             .padding(.bottom, 13)
-                            .padding(.trailing, 20)
                     }
                     .disabled(!isVerificationCodeValid)
                 }
             }
+        }
+        .padding(.horizontal)
+        .onTapGesture {
+            fieldIsFocused = false
         }
     }
     func isValidEmailAddress(email: String) -> Bool {

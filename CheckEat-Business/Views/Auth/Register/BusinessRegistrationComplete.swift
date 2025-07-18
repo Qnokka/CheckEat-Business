@@ -32,14 +32,14 @@ struct BusinessRegistrationComplete: View {
                 Text("로그인")
                     .primaryButtonStyle()
                     .semibold16()
-                    .padding(.vertical, 24)
             }
+            .padding(.vertical, 24)
             .fullScreenCover(isPresented: $goToLogin) {
                 LoginView()
             }
             
             Button {
-                //메뉴등록페이지로 이동
+                //TODO: 메뉴등록페이지로 이동
             } label: {
                 Text("메뉴 정보 등록하기")
                     .semibold16()
@@ -53,6 +53,6 @@ struct BusinessRegistrationComplete: View {
     }
 }
 
-#Preview {
-    BusinessRegistrationComplete()
-}
+//#Preview {
+//    BusinessRegistrationComplete()
+//}

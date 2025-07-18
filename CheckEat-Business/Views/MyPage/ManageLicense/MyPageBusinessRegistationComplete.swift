@@ -1,19 +1,18 @@
 //
-//  ChangePasswordCompleteView.swift
+//  MyPageBusinessRegistationComplete.swift
 //  CheckEat-Business
 //
-//  Created by 최준영 on 7/5/25.
+//  Created by Hee  on 7/10/25.
 //
 
 import SwiftUI
 
-struct ChangePasswordCompleteView: View {
+struct MyPageBusinessRegistationComplete: View {
     
-    @State private var goToLogin: Bool = false
-    
+    @Binding var isPresented: Bool
+    let onComplete: () -> Void
     
     var body: some View {
-        
         VStack(spacing: 8) {
             Image("CheckMark")
                 .resizable()
@@ -21,22 +20,21 @@ struct ChangePasswordCompleteView: View {
                 .frame(width: 50, height: 50)
                 .foregroundStyle(.green)
                 .padding(.bottom)
+            
             Group {
-                Text("비밀번호가")
-                Text("성공적으로 변경되었습니다.")
+                Text("사업자등록증이")
+                Text("성공적으로 변경되었습니다")
             }
             .bold20()
             
             Button {
-                goToLogin = true
+                isPresented = false
+                onComplete()
             } label: {
-                Text("로그인")
+                Text("마이페이지")
                     .primaryButtonStyle()
                     .semibold16()
                     .padding(.vertical, 24)
-            }
-            .fullScreenCover(isPresented: $goToLogin) {
-                LoginView()
             }
         }
         .padding()
@@ -45,5 +43,5 @@ struct ChangePasswordCompleteView: View {
 }
 
 //#Preview {
-//    ChangePasswordCompleteView()
+//    MyPageBusinessRegistationComplete(isPresented: .constant(false), onComplete: {})
 //}

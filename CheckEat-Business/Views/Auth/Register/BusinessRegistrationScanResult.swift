@@ -7,18 +7,21 @@
 
 import SwiftUI
 
-struct BusinessRegistrationStep1: View {
+struct BusinessRegistrationScanResult: View {
     @Environment(\.dismiss) private var dismiss
     @State private var businessNumber: String = ""
-    @State private var storeName: String = ""
+    @State private var storeNameKo: String = ""
+    @State private var storeNameEN: String = ""
     @State private var typeofBusiness: String = ""
     @State private var adress: String = ""
+    @State private var goToBusinessRestration: Bool = false
+    @FocusState private var fieldIsFocused: Bool
     private var isFormValid: Bool {
-        return !businessNumber.isEmpty && !storeName.isEmpty && !typeofBusiness.isEmpty && !adress.isEmpty
+        return !businessNumber.isEmpty && !storeNameKo.isEmpty && !typeofBusiness.isEmpty && !adress.isEmpty
     }
     var body: some View {
         NavigationStack{
-            GeometryReader { _ in
+            ScrollView {
                 VStack(alignment: .leading) {
                     HStack {
                         Text("사업자 등록증 스캔")
@@ -46,44 +49,59 @@ struct BusinessRegistrationStep1: View {
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $businessNumber)
                         .regular14()
                         .padding(.bottom)
+                        .focused($fieldIsFocused)
                     Text("업체명")
                         .semibold16()
-                    UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $storeName)
+                    UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $storeNameKo)
                         .regular14()
                         .padding(.bottom)
+                    Text("영문업체명(선택)")
+                        .semibold16()
+                    UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $storeNameEN)
+                        .regular14()
+                        .padding(.bottom)
+                        .focused($fieldIsFocused)
                     Text("업태")
                         .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $typeofBusiness)
                         .regular14()
                         .padding(.bottom)
+                        .focused($fieldIsFocused)
                     Text("주소")
                         .semibold16()
                     UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $adress)
                         .regular14()
                         .padding(.bottom)
+                        .focused($fieldIsFocused)
                     
                     VStack(alignment: .center) {
                         Button {
-                            
+                            goToBusinessRestration = true
                         } label: {
                             Text("완료")
                                 .semibold16()
                                 .primaryButtonStyle(isEnabled: isFormValid)
-                                .padding(.top, 24)
                         }
+                        .padding(.vertical, 24)
                         Button {
                             
                         } label: {
                             Text("스캔 다시하기")
                                 .semibold16()
                                 .foregroundColor(.buttonEnable)
-                                .padding(.vertical, 24)
                         }
+                        .padding(.vertical)
                     }
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
                 }
+                .fullScreenCover(isPresented: $goToBusinessRestration) {
+                    BusinessRegistrationComplete()
+                }
                 .padding(.horizontal)
+            }
+            .onTapGesture {
+                fieldIsFocused = false
             }
             .navigationTitle("회원가입")
             .navigationBarTitleDisplayMode(.inline)
@@ -103,6 +121,6 @@ struct BusinessRegistrationStep1: View {
     }
 }
 
-#Preview {
-    BusinessRegistrationStep1()
-}
+//#Preview {
+//    BusinessRegistrationScanResult()
+//}

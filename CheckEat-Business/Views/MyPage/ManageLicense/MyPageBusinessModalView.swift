@@ -8,7 +8,16 @@
 import SwiftUI
 
 struct MyPageBusinessModalView: View {
-    @Environment(\.dismiss) var dissmiss
+    
+    
+    @Binding var isPresented: Bool
+    @Binding var parentIsPresented: Bool
+    //MyPageBusinessReRegistration의 isPresented
+    let onComplete: () -> Void
+    
+    @State var OCRScanSuccess: Bool = false
+    @Environment(\.dismiss) var dismiss
+    
     var body: some View {
         VStack(alignment: .leading){
             HStack {
@@ -16,18 +25,19 @@ struct MyPageBusinessModalView: View {
                     .bold20()
                 Spacer()
                 Button {
-                   dissmiss()
+                    isPresented = false
                 } label: {
                     Image("xmark")
-                    
                 }
             }
             .padding(.bottom, 8)
+            
             Text("다음 중 하나에 해당할 경우, \n새로운 사업자 등록증을 등록해 주세요.")
                 .regular16()
                 .padding(.top, 10)
                 .multilineTextAlignment(.leading)
                 .padding(.bottom, 15)
+            
             ZStack(alignment: .leading) {
                 Rectangle()
                     .fill(Color("Button_OP"))
@@ -40,24 +50,29 @@ struct MyPageBusinessModalView: View {
                 }
                 .padding(.leading, 20)
                 .regular14()
-            
             }
+            
             Button {
-                //스캔OCR 이동
+                //TODO: OCR 스캔 성공 판단 여부 로직 구현
+                OCRScanSuccess = true
             } label: {
                 Text("사업자 등록증 스캔하기")
                     .semibold16()
                     .primaryButtonStyle()
                     .padding(.vertical)
             }
-
+        }
+        .onAppear {
+            OCRScanSuccess = false
         }
         .padding(.horizontal)
         .padding(.top, 50)
-        Spacer()
+        .fullScreenCover(isPresented: $OCRScanSuccess) {
+            MyPageBusinessRegistation(isPresented: $OCRScanSuccess, parentIsPresented:$parentIsPresented, onCompletion: onComplete)
+            }
     }
 }
 
-#Preview {
-    MyPageBusinessModalView()
-}
+//#Preview {
+//    MyPageBusinessModalView(isPresented: .constant(true), parentIsPresented: .constant(true), onComplete: {})
+//}

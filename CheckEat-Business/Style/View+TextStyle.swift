@@ -9,10 +9,6 @@ import SwiftUI
 
 extension View {
     // 공통적으로 사용되는 텍스트 스타일
-    func medium16() -> some View {
-        return self
-            .font(.system(size: 16, weight: .medium))
-    }
     
     func bold20() -> some View {
         return self
@@ -27,6 +23,11 @@ extension View {
     func semibold16() -> some View {
         return self
             .font(.system(size: 16, weight: .semibold))
+    }
+    
+    func medium16() -> some View {
+        return self
+            .font(.system(size: 16, weight: .medium))
     }
     
     func bold14() -> some View {
@@ -49,4 +50,8 @@ extension View {
             .font(.system(size: 12, weight: .regular))
     }
     
+    func semibold12() -> some View {
+        return self
+            .font(.system(size: 12, weight: .semibold))
+    }
 }

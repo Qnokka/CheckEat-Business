@@ -1,5 +1,5 @@
 //
-//  View+PrimaryButtonStyle.swift
+//  View+ButtonStyle.swift
 //  CheckEat-Business
 //
 //  Created by 최준영 on 7/7/25.
@@ -17,5 +17,17 @@ extension View {
             .background(enabled ? Color.buttonEnable : Color.buttonDisable)
             .foregroundColor(.white)
             .cornerRadius(8)
+    }
+    
+    func subButtonStyle(isEnabled: Bool? = nil) -> some View {
+        return self
+            .frame(maxWidth: .infinity)
+            .padding()
+            .foregroundColor(.primary)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.buttonOP50, lineWidth: 1)
+            )
     }
 }

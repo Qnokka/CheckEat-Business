@@ -1,5 +1,5 @@
 //
-//  KeyboardDismissView.swift
+//  View+tapToDismissKeyboard.swift
 //  CheckEat-Business
 //
 //  Created by 최준영 on 7/7/25.
@@ -12,7 +12,7 @@ struct KeyboardDismissView: UIViewRepresentable {
         let view = UIView()
         let tapGesture = UITapGestureRecognizer(target: context.coordinator,
                                                 action: #selector(Coordinator.handleTap))
-        tapGesture.cancelsTouchesInView = false // 버튼/텍스트필드/이미지 동작 막지 않음
+        tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
         return view
     }
