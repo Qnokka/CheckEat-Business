@@ -14,22 +14,29 @@ struct ManageBusinessHoursView: View {
     
     let midnight = Calendar.current.startOfDay(for: Date())
     
-    @State private var openTime = Calendar.current.startOfDay(for: Date())
-    @State private var closeTime = Calendar.current.startOfDay(for: Date())
+    //MARK: 영업시간 관리 - 전부 동일
+    //영업시간(오픈, 마감) 변수 선언
+    @State private var openTimeSameAll = Calendar.current.startOfDay(for: Date())
+    @State private var closeTimeSameAll = Calendar.current.startOfDay(for: Date())
     @State private var savedOpenTime: Date?
     @State private var savedCloseTime: Date?
-    @State private var showingOpenPicker = false
-    @State private var showingClosePicker = false
+    //휴게시간 변수 선언
+    @State var breakTimesSameAll: [BreakTime] = []
+    
+    //MARK: 영업시간 관리 - 평일/주말 다름
+    //평일 | 영업시간(오픈, 마감) 변수 선언
+    @State private var openTimeWeekday = Calendar.current.startOfDay(for: Date())
+    @State private var closeTimeWeekday = Calendar.current.startOfDay(for: Date())
+    //평일 | 휴게시간 변수 선언
+    @State var breakTimesWeekday: [BreakTime] = []
+    //주말 | 영업시간(오픈, 마감) 변수 선언
+    @State private var openTimeWeekend = Calendar.current.startOfDay(for: Date())
+    @State private var closeTimeWeekend = Calendar.current.startOfDay(for: Date())
+    //주말 | 휴게시간 변수 선언
+    @State var breakTimesWeekend: [BreakTime] = []
+    
     @State private var is24Hours = false
     @State private var showTimeWarning = false
-    
-    struct BreakTime: Identifiable {
-        let id = UUID()
-        var breakStartTime: Date
-        var breakEndTime: Date
-        var showTimeWarning: Bool = false
-    }
-    @State private var breakTimes: [BreakTime] = []
     
     enum BusinessHourType {
         case sameAll
@@ -43,7 +50,6 @@ struct ManageBusinessHoursView: View {
                 VStack(alignment: .leading) {
                     businessHourTypeSection
                     businessHoursSection
-                    breakTimeSection
                     completeButtonSection
                 }
                 .padding(.top, 35)
@@ -97,7 +103,7 @@ struct ManageBusinessHoursView: View {
     }
     
     private var businessHoursSection: some View {
-        Group {
+        VStack(alignment: .leading) {
             Rectangle()
                 .fill(Color("Button_OP20"))
                 .frame(height: 1)
@@ -106,71 +112,27 @@ struct ManageBusinessHoursView: View {
             
             if businessHourType == .sameAll {
                 BusinessHoursPickerView(
-                    openTime: $openTime,
-                    closeTime: $closeTime,
+                    openTime: $openTimeSameAll,
+                    closeTime: $closeTimeSameAll,
                     showTimeWarning: $showTimeWarning,
-                    is24Hours: $is24Hours
+                    is24Hours: $is24Hours,
+                    shows24HourOption: true
                 )
+                BreakTimeAddListView(breakTimes: $breakTimesSameAll)
+                
             } else if businessHourType == .weekdayWeekendDifferent {
-                WeekdayWeekendHoursPickerView()
-            }
-        }
-    }
-    
-    private var breakTimeSection: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Text("휴게시간이 있나요?")
-                    .semibold16()
-                if breakTimes.isEmpty {
-                    Button {
-                        breakTimes.append(BreakTime(breakStartTime: midnight, breakEndTime: midnight))
-                    } label: {
-                        HStack {
-                            Text("설정하기")
-                                .semibold14()
-                                .foregroundStyle(.buttonEnable)
-                            Image(systemName: "chevron.backward")
-                                .resizable()
-                                .frame(width: 6, height: 9)
-                                .foregroundStyle(.buttonEnable)
-                                .rotationEffect(.degrees(270))
-                        }
-                    }
-                }
-            }
-            .padding(.top, 24)
-            .padding(.bottom)
-            
-            if !breakTimes.isEmpty {
-                ForEach($breakTimes) { $breakTime in
-                    HStack(alignment: .top, spacing: 16) {
-                        BreakTimePickerView(
-                            breakStartTime: $breakTime.breakStartTime,
-                            breakEndTime: $breakTime.breakEndTime,
-                            showTimeWarning: $breakTime.showTimeWarning,
-                            showDeleteButton: true,
-                            onDelete: {
-                                if let index = breakTimes.firstIndex(where: { $0.id == breakTime.id }) {
-                                    breakTimes.remove(at: index)
-                                }
-                            }
-                        )
-                        
-                        Button {
-                            breakTimes.append(BreakTime(breakStartTime: midnight, breakEndTime: midnight))
-                        } label: {
-                            Text("+ 시간 추가")
-                                .regular16()
-                                .foregroundStyle(.buttonEnable)
-                                .padding(.horizontal, 2)
-                                .padding(.top, 20)
-                                
-                        }
-                        .opacity(breakTimes.contains(where: { $0.breakStartTime == $0.breakEndTime }) ? 0.5 : 1)
-                        .disabled(breakTimes.contains(where: { $0.breakStartTime == $0.breakEndTime }))
-                    }
-                }
+                BusinessHoursPickerView(
+                    openTime: $openTimeWeekday,
+                    closeTime: $closeTimeWeekday,
+                    showTimeWarning: $showTimeWarning
+                )
+                BreakTimeAddListView(breakTimes: $breakTimesWeekday)
+                BusinessHoursPickerView(
+                    openTime: $openTimeWeekend,
+                    closeTime: $closeTimeWeekend,
+                    showTimeWarning: $showTimeWarning
+                )
+                BreakTimeAddListView(breakTimes: $breakTimesWeekend)
             }
         }
     }
@@ -178,14 +140,22 @@ struct ManageBusinessHoursView: View {
     private var completeButtonSection: some View {
         Button {
             var errorFound = false
-            if openTime == closeTime {
-                showTimeWarning = true
-                errorFound = true
-            } else {
-                showTimeWarning = false
+            
+            switch businessHourType {
+            case .sameAll:
+                if openTimeSameAll == closeTimeSameAll {
+                    errorFound = true
+                }
+                breakTimesSameAll.removeAll { $0.breakStartTime == $0.breakEndTime }
+            case .weekdayWeekendDifferent:
+                if openTimeWeekday == closeTimeWeekday || openTimeWeekend == closeTimeWeekend {
+                    errorFound = true
+                }
+                breakTimesWeekday.removeAll { $0.breakStartTime == $0.breakEndTime }
+                breakTimesWeekend.removeAll { $0.breakStartTime == $0.breakEndTime }
             }
             if !errorFound {
-                
+                //TODO:
             }
         } label: {
             Text("완료")

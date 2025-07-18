@@ -16,7 +16,7 @@ struct BreakTimePickerView: View {
     
     @State private var showingBreakStartPicker = false
     @State private var showingBreakEndPicker = false
-
+    
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -25,7 +25,7 @@ struct BreakTimePickerView: View {
                     RoundedRectangle(cornerRadius: 5)
                         .fill(Color.white)
                         .stroke(Color.buttonOP20, lineWidth: 1)
-                        .frame(maxWidth: UIScreen.main.bounds.width-108)
+                        .frame(maxWidth: UIScreen.main.bounds.width-100)
                     HStack(spacing: 8) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 20)
@@ -49,7 +49,7 @@ struct BreakTimePickerView: View {
                             TimePickerModalView(selectedTime: $breakStartTime, title: "브레이크타임 시작")
                                 .presentationDetents([.height(400)])
                         }
-
+                        
                         Text("-")
                             .semibold12()
                             .foregroundStyle(.buttonOP50)
@@ -78,7 +78,6 @@ struct BreakTimePickerView: View {
                         }
                     }
                     .padding(12)
-                    .padding(.vertical, 2)
                     
                     if showDeleteButton, let onDelete = onDelete {
                         GeometryReader { geometry in

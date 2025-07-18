@@ -14,7 +14,9 @@ struct BusinessHoursPickerView: View {
     @Binding var openTime: Date
     @Binding var closeTime: Date
     @Binding var showTimeWarning: Bool
-    @Binding var is24Hours: Bool
+    
+    var is24Hours: Binding<Bool>? = nil
+    var shows24HourOption: Bool = false
     
     @State private var savedOpenTime: Date?
     @State private var savedCloseTime: Date?
@@ -84,28 +86,35 @@ struct BusinessHoursPickerView: View {
                         }
                     }
                     .padding(12)
+                    
                 }
-                .disabled(is24Hours)
+                .disabled(shows24HourOption && (is24Hours?.wrappedValue ?? false))
+                .frame(maxWidth: UIScreen.main.bounds.width-120)
                 
-                Button {
-                    if !is24Hours {
-                        savedOpenTime = openTime
-                        savedCloseTime = closeTime
-                        openTime = midnight
-                        closeTime = Calendar.current.date(byAdding: .day, value: 1, to: midnight)!
-                    } else {
-                        if let savedOpenTime, let savedCloseTime {
-                            openTime = savedOpenTime
-                            closeTime = savedCloseTime
+                if shows24HourOption {
+                    Button {
+                        if let is24Hours = is24Hours {
+                            if !is24Hours.wrappedValue {
+                                savedOpenTime = openTime
+                                savedCloseTime = closeTime
+                                openTime = midnight
+                                closeTime = Calendar.current.date(byAdding: .day, value: 1, to: midnight)!
+                            } else {
+                                if let savedOpenTime, let savedCloseTime {
+                                    openTime = savedOpenTime
+                                    closeTime = savedCloseTime
+                                }
+                            }
+                            is24Hours.wrappedValue.toggle()
+                            checkForSameTime()
                         }
+                    } label: {
+                        Text("24시간\n운영")
+                            .regular14()
+                            .multilineTextAlignment(.center)
                     }
-                    is24Hours.toggle()
-                    checkForSameTime()
-                } label: {
-                    Text("24시간\n운영")
-                        .multilineTextAlignment(.center)
+                    .selectedButtonStyle(isSelected: is24Hours?.wrappedValue ?? false, width: 50)
                 }
-                .selectedButtonStyle(isSelected: is24Hours, width: 50)
                 
             }
             .onChange(of: openTime) { _ in
@@ -125,7 +134,7 @@ struct BusinessHoursPickerView: View {
     }
     
     private func checkForSameTime() {
-        if !is24Hours {
+        if is24Hours?.wrappedValue != true {
             showTimeWarning = openTime == closeTime
         } else {
             showTimeWarning = false
