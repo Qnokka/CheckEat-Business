@@ -37,6 +37,9 @@ struct ManageBusinessHoursView: View {
     
     @State private var is24Hours = false
     @State private var showTimeWarning = false
+    @State private var showTimeAlert = false
+    @State private var showOvernightConfirm = false
+    @State private var allowOvernightBusiness = false
     
     enum BusinessHourType {
         case sameAll
@@ -72,6 +75,27 @@ struct ManageBusinessHoursView: View {
                 fieldIsFocused = false
             }
             .scrollDismissesKeyboard(.interactively)
+            .onChange(of: businessHourType) { _ in
+                allowOvernightBusiness = false
+            }
+            .onChange(of: openTimeSameAll) { _ in
+                allowOvernightBusiness = false
+            }
+            .onChange(of: closeTimeSameAll) { _ in
+                allowOvernightBusiness = false
+            }
+            .onChange(of: openTimeWeekday) { _ in
+                allowOvernightBusiness = false
+            }
+            .onChange(of: closeTimeWeekday) { _ in
+                allowOvernightBusiness = false
+            }
+            .onChange(of: openTimeWeekend) { _ in
+                allowOvernightBusiness = false
+            }
+            .onChange(of: closeTimeWeekend) { _ in
+                allowOvernightBusiness = false
+            }
         }
     }
     
@@ -139,29 +163,58 @@ struct ManageBusinessHoursView: View {
     
     private var completeButtonSection: some View {
         Button {
-            var errorFound = false
-            
-            switch businessHourType {
-            case .sameAll:
-                if openTimeSameAll == closeTimeSameAll {
-                    errorFound = true
-                }
-                breakTimesSameAll.removeAll { $0.breakStartTime == $0.breakEndTime }
-            case .weekdayWeekendDifferent:
-                if openTimeWeekday == closeTimeWeekday || openTimeWeekend == closeTimeWeekend {
-                    errorFound = true
-                }
-                breakTimesWeekday.removeAll { $0.breakStartTime == $0.breakEndTime }
-                breakTimesWeekend.removeAll { $0.breakStartTime == $0.breakEndTime }
-            }
-            if !errorFound {
-                //TODO:
-            }
+            completeButtonAction()
         } label: {
             Text("완료")
         }
         .primaryButtonStyle()
         .padding(.vertical, 24)
+        .alert("영업시간을 확인해주세요", isPresented: $showTimeAlert) {
+            Button("확인", role: .cancel) { }
+        } message: {
+            Text("오픈 시간이 마감 시간과 같거나 이후일 수 없습니다.")
+        }
+        .alert("밤샘 영업 확인", isPresented: $showOvernightConfirm) {
+            Button("취소", role: .cancel) { }
+            Button("밤샘 영업", role: .none) {
+                allowOvernightBusiness = true
+                completeButtonAction()
+            }
+        } message: {
+            Text("오픈 시간이 마감 시간보다 늦습니다. 밤샘 영업인가요?")
+        }
+    }
+    
+    private func completeButtonAction() {
+        var errorFound = false
+        
+        switch businessHourType {
+        case .sameAll:
+            if openTimeSameAll == closeTimeSameAll {
+                errorFound = true
+                showTimeAlert = true
+            }
+            if openTimeSameAll > closeTimeSameAll && !allowOvernightBusiness {
+                showOvernightConfirm = true
+                return
+            }
+            breakTimesSameAll.removeAll { $0.breakStartTime == $0.breakEndTime }
+        case .weekdayWeekendDifferent:
+            if openTimeWeekday == closeTimeWeekday || openTimeWeekend == closeTimeWeekend {
+                errorFound = true
+                showTimeAlert = true
+                return
+            }
+            if (openTimeWeekday > closeTimeWeekday || openTimeWeekend > closeTimeWeekend) && !allowOvernightBusiness {
+                showOvernightConfirm = true
+                return
+            }
+            breakTimesWeekday.removeAll { $0.breakStartTime == $0.breakEndTime }
+            breakTimesWeekend.removeAll { $0.breakStartTime == $0.breakEndTime }
+        }
+        if !errorFound {
+            //TODO: 데이터 처리 로직 구현
+        }
     }
 }
 
