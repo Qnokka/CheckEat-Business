@@ -127,7 +127,7 @@ struct MyPageView: View {
                 case .manageBusinessHours:
                     ManageBusinessHoursView()
                 case .manageHoliday:
-                    EmptyView()
+                    DayOffManagementView()
                 default:
                     EmptyView() //예외 방지용
                 }

@@ -52,7 +52,7 @@ struct JoinView: View {
                     ContactVerificationSection(phoneNumber: $phoneNumber, email: $email, verificationCode: $verificationCode, didSendCode: $didSendCode, fieldIsFocused: $fieldIsFocused)
                     VStack(alignment: .leading) {
                     HStack {
-                        CheckBoxButton(ischecked: $isChecked) {
+                        CheckBoxButton(isChecked: $isChecked) {
                             isChecked2 = isChecked
                             isChecked3 = isChecked
                         }
@@ -72,14 +72,14 @@ struct JoinView: View {
                             .padding(.top, 10)
                         VStack(alignment: .leading, spacing: 12) {
                             HStack(spacing: 8) {
-                                CheckBoxButton(ischecked: $isChecked2, onToggle: updateAllCheckBox)
+                                CheckBoxButton(isChecked: $isChecked2, onToggle: updateAllCheckBox)
                                     .padding(.top, 10)
                                 Text("[필수] 서비스이용약관에 동의합니다.")
                                     .font(.system(size: 14, weight: .medium))
                                     .padding(.top, 10)
                             }
                             HStack(spacing: 8) {
-                                CheckBoxButton(ischecked: $isChecked3, onToggle: updateAllCheckBox)
+                                CheckBoxButton(isChecked: $isChecked3, onToggle: updateAllCheckBox)
                                     .padding(.top, 10)
                                 Text("[필수] 만 14세 이상입니다.")
                                     .font(.system(size: 14, weight: .medium))
