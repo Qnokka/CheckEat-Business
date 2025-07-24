@@ -9,18 +9,15 @@ import SwiftUI
 
 struct LoginView: View {
     
-    @State var userId: String = ""
-    @State private var userPassword: String = ""
+    //MARK: - userId,userPassword,testId,testPassword,loginError 삭제
     @State private var isPasswordVisible: Bool = false
     @State private var showFindId: Bool = false
     @State private var showFindPwd: Bool = false
     @State private var showJoin: Bool = false
-    @State private var goToMyPage: Bool = false
-    @State private var loginError: String = ""
-    
-    private let testId = "user"
-    private let testPassword = "Qwer1234!"
-    
+    @State private var goToMyPage: Bool = false 
+
+    @StateObject private var viewModel = LoginViewModel()
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -31,7 +28,7 @@ struct LoginView: View {
                     
                     Text("아이디")
                         .semibold16()
-                    UnderLinedTextField(placeholder: "아이디를 입력해주세요", text: $userId)
+                    UnderLinedTextField(placeholder: "아이디를 입력해주세요", text: $viewModel.loginId)
                         .regular14()
                         .autocorrectionDisabled(true)
                         .textInputAutocapitalization(.never)
@@ -42,12 +39,12 @@ struct LoginView: View {
                     HStack {
                         Group {
                             if isPasswordVisible {
-                                UnderLinedTextField(placeholder: "비밀번호를 입력해주세요", text: $userPassword)
+                                UnderLinedTextField(placeholder: "비밀번호를 입력해주세요", text: $viewModel.password)
                                     .textContentType(.password)
                                     .autocapitalization(.none)
                                     .disableAutocorrection(true)
                             } else {
-                                UnderLinedTextField(placeholder: "비밀번호를 입력해주세요", isSecure: true, text: $userPassword)
+                                UnderLinedTextField(placeholder: "비밀번호를 입력해주세요", isSecure: true, text: $viewModel.password)
                                     .textContentType(.password)
                                     .autocapitalization(.none)
                                     .disableAutocorrection(true)
@@ -66,26 +63,22 @@ struct LoginView: View {
                         }
                     }
                     .regular14()
-                    
-                    Text(loginError)
+                    //MARK: - 에러메세지 수정부분
+                    Text(viewModel.alertMessage)
                         .regular12()
                         .foregroundStyle(.red)
                         .padding(.bottom, 24)
                     
                     Button {
                         //TODO: 로그인 인증 로직 구현
-                        //MARK: - 우선은 테스트용 아이디, 비밀번호로 테스트
-                        if(testId == userId && testPassword == userPassword) {
-                            goToMyPage = true
-                        } else {
-                            loginError = "입력하신 정보가 일치하지 않습니다. 다시 확인해주세요"
-                        }
+                        //MARK: - 테스트 ID,PWD 부분 삭제
+                        viewModel.login()
                     } label: {
                         Text("로그인")
                             .primaryButtonStyle()
                             .semibold16()
                     }
-                    .fullScreenCover(isPresented: $goToMyPage) {
+                    .fullScreenCover(isPresented: $viewModel.loginSuccess) {
                         MyPageView()
                     }
                     

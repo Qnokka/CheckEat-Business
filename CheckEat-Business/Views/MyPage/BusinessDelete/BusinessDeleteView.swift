@@ -35,24 +35,6 @@ struct BusinessDeleteView: View {
                         .frame(height: 1)
                         .padding(.top, 10)
 
-                    Button {
-                        // 업종변경
-                    } label: {
-                        HStack {
-                            Text("업종변경").medium16()
-                            Spacer()
-                            Image("arrow.right")
-                        }
-                        .foregroundColor(.black)
-                        .padding(.top, 15)
-                        .contentShape(Rectangle())
-                    }
-
-                    Rectangle()
-                        .fill(Color(red: 0.85, green: 0.85, blue: 0.85))
-                        .frame(height: 1)
-                        .padding(.top, 10)
-
                     Spacer()
                 }
                 .padding(.horizontal)

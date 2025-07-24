@@ -44,6 +44,6 @@ struct BusinessDeleteComplete: View {
     }
 }
 
-#Preview {
-    BusinessDeleteComplete()
-}
+//#Preview {
+//    BusinessDeleteComplete()
+//}

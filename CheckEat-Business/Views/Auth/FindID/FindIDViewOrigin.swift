@@ -20,6 +20,8 @@ struct FindIDViewOrigin: View {
     @State private var showCodeErrorMessage: Bool = false
     @State private var goToLogin: Bool = false
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @StateObject private var viewModel = FindIDViewModel()
+
     var isButtonEnabled: Bool {
         if showVerificationField {
             return isEmailValid && !verificationCode.isEmpty
@@ -27,6 +29,7 @@ struct FindIDViewOrigin: View {
             return isEmailValid
         }
     }
+    
     var body: some View {
         GeometryReader { _ in
             NavigationStack {
@@ -54,10 +57,6 @@ struct FindIDViewOrigin: View {
                                 .font(.system(size: 14, weight: .bold))
                                 .padding(.top, 10)
                             UnderLinedTextField(placeholder: "인증코드를 입력해 주세요.", text: $verificationCode)
-                                .onChange(of: verificationCode){ newValue in
-                                    isVerificationCodeValid = (newValue == "1234")
-                                    showCodeErrorMessage = !isVerificationCodeValid && !newValue.isEmpty
-                                }
                                 .font(.system(size: 14))
                                 .padding(.top, 2)
                             
@@ -98,9 +97,7 @@ struct FindIDViewOrigin: View {
                     }
                     Button {
                         if showVerificationField {
-                            if isVerificationCodeValid {
-                                goFindIDComplete = true
-                            }
+                            viewModel.checkFindId(email: email, token: verificationCode)
                         } else {
                             withAnimation {
                                 showVerificationField = true
@@ -111,7 +108,7 @@ struct FindIDViewOrigin: View {
                         
                     } label: {
                         Text(showVerificationField ? "완료" : "인증코드 받기")
-                            .font(.system(size: 16, weight: .bold))
+                            .semibold16()
                             .foregroundColor(.white)
                             .primaryButtonStyle(isEnabled: isButtonEnabled)
                             .padding(.trailing)
@@ -121,8 +118,8 @@ struct FindIDViewOrigin: View {
                     .fullScreenCover(isPresented: $goFindIDComplete) {
                         FindIDComplete(userID: "test1234")
                     }
-                    Spacer()
-                    
+                    .padding(.top, 24)
+                    .padding(.bottom, 40)
                 }
                 .padding(.top, 50)
                 .padding(.leading, 15)
