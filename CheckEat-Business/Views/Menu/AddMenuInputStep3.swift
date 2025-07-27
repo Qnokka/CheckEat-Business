@@ -53,7 +53,8 @@ struct AddMenuInputStep3: View {
                 .bold18()
                 .padding(.top, 40)
             Text("입력해 주신 식재료 정보를 바탕으로 해당 음식과\n관련하 섭취 주의정보를 확인해주세요.")
-                .multilineTextAlignment(.center)
+                .lineSpacing(4)
+                .multilineTextAlignment(.leading)
                 .regular16()
                 .padding(.top, 30)
             VStack(alignment: .leading) {
