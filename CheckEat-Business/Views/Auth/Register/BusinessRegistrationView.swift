@@ -10,6 +10,7 @@ import SwiftUI
 struct BusinessRegistrationView: View {
     
     @State private var OCRScanSuccess: Bool = false
+    @State private var businessType: BusinessType = .none
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -55,7 +56,7 @@ struct BusinessRegistrationView: View {
                     }
                 }
                 .fullScreenCover(isPresented: $OCRScanSuccess, content: {
-                    BusinessRegistrationScanResult()
+                    BusinessRegistrationScanResult(businessType: $businessType)
                 })
                 .padding(.horizontal)
                     .navigationTitle("회원가입")
