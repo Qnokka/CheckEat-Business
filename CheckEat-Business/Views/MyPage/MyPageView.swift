@@ -122,8 +122,8 @@ struct MyPageView: View {
                             showToast = true
                         }
                     })
-                case .manageMenu:
-                    EmptyView()
+                case .menuManagement:
+                    MenuManagementView()
                 case .manageBusinessHours:
                     ManageBusinessHoursView()
                 case .manageHoliday:
@@ -142,8 +142,8 @@ struct MyPageView: View {
             selectedDestination = .manageCompany
         case .changePassword:
             showChangePasswordModal = true
-        case .manageMenu:
-            selectedDestination = .manageMenu
+        case .menuManagement:
+            selectedDestination = .menuManagement
         case .manageBusinessHours:
             selectedDestination = .manageBusinessHours
         case .manageHoliday:

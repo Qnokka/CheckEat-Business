@@ -10,7 +10,7 @@ import SwiftUI
 enum SettingDestination: Hashable, Identifiable {
     case manageCompany
     case changePassword
-    case manageMenu
+    case menuManagement
     case manageBusinessHours
     case manageHoliday
     case manageLicense
@@ -40,7 +40,7 @@ struct MyPageSectionContainerView: View {
 
             SectionView(
                 title: "메뉴",
-                buttons: [(title: "메뉴 관리", destination: .manageMenu)]
+                buttons: [(title: "메뉴 관리", destination: .menuManagement)]
             ) { destination in
                 handleSelection(destination)
             }
