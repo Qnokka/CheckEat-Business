@@ -35,7 +35,8 @@ struct CertificationCompleteView: View {
                     .padding(.vertical, 24)
             }
             .fullScreenCover(isPresented: $goToHome) {
-                LoginView()
+                //FIXME: Home 화면으로 이동
+                MyPageView()
             }
         }
         .padding()

@@ -15,11 +15,7 @@ struct HalalCertificationView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 18) {
-                Image("CheckMark")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 50, height: 50)
-                    .foregroundStyle(.green)
+                Image("KMF")
                     
                 Group {
                     Text("할랄푸드\n정식 인증 검증")
