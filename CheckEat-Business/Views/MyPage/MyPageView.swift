@@ -128,6 +128,8 @@ struct MyPageView: View {
                     ManageBusinessHoursView()
                 case .manageHoliday:
                     DayOffManagementView()
+                case .languageSetting:
+                    LanguageSettings()
                 default:
                     EmptyView() //예외 방지용
                 }
@@ -150,6 +152,8 @@ struct MyPageView: View {
             selectedDestination = .manageHoliday
         case .manageLicense:
             isPresented = true
+        case .languageSetting:
+            selectedDestination = .languageSetting
         }
     }
 }
