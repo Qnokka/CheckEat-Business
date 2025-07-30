@@ -20,7 +20,7 @@ struct CheckEat_BusinessApp: App {
                 ZStack {
                     switch selectedTab {
                     case .home:
-                        EmptyView()
+                        HomeMainView()
                     case .menu:
                         AddMenuView()
                     case .myPage:
