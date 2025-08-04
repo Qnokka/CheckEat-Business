@@ -30,4 +30,16 @@ extension View {
                     .stroke(Color.buttonOP50, lineWidth: 1)
             )
     }
+    
+    func subButtonStyle2(isEnabled: Bool? = nil) -> some View {
+        return self
+            .frame(maxWidth: .infinity)
+            .padding()
+            .foregroundColor(.buttonEnable)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.buttonOP20, lineWidth: 1)
+            )
+    }
 }
