@@ -170,9 +170,9 @@ struct MenuManagementView: View {
     }
 
 
-#Preview {
-    MenuManagementView()
-}
+//#Preview {
+//    MenuManagementView()
+//}
 
 extension VeganType {
     var isVegan: Bool {

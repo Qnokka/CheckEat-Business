@@ -72,6 +72,6 @@ struct LanguageSettings: View {
         }
     }
 }
-#Preview {
-    LanguageSettings()
-}
+//#Preview {
+//    LanguageSettings()
+//}

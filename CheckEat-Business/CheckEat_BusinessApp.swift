@@ -7,81 +7,76 @@
 
 import SwiftUI
 
+class AppTabViewModel: ObservableObject {
+    @Published var selectedTab: CheckEat_BusinessApp.Tab = .home
+}
+
 @main
 struct CheckEat_BusinessApp: App {
     
-    @State private var selectedTab: CustomTabBarView.Tab = .home
-    //TODO: 언어 설정 값 가져오는 로직 구현
-    
-    var body: some Scene {
-        WindowGroup {
-            //TODO: 탭바 적용
-            VStack {
-                ZStack {
-                    switch selectedTab {
-                    case .home:
-                        HomeMainView()
-                    case .menu:
-                        AddMenuView()
-                    case .myPage:
-                        MyPageView()
-                    }
-                }
-                .frame(maxHeight: .infinity)
-
-                CustomTabBarView(selectedTab: $selectedTab)
-            }
-            .background(Color.white)
-        }
+    enum Tab {
+        case home, menu, myPage
     }
-}
-
-struct CheckEat_BusinessApp1: App {
     
-    @State private var selectedTab: CustomTabBarView.Tab = .home
-    //TODO: 언어 설정 값 가져오는 로직 구현
+    @StateObject private var tabViewModel = AppTabViewModel()
     
     var body: some Scene {
         WindowGroup {
-            
-            VStack {
-                ZStack {
-                    switch selectedTab {
-                    case .home:
-                        HomeMainView()
-                    case .menu:
-                        AddMenuView()
-                    case .myPage:
-                        MyPageView()
+            TabView(selection: $tabViewModel.selectedTab) {
+                NavigationStack {
+                    HomeMainView()
+                }
+                .environmentObject(tabViewModel)
+                .tabItem {
+                    VStack(spacing: 4) {
+                        Image("Home")
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                        Text("홈")
+                            .font(.system(size: 12))
                     }
                 }
-                .frame(maxHeight: .infinity)
+                .tag(Tab.home)
                 
-                CustomTabBarView(selectedTab: $selectedTab)
+                NavigationStack {
+                    //FIXME: 리뷰 등록 페이지 - OCR 스캔 화면으로 루트뷰 변경
+                    OCRScanResultView()
+                }
+                .environmentObject(tabViewModel)
+                .tabItem {
+                    ZStack {
+                        Circle()
+                            .fill(Color(.buttonEnable))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: "plus")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.white)
+                    }
+                    .offset(y: -4)
+                }
+                .tag(Tab.menu)
+                
+                NavigationStack {
+                    MyPageView()
+                }
+                .environmentObject(tabViewModel)
+                .tabItem {
+                    VStack(spacing: 4) {
+                        Image("User")
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                        Text("마이페이지")
+                            .font(.system(size: 12))
+                    }
+                }
+                .tag(Tab.myPage)
             }
-            .background(Color.white)
-            
-            //TODO: 추후 다음과 같이 수정
-//            if signmanager.login { //로그인된 상태가 아니라면 홈으로 진입
-//                VStack {
-//                    ZStack {
-//                        switch selectedTab {
-//                        case .home:
-//                            HomeMainView()
-//                        case .menu:
-//                            AddMenuView()
-//                        case .myPage:
-//                            MyPageView()
-//                        }
-//                    }
-//                    .frame(maxHeight: .infinity)
-//                    
-//                    CustomTabBarView(selectedTab: $selectedTab)
-//                }
-//                .background(Color.white)
-//            } else {
-//                LoginView()
-//            }
         }
     }
 }
