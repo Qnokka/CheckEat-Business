@@ -63,13 +63,8 @@ struct MyPageView: View {
                         }
                     }
                 }
-                .alert("업체삭제", isPresented: $showDeleteCompany) {
-                    Button("삭제", role: .destructive) {
-                        //TODO: 실제 삭제 처리 로직 (DB, API 등)
-                    }
-                    Button("취소", role: .cancel) { }
-                } message: {
-                    Text("등록한 업체를 정말 삭제하시겠습니까?\n이후 새로운 업장을 다시 등록해야 합니다.")
+                .fullScreenCover(isPresented: $showDeleteCompany) {
+                    BusinessDeleteView()
                 }
                 .alert("회원탈퇴", isPresented: $showWithdrawAlert) {
                     Button("탈퇴", role: .destructive) {

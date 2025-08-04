@@ -15,11 +15,7 @@ class RegisterViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var email: String = ""
     @Published var nickName: String = ""
-    @Published var allergy: String = ""
-    @Published var selectedVeganLevel: VeganLevel = .none
-    @Published var selectedHalalStatus: HalaStatus = .no
-    @Published var selectedCommonAllergies: Set<Int> = []
-    
+ 
     //이메일 인증 관련
     @Published var emailVerificationToken = ""
     
@@ -134,11 +130,7 @@ class RegisterViewModel: ObservableObject {
               log_Id: loginId,
               log_pwd: password,
               email: email,
-              allergy: allergy.isEmpty ? nil : allergy,
-              nickname: nickName,
-              commonAllergies: selectedCommonAllergies.isEmpty ? nil : Array(selectedCommonAllergies),
-              vegan: selectedVeganLevel.rawValue,
-              isHalal: selectedHalalStatus.rawValue
+              nickname: nickName
           )
           
           RegisterSerivce.signUp(request: request)

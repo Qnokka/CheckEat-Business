@@ -11,6 +11,7 @@ struct BusinessDeleteModalStep2: View {
     var storeName: String
     var onClose: () -> Void
     @State private var showComplete = false
+    @StateObject private var viewModel = DeleteStoreViewModel()
     var body: some View {
         VStack(alignment: .center) {
             Text(storeName)
@@ -40,8 +41,9 @@ struct BusinessDeleteModalStep2: View {
                 }
                 .padding()
                 Button {
-                    //삭제구현
-                    showComplete = true
+                    viewModel.deleteStore {
+                        showComplete = true
+                    }
                 } label: {
                     Text("삭제하기")
                         .foregroundStyle(Color.white)

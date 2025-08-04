@@ -10,6 +10,7 @@ import SwiftUI
 struct BusinessDeleteView: View {
     @State private var showStep1 = false
     @State private var showStep2 = false
+    @Environment(\.dismiss) private var dismiss
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
@@ -94,7 +95,7 @@ struct BusinessDeleteView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        // 마이페이지로 돌아가기
+                       dismiss()
                     } label: {
                         Image(systemName: "chevron.backward")
                             .foregroundStyle(.black)

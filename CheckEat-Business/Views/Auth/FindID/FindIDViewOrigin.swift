@@ -59,7 +59,6 @@ struct FindIDViewOrigin: View {
                             UnderLinedTextField(placeholder: "인증코드를 입력해 주세요.", text: $verificationCode)
                                 .font(.system(size: 14))
                                 .padding(.top, 2)
-                            
                             if showCodeErrorMessage {
                                 Text("잘못된 코드입니다. 다시 시도해 주세요.")
                                     .foregroundColor(.red)
@@ -95,18 +94,24 @@ struct FindIDViewOrigin: View {
                             }
                         }
                     }
-                    Button {
-                        if showVerificationField {
-                            viewModel.checkFindId(email: email, token: verificationCode)
+            Button {
+                if showVerificationField {
+                    showCodeErrorMessage = false
+                    viewModel.checkFindId(email: email, token: verificationCode) { success in
+                        if success {
+                            goFindIDComplete = true
                         } else {
-                            withAnimation {
-                                showVerificationField = true
-                                startTimer()
-                                infoMessage = "입력하신 이메일로 인증코드를 전송했습니다."
-                            }
+                            showCodeErrorMessage = true
                         }
-                        
-                    } label: {
+                    }
+                } else {
+                    withAnimation {
+                        showVerificationField = true
+                        startTimer()
+                        infoMessage = "입력하신 이메일로 인증코드를 전송했습니다."
+                    }
+                }
+            } label: {
                         Text(showVerificationField ? "완료" : "인증코드 받기")
                             .semibold16()
                             .foregroundColor(.white)
@@ -116,7 +121,7 @@ struct FindIDViewOrigin: View {
                     }
                     .disabled(!isButtonEnabled)
                     .fullScreenCover(isPresented: $goFindIDComplete) {
-                        FindIDComplete(userID: "test1234")
+                        FindIDComplete(userID: viewModel.foundUserId)
                     }
                     .padding(.top, 24)
                     .padding(.bottom, 40)
@@ -161,7 +166,6 @@ struct FindIDViewOrigin: View {
                     timerActive = false
                 }
             }
-            
         }
     }
     

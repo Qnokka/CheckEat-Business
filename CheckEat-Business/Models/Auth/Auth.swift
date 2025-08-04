@@ -7,6 +7,8 @@
 
 import Foundation
 
+
+//MARK: - 로그인
 //로그인 요청
 struct LoginRequest: Codable {
     var ld_log_id: String
@@ -17,23 +19,7 @@ struct LoginResponse: Decodable {
     let accessToken: String
     let refreshToken: String
 }
-//회원가입 요청
-struct RegisterRequest: Codable {
-    let log_Id: String
-    let log_pwd: String
-    let email: String
-    let allergy: String?
-    let nickname: String
-    let commonAllergies: [Int]?
-    let vegan: Int?
-    let isHalal: Int?
-}
-//회원가입 응답
-struct RegisterResponse: Decodable {
-    let message: String
-    let userId: String?
-    let status: Int
-}
+//MARK: - 아이디찾기
 //아이디찾기 토큰 요청
 struct FindIdTokenRequest: Codable {
     let email: String
@@ -52,6 +38,21 @@ struct CheckIdTokenResponse: Decodable {
 }
 struct LogID: Decodable {
     let ld_log_id: String
+}
+//MARK: - 회원가입
+//회원가입 요청
+struct RegisterRequest: Codable {
+    let log_Id: String
+    let log_pwd: String
+    let email: String
+    let nickname: String
+
+}
+//회원가입 응답
+struct RegisterResponse: Decodable {
+    let message: String
+    let userId: String?
+    let status: Int
 }
 //아이디중복 응답
 struct IDUniqueResponse: Decodable {
@@ -81,47 +82,4 @@ struct CheckEmailTokenRequest: Codable {
 struct CheckEmailTokenResponse: Decodable {
     let message: String
     let status: String
-}
-//비건 단계
-enum VeganLevel: Int, CaseIterable {
-    case none = 0
-    case level1 = 1
-    case level2 = 2
-    case level3 = 3
-    case level4 = 4
-    case level5 = 5
-    case level6 = 6
-    
-    var description: String {
-        switch self {
-        case .none:
-            return "비건 아님"
-        case .level1:
-            return "폴로 베지테리언"
-        case .level2:
-            return "페스코 베지테리언"
-        case .level3:
-            return "락토 오보 베지테리언"
-        case .level4:
-            return "오보 베지테리언"
-        case .level5:
-            return "락토 베지테리언"
-        case .level6:
-            return "비건 베지테리언"
-        }
-    }
-}
-//할랄 여부
-enum HalaStatus: Int, CaseIterable {
-    case no = 0
-    case yes = 1
-    
-    var description: String {
-        switch self {
-        case .no:
-            return "할랄 아님"
-        case .yes:
-            return "할랄"
-        }
-    }
 }

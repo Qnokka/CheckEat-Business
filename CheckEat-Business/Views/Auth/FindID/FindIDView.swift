@@ -12,6 +12,7 @@ struct FindIDView: View {
     @State private var userEmail: String = ""
     @State private var authCode: String = ""
     @State private var infoMsg = "가입시 등록하신 이메일을 입력해주세요."
+    @State private var showCodeErrorMessage: Bool = false
     
     @State private var isFieldVisible: Bool = false
     @State private var authCodeIsValid: Bool? = nil
@@ -102,7 +103,7 @@ struct FindIDView: View {
                                         .regular14()
                                         .focused($fieldIsFocused)
                                     
-                                    if authCodeIsValid == false {
+                                    if showCodeErrorMessage {
                                         VStack(alignment: .leading) {
                                             Text("잘못된 코드입니다. 다시 시도해주세요.")
                                                 .regular12()
@@ -147,25 +148,22 @@ struct FindIDView: View {
                                 }
                                 HStack {
                                     Button {
-                                        viewModel.checkFindId(email: userEmail, token: authCode)
+                                        showCodeErrorMessage = false
+                                        viewModel.checkFindId(email: userEmail, token: authCode) { success in
+                                            if success {
+                                                goFindIDComplete = true
+                                            } else {
+                                                showCodeErrorMessage = true
+                                            }
+                                        }
                                     } label: {
                                         Text("완료")
                                             .primaryButtonStyle(isEnabled: canRequestAuthCode)
                                             .semibold16()
                                     }
                                     .disabled(authCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                                    .onChange(of: viewModel.findIdTokenSuccess) { newValue in
-                                        if newValue == true {
-                                            authCodeIsValid = true
-                                            goFindIDComplete = true
-                                        } else if newValue == false {
-                                            authCodeIsValid = false
-                                        }
-                                    }
                                     .fullScreenCover(isPresented: $goFindIDComplete) {
-                                        if let userID = viewModel.foundUserId {
-                                            FindIDComplete(userID: userID)
-                                        }
+                                        FindIDComplete(userID: viewModel.foundUserId)
                                     }
                                 }
                             }
@@ -174,6 +172,13 @@ struct FindIDView: View {
                     }
                     .animation(.easeInOut(duration: 0.5), value: isFieldVisible)
                     .padding(.vertical)
+                }
+                .onChange(of: viewModel.findIdTokenSuccess) { newValue in
+                    if newValue {
+                        goFindIDComplete = true
+                    } else {
+                        showCodeErrorMessage = true
+                    }
                 }
                 .onTapGesture {
                     fieldIsFocused = false
