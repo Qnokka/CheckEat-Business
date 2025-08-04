@@ -79,6 +79,6 @@ struct BusinessRegistrationView: View {
     
 }
 
-#Preview {
-    BusinessRegistrationView()
-}
+//#Preview {
+//    BusinessRegistrationView()
+//}
