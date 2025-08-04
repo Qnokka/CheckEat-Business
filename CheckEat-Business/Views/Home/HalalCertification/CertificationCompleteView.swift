@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CertificationCompleteView: View {
     
-    @State private var goToHome: Bool = false
+    @Binding var stack: [String]
     
     var body: some View {
         
@@ -27,20 +27,16 @@ struct CertificationCompleteView: View {
             .bold20()
             
             Button {
-                goToHome = true
+                stack.removeAll()
             } label: {
                 Text("홈으로")
                     .primaryButtonStyle()
                     .semibold16()
                     .padding(.vertical, 24)
             }
-            .fullScreenCover(isPresented: $goToHome) {
-                //FIXME: Home 화면으로 이동
-                HomeMainView()
-            }
         }
+        .navigationBarBackButtonHidden()
         .padding()
         .padding(.bottom, 200)
-        
     }
 }
