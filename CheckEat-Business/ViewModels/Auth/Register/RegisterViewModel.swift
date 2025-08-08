@@ -19,6 +19,7 @@ class RegisterViewModel: ObservableObject {
     @Published var selectedVeganLevel: VeganLevel = .none
     @Published var selectedHalalStatus: HalaStatus = .no
     @Published var selectedCommonAllergies: Set<Int> = []
+    @Published var selectedLanguage: LanguageSetting = .ko
     
     //이메일 인증 관련
     @Published var emailVerificationToken = ""
@@ -138,7 +139,8 @@ class RegisterViewModel: ObservableObject {
               nickname: nickName,
               commonAllergies: selectedCommonAllergies.isEmpty ? nil : Array(selectedCommonAllergies),
               vegan: selectedVeganLevel.rawValue,
-              isHalal: selectedHalalStatus.rawValue
+              isHalal: selectedHalalStatus.rawValue,
+              ld_lang: selectedLanguage.rawValue
           )
           
           RegisterSerivce.signUp(request: request)

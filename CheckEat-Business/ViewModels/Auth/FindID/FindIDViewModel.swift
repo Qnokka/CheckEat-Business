@@ -13,13 +13,14 @@ class FindIDViewModel: ObservableObject {
     
     @Published var findIdTokenSuccess: Bool? = nil
     @Published var foundUserId: String? = nil
+    @Published var alertMessage: String = ""
     
     private var cancellables = Set<AnyCancellable>()
     
     func findId(email: String, language: String) {
         let findIdData = FindIdTokenRequest(email: email, language: "ko")
         
-        AF.request(API.FindIdURL, method: .post, parameters: findIdData, encoder: JSONParameterEncoder.default)
+        AF.request(AuthAPI.findIdURL, method: .post, parameters: findIdData, encoder: JSONParameterEncoder.default)
             .validate(statusCode: 200..<300)
             .response { response in
                 switch response.result {
@@ -34,7 +35,7 @@ class FindIDViewModel: ObservableObject {
     func checkFindId(email: String, token: String) {
         let checkTokenData = CheckIdTokenRequest(email: email, token: token)
  
-        AF.request(API.FindIdTokenURL, method: .post, parameters: checkTokenData, encoder: JSONParameterEncoder.default)
+        AF.request(AuthAPI.findIdTokenURL, method: .post, parameters: checkTokenData, encoder: JSONParameterEncoder.default)
             .validate(statusCode: 200..<300)
             .publishDecodable(type: CheckIdTokenResponse.self)
             .value()
@@ -43,6 +44,8 @@ class FindIDViewModel: ObservableObject {
                 switch completion {
                 case .failure(let error):
                     print("토큰 확인 실패 ❌❌❌ \(error.localizedDescription)")
+                    self.alertMessage = "잘못된 인증코드입니다. 다시 시도해주세요."
+                    self.findIdTokenSuccess = false
                 case .finished:
                     break
                 }
