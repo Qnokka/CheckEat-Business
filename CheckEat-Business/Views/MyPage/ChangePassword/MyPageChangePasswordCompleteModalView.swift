@@ -9,7 +9,10 @@ import SwiftUI
 
 struct MyPageChangePasswordCompleteModalView: View {
     
-    @State private var goToLogin: Bool = false
+    //MARK: 비밀번호 변경 모달 뷰 상태 값
+    @Binding var showChangePasswordModal: Bool
+    //MARK: 비밀번호 변경 완료 모달 뷰 상태 값
+    @Binding var showChangePasswordCompleteModal: Bool
     
     var body: some View {
         VStack(spacing: 8) {
@@ -29,22 +32,19 @@ struct MyPageChangePasswordCompleteModalView: View {
                 .padding(.vertical, 8)
             
             Button {
-                goToLogin = true
+                //MARK: 동사에 내려가게 만들어줘야 해서 딜레이 적용
+                showChangePasswordModal = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                    showChangePasswordCompleteModal = false
+                }
             } label: {
                 Text("닫기")
                     .subButtonStyle()
                     .semibold16()
                     .padding(.top, 24)
             }
-            .fullScreenCover(isPresented: $goToLogin) {
-                LoginView()
-            }
         }
         .padding(.horizontal)
         .padding(.top, 50)
     }
 }
-
-//#Preview {
-//    MyPageChangePasswordCompleteModalView()
-//}
