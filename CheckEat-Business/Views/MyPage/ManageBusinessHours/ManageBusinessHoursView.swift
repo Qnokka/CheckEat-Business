@@ -9,9 +9,10 @@ import SwiftUI
 
 struct ManageBusinessHoursView: View {
     
-    @Environment(\.dismiss) private var dismiss
-    @FocusState private var fieldIsFocused: Bool
+    // MARK: 스크린 상태 값
+    @Binding var showManageBusinessHours: Bool
     
+    @FocusState private var fieldIsFocused: Bool
     let midnight = Calendar.current.startOfDay(for: Date())
     
     //MARK: 영업시간 관리 - 전부 동일
@@ -48,55 +49,38 @@ struct ManageBusinessHoursView: View {
     @State private var businessHourType: BusinessHourType = .sameAll
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    businessHourTypeSection
-                    businessHoursSection
-                    completeButtonSection
-                }
-                .padding(.top, 35)
+        NavigationView {
+        ScrollView {
+            VStack(alignment: .leading) {
+                businessHourTypeSection
+                businessHoursSection
+            }
+            .padding(.top, 35)
+            .padding(.horizontal)
+        }
+        .safeAreaInset(edge: .bottom) {
+            completeButtonSection
                 .padding(.horizontal)
-            }
-            .navigationTitle("영업시간 관리")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.backward")
-                            .foregroundStyle(.black)
-                    }
+                .padding(.vertical, 8)
+                .background(Color(uiColor: .systemBackground))
+        }
+        .navigationTitle("영업시간 관리")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    showManageBusinessHours = false
+                } label: {
+                    Image(systemName: "chevron.backward")
+                        .foregroundStyle(.black)
                 }
-            }
-            .onTapGesture {
-                fieldIsFocused = false
-            }
-            .scrollDismissesKeyboard(.interactively)
-            .onChange(of: businessHourType) { _ in
-                allowOvernightBusiness = false
-            }
-            .onChange(of: openTimeSameAll) { _ in
-                allowOvernightBusiness = false
-            }
-            .onChange(of: closeTimeSameAll) { _ in
-                allowOvernightBusiness = false
-            }
-            .onChange(of: openTimeWeekday) { _ in
-                allowOvernightBusiness = false
-            }
-            .onChange(of: closeTimeWeekday) { _ in
-                allowOvernightBusiness = false
-            }
-            .onChange(of: openTimeWeekend) { _ in
-                allowOvernightBusiness = false
-            }
-            .onChange(of: closeTimeWeekend) { _ in
-                allowOvernightBusiness = false
             }
         }
+        .onTapGesture {
+            fieldIsFocused = false
+        }
+        .scrollDismissesKeyboard(.interactively)
+    }
     }
     
     private var businessHourTypeSection: some View {
@@ -164,6 +148,7 @@ struct ManageBusinessHoursView: View {
     private var completeButtonSection: some View {
         Button {
             completeButtonAction()
+            
         } label: {
             Text("완료")
         }
@@ -190,6 +175,10 @@ struct ManageBusinessHoursView: View {
         
         switch businessHourType {
         case .sameAll:
+            if is24Hours {
+                openTimeSameAll = Calendar.current.startOfDay(for: Date())
+                closeTimeSameAll = Calendar.current.date(bySettingHour: 23, minute: 59, second: 0, of: openTimeSameAll) ?? openTimeSameAll.addingTimeInterval(86340)
+            }
             if openTimeSameAll == closeTimeSameAll {
                 errorFound = true
                 showTimeAlert = true
@@ -199,6 +188,25 @@ struct ManageBusinessHoursView: View {
                 return
             }
             breakTimesSameAll.removeAll { $0.breakStartTime == $0.breakEndTime }
+            
+            let dateFormatter: DateFormatter = {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "HH:mm"
+                return formatter
+            }()
+            let open = dateFormatter.string(from: openTimeSameAll)
+            let close = dateFormatter.string(from: closeTimeSameAll)
+            print("영업시간: \(open) ~ \(close)")
+
+            if breakTimesSameAll.isEmpty {
+                print("휴게시간 없음")
+            } else {
+                for (index, breakTime) in breakTimesSameAll.enumerated() {
+                    let start = dateFormatter.string(from: breakTime.breakStartTime)
+                    let end = dateFormatter.string(from: breakTime.breakEndTime)
+                    print("휴게시간 \(index + 1): \(start) ~ \(end)")
+                }
+            }
         case .weekdayWeekendDifferent:
             if openTimeWeekday == closeTimeWeekday || openTimeWeekend == closeTimeWeekend {
                 errorFound = true
@@ -211,13 +219,43 @@ struct ManageBusinessHoursView: View {
             }
             breakTimesWeekday.removeAll { $0.breakStartTime == $0.breakEndTime }
             breakTimesWeekend.removeAll { $0.breakStartTime == $0.breakEndTime }
+            
+            let dateFormatter: DateFormatter = {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "HH:mm"
+                return formatter
+            }()
+            let weekdayOpen = dateFormatter.string(from: openTimeWeekday)
+            let weekdayClose = dateFormatter.string(from: closeTimeWeekday)
+            print("평일 영업시간: \(weekdayOpen) ~ \(weekdayClose)")
+
+            if breakTimesWeekday.isEmpty {
+                print("평일 휴게시간 없음")
+            } else {
+                for (index, breakTime) in breakTimesWeekday.enumerated() {
+                    let start = dateFormatter.string(from: breakTime.breakStartTime)
+                    let end = dateFormatter.string(from: breakTime.breakEndTime)
+                    print("평일 휴게시간 \(index + 1): \(start) ~ \(end)")
+                }
+            }
+
+            let weekendOpen = dateFormatter.string(from: openTimeWeekend)
+            let weekendClose = dateFormatter.string(from: closeTimeWeekend)
+            print("주말 영업시간: \(weekendOpen) ~ \(weekendClose)")
+
+            if breakTimesWeekend.isEmpty {
+                print("주말 휴게시간 없음")
+            } else {
+                for (index, breakTime) in breakTimesWeekend.enumerated() {
+                    let start = dateFormatter.string(from: breakTime.breakStartTime)
+                    let end = dateFormatter.string(from: breakTime.breakEndTime)
+                    print("주말 휴게시간 \(index + 1): \(start) ~ \(end)")
+                }
+            }
         }
         if !errorFound {
-            //TODO: 데이터 처리 로직 구현
+            //TODO: 영업시간 및 휴게시간 서버로 전송 로직 구현
+            showManageBusinessHours = false
         }
     }
-}
-
-#Preview {
-    ManageBusinessHoursView()
 }

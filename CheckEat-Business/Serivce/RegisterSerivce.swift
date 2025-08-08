@@ -12,9 +12,9 @@ import Alamofire
 
 class RegisterSerivce: ObservableObject {
     
-    // 아이디 중복확인 API
+    // 아이디 중복확인 AuthAPI
     static func checkIDUnique(id: String) -> AnyPublisher<IDUniqueResponse, AFError> {
-        let url =  API.checkIDUniqueURL
+        let url =  AuthAPI.checkIDUniqueURL
         let params: [String: String] = ["id": id]
         return AF.request(url,
                           method: .post,
@@ -26,9 +26,9 @@ class RegisterSerivce: ObservableObject {
         .eraseToAnyPublisher()
     }
     
-    //이메일 중복확인 API
+    //이메일 중복확인 AuthAPI
     static func checkEmailUnique(email: String) -> AnyPublisher<EmailUniqueResponse, AFError> {
-        let url = API.checkEmailUniqueURL
+        let url = AuthAPI.checkEmailUniqueURL
         let params = EmailUniqueRequest(email: email)
         return AF.request(url,
                           method: .post,
@@ -40,9 +40,9 @@ class RegisterSerivce: ObservableObject {
         .eraseToAnyPublisher()
     }
     
-    //이메일 인증 토큰 발송 API
+    //이메일 인증 토큰 발송 AuthAPI
     static func sendEmailToken(email: String, language: String = "ko") -> AnyPublisher<EmailUniqueResponse, AFError> {
-        let url = API.sendEmailTokenURL
+        let url = AuthAPI.sendEmailTokenURL
         let params = SendEmailTokenRequest(email: email, language: language)
         return AF.request(url,
                           method: .post,
@@ -54,9 +54,9 @@ class RegisterSerivce: ObservableObject {
         .eraseToAnyPublisher()
     }
     
-    //이메일 인증 토큰 확인 API
+    //이메일 인증 토큰 확인 AuthAPI
     static func checkEmailToken(email: String, token: String) -> AnyPublisher<CheckEmailTokenResponse, AFError> {
-        let url = API.checkEmailTokenURL
+        let url = AuthAPI.checkEmailTokenURL
         let params = CheckEmailTokenRequest(email: email, token: token)
         return AF.request(url,
                           method: .post,
@@ -68,9 +68,9 @@ class RegisterSerivce: ObservableObject {
         .eraseToAnyPublisher()
     }
     
-    //회원가입 API
+    //회원가입 AuthAPI
     static func signUp(request: RegisterRequest) -> AnyPublisher<RegisterResponse, AFError> {
-        let url = API.signUpURL
+        let url = AuthAPI.signUpURL
         return AF.request(url,
                           method: .post,
                           parameters: request,

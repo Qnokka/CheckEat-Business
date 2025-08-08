@@ -7,8 +7,11 @@
 
 import SwiftUI
 
-//인식실패시 뜨는 뷰
+//MARK: - OCR 스캔 실패시 뜨는 뷰
 struct UnableToRecognize: View {
+    let onRetry: () -> Void
+    let onClose: () -> Void
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             VStack(alignment: .center) {
@@ -23,7 +26,7 @@ struct UnableToRecognize: View {
                     .padding(.top, 10)
                 Spacer()
                 Button {
-                    //다시촬영 OCR부분
+                    onRetry()
                 } label: {
                     Text("다시 촬영")
                         .semibold16()
@@ -37,7 +40,7 @@ struct UnableToRecognize: View {
             .padding(.top, 180)
             
             Button {
-              //
+                onClose()
             } label: {
                Image("xmark")
             }
@@ -47,5 +50,5 @@ struct UnableToRecognize: View {
     }
 }
 #Preview {
-    UnableToRecognize()
+    UnableToRecognize(onRetry: {}, onClose: {})
 }

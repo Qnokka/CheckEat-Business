@@ -9,35 +9,41 @@ import SwiftUI
 
 struct MyPageChangePasswordModalView: View {
     
+    // MARK: 비밀번호 입력값
     @State private var newPassword: String = ""
     @State private var confirmPassword: String = ""
     
+    // MARK: 비밀번호 보기 토글
     @State private var isNewPasswordVisible: Bool = false
     @State private var isConfirmPasswordVisible: Bool = false
     
+    // MARK: 비밀번호 유효성 검사 상태
     @State private var isLengthValid: Bool = false
     @State private var isUpperLowerNumberSpecialValid: Bool = false
     
+    // MARK: 비밀번호 일치 여부
     @State private var isPasswordAgreement: Bool = false
     
+    // MARK: 완료 버튼 활성화 여부
     @State private var editable: Bool = false
-    @State private var showCompleteModal = false
     
+    //MARK: 비밀번호 변경 모달 뷰 상태 값
+    @Binding var showChangePasswordModal: Bool
+    //MARK: 비밀번호 변경 완료 모달 뷰 상태 값
+    @State var showChangePasswordCompleteModal: Bool = false
+    
+    // MARK: 포커스 상태
     @FocusState private var isNewPasswordFocused: Bool
     @FocusState private var isConfirmPasswordFocused: Bool
     
-    @Environment(\.dismiss) var dismiss
-    
     var body: some View {
-        
         VStack(alignment: .leading) {
-            
             HStack {
                 Text("비밀번호 변경")
                     .bold20()
                 Spacer()
                 Button {
-                    dismiss()
+                    showChangePasswordModal = false
                 } label: {
                     Image("xmark")
                 }
@@ -72,7 +78,6 @@ struct MyPageChangePasswordModalView: View {
             }
             .regular14()
             
-            
             VStack(alignment: .leading) {
                 HStack {
                     Image(systemName: isLengthValid ? "checkmark" : "checkmark")
@@ -87,7 +92,7 @@ struct MyPageChangePasswordModalView: View {
                 }
             }
             .regular12()
-            .padding(.vertical, 8)
+            .padding(.top, 4)
             
             Text("비밀번호 확인")
                 .semibold16()
@@ -128,11 +133,11 @@ struct MyPageChangePasswordModalView: View {
                 }
             }
             .regular12()
-            .padding(.vertical, 8)
+            .padding(.top, 4)
             .padding(.bottom, 24)
             
             Button {
-                showCompleteModal = true
+                showChangePasswordCompleteModal = true
                 editable = (isLengthValid && isUpperLowerNumberSpecialValid && isPasswordAgreement)
             } label: {
                 Text("변경하기")
@@ -149,10 +154,10 @@ struct MyPageChangePasswordModalView: View {
             validatePassword()
         }
         .tapToDismissKeyboard()
-        .sheet(isPresented: $showCompleteModal) {
-            MyPageChangePasswordCompleteModalView()
+        .sheet(isPresented: $showChangePasswordCompleteModal) {
+            MyPageChangePasswordCompleteModalView(showChangePasswordModal: $showChangePasswordModal, showChangePasswordCompleteModal: $showChangePasswordCompleteModal)
                 .presentationDragIndicator(.visible)
-                .presentationDetents([.height(350)])
+                .presentationDetents([.fraction(0.5)])
         }
     }
     
@@ -181,7 +186,3 @@ struct MyPageChangePasswordModalView: View {
         return hasUpper && hasLower && hasDigit && hasSpecial
     }
 }
-
-//#Preview {
-//    MyPageChangePasswordModalView()
-//}

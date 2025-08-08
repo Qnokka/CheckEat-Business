@@ -9,8 +9,8 @@ import SwiftUI
 
 struct MyPageBusinessRegistationComplete: View {
     
-    @Binding var isPresented: Bool
-    let onComplete: () -> Void
+    @Binding var parentsPath: [MyPageBusinessReRegistrationRoute]
+    @Binding var showManageLicense: Bool
     
     var body: some View {
         VStack(spacing: 8) {
@@ -28,8 +28,10 @@ struct MyPageBusinessRegistationComplete: View {
             .bold20()
             
             Button {
-                isPresented = false
-                onComplete()
+                showManageLicense = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                    parentsPath.removeAll()
+                }
             } label: {
                 Text("마이페이지")
                     .primaryButtonStyle()
@@ -39,9 +41,7 @@ struct MyPageBusinessRegistationComplete: View {
         }
         .padding()
         .padding(.bottom, 200)
+        .navigationBarBackButtonHidden(true)
     }
 }
 
-//#Preview {
-//    MyPageBusinessRegistationComplete(isPresented: .constant(false), onComplete: {})
-//}

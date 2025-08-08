@@ -22,7 +22,7 @@ struct MenuManagementView: View {
     @State private var search: String = ""
     @State private var selectedItemForDeletion: MenuItem? = nil
     @State private var selectedItemForEdit: MenuItem? = nil
-    @Environment(\.dismiss) private var dismiss
+    @Binding var showMenuManagement: Bool
     
     @State private var menuItems: [MenuItem] = [
         MenuItem(id: UUID(), menuImage: "testImage", menuName: "연어초밥", price: "9,000원", allergInfo: "생선, 간장", veganType: .pesco),
@@ -146,7 +146,7 @@ struct MenuManagementView: View {
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) {
                             Button {
-                                dismiss()
+                                showMenuManagement = false
                             } label: {
                                 Image(systemName: "chevron.backward")
                                     .foregroundStyle(.black)
@@ -170,9 +170,9 @@ struct MenuManagementView: View {
     }
 
 
-#Preview {
-    MenuManagementView()
-}
+//#Preview {
+//    MenuManagementView()
+//}
 
 extension VeganType {
     var isVegan: Bool {

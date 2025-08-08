@@ -6,16 +6,15 @@
 //
 import SwiftUI
 
-// 커스텀 FlowLayout 정의 - ScrollView 호환 버전
 struct FlowLayout<Data: RandomAccessCollection, Content: View>: View where Data.Element: Hashable {
     let data: Data
     let spacing: CGFloat
     let alignment: HorizontalAlignment
     let content: (Data.Element) -> Content
-
+    
     @State private var sizes: [Data.Element: CGSize] = [:]
     @State private var availableWidth: CGFloat = 0
-
+    
     var body: some View {
         ZStack {
             Color.clear
@@ -37,7 +36,7 @@ struct FlowLayout<Data: RandomAccessCollection, Content: View>: View where Data.
             }
         }
     }
-
+    
     func generateContent() -> some View {
         let rows = calculateRows()
         
@@ -46,6 +45,7 @@ struct FlowLayout<Data: RandomAccessCollection, Content: View>: View where Data.
                 HStack(spacing: spacing) {
                     ForEach(row, id: \.self) { item in
                         content(item)
+                            .fixedSize()
                             .background(
                                 GeometryReader { geo in
                                     Color.clear
@@ -53,10 +53,10 @@ struct FlowLayout<Data: RandomAccessCollection, Content: View>: View where Data.
                                 }
                             )
                     }
-                    Spacer(minLength: 0)
                 }
             }
         }
+        .medium16()
         .onPreferenceChange(SizePreferenceKey.self) { preferences in
             sizes = Dictionary(uniqueKeysWithValues: preferences.compactMap { key, value in
                 guard let key = key as? Data.Element else { return nil }
@@ -74,7 +74,7 @@ struct FlowLayout<Data: RandomAccessCollection, Content: View>: View where Data.
         for item in data {
             let itemSize = sizes[item, default: CGSize(width: 90, height: 30)]
             
-            if currentRowWidth + itemSize.width + spacing > availableWidth && !rows[rows.count - 1].isEmpty {
+            if currentRowWidth + itemSize.width + spacing > availableWidth * 0.98 && !rows[rows.count - 1].isEmpty {
                 rows.append([item])
                 currentRowWidth = itemSize.width + spacing
             } else {

@@ -7,8 +7,10 @@
 import SwiftUI
 
 struct CheckBoxButton: View {
+    
     @Binding var isChecked: Bool
     var onToggle: (() -> Void)? = nil
+    
     var body: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.1)) {
@@ -33,10 +35,12 @@ struct CheckBoxButton: View {
         }
     }
 }
- 
+
 struct CheckBoxButtonBlack: View {
+    
     @Binding var isChecked: Bool
     var onToggle: (() -> Void)? = nil
+    
     var body: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.1)) {

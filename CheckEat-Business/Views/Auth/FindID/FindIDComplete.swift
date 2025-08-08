@@ -8,9 +8,16 @@
 import SwiftUI
 
 struct FindIDComplete: View {
-    let userID: String
-    @State var goToLogin: Bool = false
-    @State var goToFindPwd: Bool = false
+    
+    // MARK: 스크린 상태 값
+    @Binding var showFindId: Bool
+    //아이디에서 비밀번호 찾기로 이동하기 위한 상태 값 바인딩
+    @Binding var showFindPwd: Bool
+    // MARK: 하위 경로 스택
+    @Binding var path: [FindIDRoute]
+    // MARK: 전달받은 아이디
+    let foundUserId: String
+    
     var body: some View {
         
         VStack(spacing: 8) {
@@ -20,41 +27,42 @@ struct FindIDComplete: View {
                 .frame(width: 50, height: 50)
                 .foregroundStyle(.green)
                 .padding(.bottom, 16)
-            Text("회원님의 아이디는")
-                .foregroundColor(.buttonOP70)
-                .medium16()
-            Text(userID)
-                .font(.system(size: 16, weight: .semibold))
-            + Text(" 입니다.")
-                .foregroundColor(.buttonOP70)
-                .font(.system(size: 16, weight: .medium))
-                
+            HStack {
+                Text("회원님의 아이디는")
+                Text("\(foundUserId)")
+                    .semibold16()
+                Text(" 입니다.")
+            }
+            .foregroundColor(.buttonOP70)
+            .medium16()
+            
             HStack {
                 Text("비밀번호를 잊으셨나요?")
                     .foregroundStyle(.buttonOP70)
                     .regular14()
                 Button {
-                    goToFindPwd = true
+                    showFindId = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                        path.removeAll()
+                    }
+                    showFindPwd = true
                 } label: {
                     Text("비밀번호 찾기")
                         .bold14()
                         .foregroundStyle(.buttonAuth)
                 }
             }
-            .fullScreenCover(isPresented: $goToFindPwd) {
-                FindPwdView()
-            }
             .padding(.vertical)
             
             Button {
-                goToLogin = true
+                showFindId = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                    path.removeAll()
+                }
             } label: {
                 Text("로그인")
                     .primaryButtonStyle()
                     .semibold16()
-            }
-            .fullScreenCover(isPresented: $goToLogin) {
-                LoginView()
             }
             .padding(.vertical, 8)
         }
@@ -63,7 +71,3 @@ struct FindIDComplete: View {
     }
     
 }
-
-//#Preview {
-//    FindIDComplete(userID: "test1234")
-//}

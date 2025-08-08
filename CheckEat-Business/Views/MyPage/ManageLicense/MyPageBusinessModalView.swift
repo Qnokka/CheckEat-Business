@@ -9,14 +9,11 @@ import SwiftUI
 
 struct MyPageBusinessModalView: View {
     
-    
-    @Binding var isPresented: Bool
-    @Binding var parentIsPresented: Bool
-    //MyPageBusinessReRegistration의 isPresented
-    let onComplete: () -> Void
-    
-    @State var OCRScanSuccess: Bool = false
-    @Environment(\.dismiss) var dismiss
+    // MARK: 부모뷰 스택
+    @Binding var parentsPath: [MyPageBusinessReRegistrationRoute]
+    //MARK: 사업자등록증 재등록 모달 상태 값
+    @Binding var showBusinessReRegistrationModal: Bool
+    @Binding var showManageLicense: Bool
     
     var body: some View {
         VStack(alignment: .leading){
@@ -25,7 +22,7 @@ struct MyPageBusinessModalView: View {
                     .bold20()
                 Spacer()
                 Button {
-                    isPresented = false
+                    showBusinessReRegistrationModal = false
                 } label: {
                     Image("xmark")
                 }
@@ -51,10 +48,10 @@ struct MyPageBusinessModalView: View {
                 .padding(.leading, 20)
                 .regular14()
             }
-            
             Button {
-                //TODO: OCR 스캔 성공 판단 여부 로직 구현
-                OCRScanSuccess = true
+                showBusinessReRegistrationModal = false
+                //TODO: OCR 스캔 페이지 구현
+                parentsPath.append(.scan)
             } label: {
                 Text("사업자 등록증 스캔하기")
                     .semibold16()
@@ -62,17 +59,7 @@ struct MyPageBusinessModalView: View {
                     .padding(.vertical)
             }
         }
-        .onAppear {
-            OCRScanSuccess = false
-        }
         .padding(.horizontal)
-        .padding(.top, 50)
-        .fullScreenCover(isPresented: $OCRScanSuccess) {
-            MyPageBusinessRegistation(isPresented: $OCRScanSuccess, parentIsPresented:$parentIsPresented, onCompletion: onComplete)
-            }
+        .padding(.top, 35)
     }
 }
-
-//#Preview {
-//    MyPageBusinessModalView(isPresented: .constant(true), parentIsPresented: .constant(true), onComplete: {})
-//}

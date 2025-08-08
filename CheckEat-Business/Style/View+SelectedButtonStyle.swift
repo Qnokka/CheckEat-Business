@@ -10,7 +10,7 @@ import SwiftUI
 struct SelectedButtonStyle: ViewModifier {
     var isSelected: Bool
     var width: CGFloat? = nil
-
+    
     func body(content: Content) -> some View {
         content
             .semibold16()
