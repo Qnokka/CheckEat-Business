@@ -7,10 +7,6 @@
 
 import Foundation
 
-<<<<<<<< HEAD:CheckEat-Business/Models/Auth.swift
-========
-
->>>>>>>> origin/feat/DeleteStoreAPI:CheckEat-Business/Models/Auth/Auth.swift
 //MARK: - 로그인
 //로그인 요청
 struct LoginRequest: Codable {
@@ -42,7 +38,7 @@ struct CheckIdTokenResponse: Decodable {
 struct LogID: Decodable {
     let ld_log_id: String
 }
-<<<<<<<< HEAD:CheckEat-Business/Models/Auth.swift
+
 //MARK: - 비밀번호 찾기
 //비밀번호찾기 토큰 요청
 struct FindPwTokenRequest: Codable {
@@ -75,25 +71,19 @@ struct FindPwChangeResponse: Codable {
     let message: String
     let status: String
 }
-========
->>>>>>>> origin/feat/DeleteStoreAPI:CheckEat-Business/Models/Auth/Auth.swift
+
 //MARK: - 회원가입
 //회원가입 요청
 struct RegisterRequest: Codable {
     let log_Id: String
     let log_pwd: String
     let email: String
-<<<<<<<< HEAD:CheckEat-Business/Models/Auth.swift
     let allergy: String?
     let nickname: String
     let commonAllergies: [Int]?
     let vegan: Int?
     let isHalal: Int?
     let ld_lang: String
-========
-    let nickname: String
-
->>>>>>>> origin/feat/DeleteStoreAPI:CheckEat-Business/Models/Auth/Auth.swift
 }
 //회원가입 응답
 struct RegisterResponse: Decodable {

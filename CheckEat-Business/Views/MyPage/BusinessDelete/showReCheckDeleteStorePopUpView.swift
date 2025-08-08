@@ -17,6 +17,9 @@ struct showReCheckDeleteStorePopUpView: View {
     
     @Binding var storeName: String
     
+    //MARK: 업체 삭제 뷰모델 선언
+    @StateObject private var viewModel = DeleteStoreViewModel()
+    
     var body: some View {
         ZStack {
             Color.black.opacity(0.4)
@@ -44,7 +47,9 @@ struct showReCheckDeleteStorePopUpView: View {
                         .padding()
                         Button {
                             //TODO: 삭제 로직 구현 - 성공시에만 추가
-                            path.append(.deleteStoreComplete)
+                            viewModel.deleteStore {
+                                path.append(.deleteStoreComplete)
+                            }
                         } label: {
                             Text("삭제하기")
                                 .primaryButtonStyle()
