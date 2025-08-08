@@ -40,6 +40,10 @@ class LoginViewModel: ObservableObject {
                 }
             } receiveValue: { data in
                 print("로그인성공 \(data)")
+                //MARK: 로그인 성공시 토큰 저장
+                let access = data.accessToken
+                let refresh = data.refreshToken
+                TokenManager.shared.save(accessToken: access, refreshToken: refresh)
                 self.session.login(with: data)
             }
             .store(in: &cancellables)

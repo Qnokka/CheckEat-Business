@@ -53,7 +53,6 @@ struct showReCheckDeleteStorePopUpView: View {
                         } label: {
                             Text("삭제하기")
                                 .primaryButtonStyle()
-                            
                         }
                         .padding(.trailing)
                     }
