@@ -7,6 +7,21 @@
 
 import SwiftUI
 
+class SessionManager: ObservableObject {
+    @Published var isLoggedIn = false
+    @Published var userData: LoginResponse?
+
+    func login(with data: LoginResponse) {
+        self.isLoggedIn = true
+        self.userData = data
+    }
+
+    func logout() {
+        self.isLoggedIn = false
+        self.userData = nil
+    }
+}
+
 class AppTabViewModel: ObservableObject {
     @Published var selectedTab: CheckEat_BusinessApp.Tab = .home
 }
@@ -20,40 +35,17 @@ struct CheckEat_BusinessApp: App {
     
     let tabBarHeight: CGFloat = 50
     @StateObject private var tabViewModel = AppTabViewModel()
+    @StateObject private var session = SessionManager()
     
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                switch tabViewModel.selectedTab {
-                case .home:
-                    VStack(spacing: 0) {
-                        NavigationStack {
-                            HomeMainView()
-                        }
-                        .padding(.bottom, tabBarHeight)
-                    }
-                case .menu:
-                    VStack(spacing: 0) {
-                        NavigationStack {
-                            OCRScanResultView()
-                        }
-                        .padding(.bottom, tabBarHeight)
-                    }
-                case .myPage:
-                    VStack(spacing: 0) {
-                        NavigationStack {
-                            MyPageView()
-                        }
-                        .padding(.bottom, tabBarHeight)
-                    }
-                }
-                
-                VStack {
-                    Spacer()
-                    if true {
-                        CustomTabBar(selectedTab: $tabViewModel.selectedTab)
-                    }
-                }
+            if session.isLoggedIn {
+                MainTabView()
+                    .environmentObject(session)
+                    .environmentObject(tabViewModel)
+            } else {
+                LoginView(session: session)
+                    .environmentObject(session)
             }
         }
     }
