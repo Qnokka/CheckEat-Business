@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct DayOffManagementView: View {
-    @Environment(\.dismiss) private var dismiss
+    
+    //MARK: 스크린 상태 값
+    @Binding var showManageHoliday: Bool
+    
     @State private var hasDayOff = true
     let options = ["매주", "격주", "매월"]
     let days = ["월","화","수","목","금","토","일"]
@@ -50,8 +53,8 @@ struct DayOffManagementView: View {
         }
     }
     var body: some View {
-        ZStack {
-            NavigationStack {
+        NavigationView {
+            ZStack {
                 VStack(alignment: .leading) {
                     Text("휴무일")
                         .semibold14()
@@ -147,7 +150,8 @@ struct DayOffManagementView: View {
                         }
                     }
                     Button {
-                        
+                        //TODO: 실제 로직 구현
+                        showManageHoliday = false
                     } label: {
                         Text("완료")
                             .semibold16()
@@ -159,32 +163,29 @@ struct DayOffManagementView: View {
                 }
                 .padding(.leading, 15)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                .navigationTitle("휴무일 관리")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "chevron.backward")
-                                .foregroundStyle(.black)
-                        }
+            }
+            .navigationTitle("휴무일 관리")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showManageHoliday = false
+                    } label: {
+                        Image(systemName: "chevron.backward")
+                            .foregroundStyle(.black)
                     }
                 }
             }
-            if isExpanded {
-                DropdownOptionList(
-                    options: options,
-                    selectionOption: $selectionOption,
-                    isExpanded: $isExpanded,
-                    position: dropdownPosition,
-                    dropdownSpacing: dropdownSpacing
-                )
-            }
+            
+        }
+        if isExpanded {
+            DropdownOptionList(
+                options: options,
+                selectionOption: $selectionOption,
+                isExpanded: $isExpanded,
+                position: dropdownPosition,
+                dropdownSpacing: dropdownSpacing
+            )
         }
     }
-}
-
-#Preview {
-    DayOffManagementView()
 }
