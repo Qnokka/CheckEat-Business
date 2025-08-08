@@ -62,7 +62,8 @@ struct RegiMenuStep1: View {
                 .padding(.horizontal, 20)
             }
             .padding(.top)
-            
+        }
+        .safeAreaInset(edge: .bottom) {
             Button {
                 path.append(.registerMenuStep2)
             } label: {
@@ -71,7 +72,9 @@ struct RegiMenuStep1: View {
                     .primaryButtonStyle()
             }
             .padding(.horizontal)
-            .padding(.bottom, 24)
+            .padding(.top, 8)
+            .padding(.bottom, 35)
+            .background(Color(uiColor: .systemBackground))
         }
         .padding(.horizontal)
         .onAppear {

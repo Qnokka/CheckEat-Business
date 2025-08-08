@@ -100,7 +100,8 @@ struct RegiMenuStep6: View {
                 Spacer()
                 
             }
-            
+        }
+        .safeAreaInset(edge: .bottom) {
             HStack(spacing: 12) {
                 Button {
                     path.removeLast()
@@ -120,7 +121,9 @@ struct RegiMenuStep6: View {
                 }
             }
             .padding(.horizontal)
-            .padding(.bottom, 24)
+            .padding(.top, 8)
+            .padding(.bottom, 35)
+            .background(Color(uiColor: .systemBackground))
         }
         .navigationTitle("메뉴 등록")
         .navigationBarTitleDisplayMode(.inline)

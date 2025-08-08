@@ -23,6 +23,8 @@ struct RegiMenuStep4: View {
     @Binding var sauce: [String]
     //MARK: 가격 입력 필드 내용 저장 변수
     @Binding var price: String
+    //MARK: 키보드 dismiss
+    @FocusState private var isInputFocused: Bool
     
     private var isNextButtonEnabled: Bool {
         !price.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -34,47 +36,53 @@ struct RegiMenuStep4: View {
     let onReset: () -> Void
     
     var body: some View {
-        VStack(spacing: 12) {
-            
-            let screenWidth = UIScreen.main.bounds.width
-            let screenHeight = UIScreen.main.bounds.height
-            
-            Image(scanImageName)
-                .frame(width: screenWidth, height: screenHeight*0.3)
-                .padding(.top, -8)
-            
-            Text(scanMenuName)
-                .bold18()
-                .padding(.top, -12)
-            
-            Text("메뉴의 가격을 알려주세요.")
-                .regular16()
-                .foregroundStyle(.buttonOP50)
-                .padding(.bottom, 8)
-            
-            VStack(alignment: .leading) {
-                Text("가격")
-                TextFieldStyle(
-                    placeholder: "가격을 입력해주세요.",
-                    text: $price
-                )
-                .keyboardType(.numberPad)
+        ScrollView {
+            VStack(spacing: 12) {
+                
+                let screenWidth = UIScreen.main.bounds.width
+                let screenHeight = UIScreen.main.bounds.height
+                
+                Image(scanImageName)
+                    .frame(width: screenWidth, height: screenHeight*0.3)
+                    .padding(.top, -8)
+                
+                Text(scanMenuName)
+                    .bold18()
+                    .padding(.top, -12)
+                
+                Text("메뉴의 가격을 알려주세요.")
+                    .regular16()
+                    .foregroundStyle(.buttonOP50)
+                    .padding(.bottom, 8)
+                
+                VStack(alignment: .leading) {
+                    Text("가격")
+                    TextFieldStyle(
+                        placeholder: "가격을 입력해주세요.",
+                        text: $price
+                    )
+                    .focused($isInputFocused)
+                    .keyboardType(.numberPad)
+                }
+                .semibold14()
+                .padding(.horizontal)
+                
+                Spacer()
+                
+                Button {
+                    path.append(.registerMenuStep5)
+                } label: {
+                    Text("다음")
+                        .semibold16()
+                        .primaryButtonStyle(isEnabled: isNextButtonEnabled)
+                }
+                .disabled(!isNextButtonEnabled)
+                .padding(.horizontal)
+                .padding(.bottom, 24)
             }
-            .semibold14()
-            .padding(.horizontal)
-            
-            Spacer()
-            
-            Button {
-                path.append(.registerMenuStep5)
-            } label: {
-                Text("다음")
-                    .semibold16()
-                    .primaryButtonStyle(isEnabled: isNextButtonEnabled)
-            }
-            .disabled(!isNextButtonEnabled)
-            .padding(.horizontal)
-            .padding(.bottom, 24)
+        }
+        .onTapGesture {
+            isInputFocused = false
         }
         .navigationTitle("메뉴 등록")
         .navigationBarTitleDisplayMode(.inline)

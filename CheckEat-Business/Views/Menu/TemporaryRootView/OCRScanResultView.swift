@@ -39,6 +39,10 @@ struct OCRScanResultView: View {
     @State var showMenuRegiCompletePopUp: Bool = false
     //MARK: 메뉴 등록 중단 팝업 창 상태
     @State var showMenuRegiResetPopUp: Bool = false
+    
+    @EnvironmentObject var session: SessionManager
+    
+    //FIXME: OCR 루트뷰 추가 후 삭제
     @Environment(\.dismiss) private var dismiss
     
     func resetInputs() {
@@ -86,7 +90,8 @@ struct OCRScanResultView: View {
                 }
                 
                 Spacer()
-                
+            }
+            .safeAreaInset(edge: .bottom) {
                 Button {
                     path.append(.registerMenuStep1)
                 } label: {
@@ -94,8 +99,10 @@ struct OCRScanResultView: View {
                         .semibold16()
                         .primaryButtonStyle()
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 24)
+                .padding(.horizontal)
+                .padding(.top, 8)
+                .padding(.bottom, 35)
+                .background(Color(uiColor: .systemBackground))
             }
             .sheet(isPresented: $showPassivityModal) {
                 PassivityMenuModalView(

@@ -23,6 +23,8 @@ struct RegiMenuStep3: View {
     @Binding var sauce: [String]
     //MARK: 추출된 재료+입력한 추가 재료 네이밍 담을 배열
     @Binding var finalMaterials: [String]
+    //MARK: 키보드 dismiss
+    @FocusState private var isInputFocused: Bool
     
     private var isNextButtonEnabled: Bool {
         let parsed = parseMaterials(from: materials)
@@ -43,83 +45,93 @@ struct RegiMenuStep3: View {
     let onReset: () -> Void
     
     var body: some View {
-        VStack(spacing: 12) {
-            
-            let screenWidth = UIScreen.main.bounds.width
-            let screenHeight = UIScreen.main.bounds.height
-            
-            Image(scanImageName)
-                .frame(width: screenWidth, height: screenHeight*0.3)
-                .padding(.top, -8)
-            
-            Text(scanMenuName)
-                .bold18()
-                .padding(.top, -12)
-            
-            Text("누락된 재료나 육수/소스로 사용한 재료를\n쉼표(,)로 구분해서 작성해주세요.")
-                .foregroundStyle(.buttonOP50)
-                .multilineTextAlignment(.center)
-                .regular16()
-            
-            Text("*양식과 다를 경우, 정보 제공의 정확성이 떨어지거나 누락될 수 있습니다.")
-                .foregroundStyle(.red)
-                .multilineTextAlignment(.center)
-                .regular12()
-                .padding(.bottom, 8)
-            
-            ScrollView {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("재료")
-                    TextFieldStyle(
-                        placeholder: "선택한 재료 외에 추가 재료가 있다면 입력해주세요.",
-                        text: Binding(
-                            get: { materials.joined(separator: ", ") },
-                            set: { materials = $0.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } }
-                        )
-                    )
-                    
-                    Text("육수")
-                    TextFieldStyle(
-                        placeholder: "육수로 사용한 재료를 입력해주세요.",
-                        text: Binding(
-                            get: { broth.joined(separator: ", ") },
-                            set: { broth = $0.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } }
-                        )
-                    )
-                    
-                    Text("소스")
-                    TextFieldStyle(
-                        placeholder: "소스로 사용한 재료를 입력해주세요.",
-                        text: Binding(
-                            get: { sauce.joined(separator: ", ") },
-                            set: { sauce = $0.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } }
-                        )
-                    )
-                }
-                .semibold14()
-                .padding(.horizontal)
-            }
-            
-            Button {
-                let allAdditionalMaterials = parseMaterials(from: materials)
-                + parseMaterials(from: broth)
-                + parseMaterials(from: sauce)
+        ScrollView {
+            VStack(spacing: 12) {
                 
-                if allAdditionalMaterials.isEmpty {
-                    finalMaterials = Array(selectedMarterialsID).sorted()
-                } else {
-                    finalMaterials = Array(selectedMarterialsID.union(allAdditionalMaterials)).sorted()
+                let screenWidth = UIScreen.main.bounds.width
+                let screenHeight = UIScreen.main.bounds.height
+                
+                Image(scanImageName)
+                    .frame(width: screenWidth, height: screenHeight*0.3)
+                    .padding(.top, -8)
+                
+                Text(scanMenuName)
+                    .bold18()
+                    .padding(.top, -12)
+                
+                Text("누락된 재료나 육수/소스로 사용한 재료를\n쉼표(,)로 구분해서 작성해주세요.")
+                    .foregroundStyle(.buttonOP50)
+                    .multilineTextAlignment(.center)
+                    .regular16()
+                
+                Text("*양식과 다를 경우, 정보 제공의 정확성이 떨어지거나 누락될 수 있습니다.")
+                    .foregroundStyle(.red)
+                    .multilineTextAlignment(.center)
+                    .regular12()
+                    .padding(.bottom, 12)
+                
+                Group {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("재료")
+                        TextFieldStyle(
+                            placeholder: "선택한 재료 외에 추가 재료가 있다면 입력해주세요.",
+                            text: Binding(
+                                get: { materials.joined(separator: ", ") },
+                                set: { materials = $0.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } }
+                            )
+                        )
+                        .focused($isInputFocused)
+                        
+                        Text("육수")
+                        TextFieldStyle(
+                            placeholder: "육수로 사용한 재료를 입력해주세요.",
+                            text: Binding(
+                                get: { broth.joined(separator: ", ") },
+                                set: { broth = $0.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } }
+                            )
+                        )
+                        .focused($isInputFocused)
+                        
+                        Text("소스")
+                        TextFieldStyle(
+                            placeholder: "소스로 사용한 재료를 입력해주세요.",
+                            text: Binding(
+                                get: { sauce.joined(separator: ", ") },
+                                set: { sauce = $0.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } }
+                            )
+                        )
+                        .focused($isInputFocused)
+                    }
+                    .semibold14()
+                    .padding(.horizontal)
                 }
-                print("✅ 최종 재료 목록:", finalMaterials)
-                path.append(.registerMenuStep4)
-            } label: {
-                Text("다음")
-                    .semibold16()
-                    .primaryButtonStyle(isEnabled: isNextButtonEnabled)
+                .padding(.top, 12)
+                
+                Button {
+                    let allAdditionalMaterials = parseMaterials(from: materials)
+                    + parseMaterials(from: broth)
+                    + parseMaterials(from: sauce)
+                    
+                    if allAdditionalMaterials.isEmpty {
+                        finalMaterials = Array(selectedMarterialsID).sorted()
+                    } else {
+                        finalMaterials = Array(selectedMarterialsID.union(allAdditionalMaterials)).sorted()
+                    }
+                    print("✅ 최종 재료 목록:", finalMaterials)
+                    path.append(.registerMenuStep4)
+                } label: {
+                    Text("다음")
+                        .semibold16()
+                        .primaryButtonStyle(isEnabled: isNextButtonEnabled)
+                }
+                .disabled(!isNextButtonEnabled)
+                .padding(.horizontal)
+                .padding(.top, 24)
+                .padding(.bottom, 35)
             }
-            .disabled(!isNextButtonEnabled)
-            .padding(.horizontal)
-            .padding(.bottom, 24)
+            .onTapGesture {
+                isInputFocused = false
+            }
         }
         .onDisappear {
             if !path.contains(.registerMenuStep3) {

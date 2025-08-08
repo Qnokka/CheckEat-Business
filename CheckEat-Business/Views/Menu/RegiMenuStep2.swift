@@ -91,8 +91,10 @@ struct RegiMenuStep2: View {
                 }
                 .padding(.horizontal, 20)
             }
-            .padding(.vertical)
-            
+            .padding(.top)
+            .padding(.bottom, 4)
+        }
+        .safeAreaInset(edge: .bottom) {
             HStack(spacing: 12) {
                 Button {
                     print("✅ 최종 재료 목록:", selectedMarterialsID)
@@ -113,7 +115,9 @@ struct RegiMenuStep2: View {
                 }
             }
             .padding(.horizontal)
-            .padding(.bottom, 24)
+            .padding(.top, 8)
+            .padding(.bottom, 35)
+            .background(Color(uiColor: .systemBackground))
         }
         .padding(.horizontal)
         .navigationTitle("메뉴 등록")
