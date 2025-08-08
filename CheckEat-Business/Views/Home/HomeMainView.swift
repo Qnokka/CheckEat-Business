@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeMainView: View {
     
     @State private var path: [String] = []
+    @EnvironmentObject var session: SessionManager
     
     let dummyReviews = [
         (
