@@ -9,7 +9,10 @@ import SwiftUI
 
 struct BusinessRegistrationComplete: View {
     
-    @State private var goToLogin: Bool = false
+    // MARK: 스크린 상태 값
+    @Binding var showRegister: Bool
+    //MARK: 하위 스택 경로
+    @Binding var path: [RegisterRoute]
     
     var body: some View {
         
@@ -27,32 +30,30 @@ struct BusinessRegistrationComplete: View {
             .bold20()
             
             Button {
-                goToLogin = true
+                showRegister = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                    path.removeAll()
+                }
             } label: {
                 Text("로그인")
                     .primaryButtonStyle()
                     .semibold16()
             }
             .padding(.vertical, 24)
-            .fullScreenCover(isPresented: $goToLogin) {
-                LoginView()
-            }
             
-            Button {
-                //TODO: 메뉴등록페이지로 이동
-            } label: {
-                Text("메뉴 정보 등록하기")
-                    .semibold16()
-                    .foregroundStyle(Color("Button_Enable"))
-
-            }
+            //            Button {
+            //                //TODO: 메뉴등록페이지로 이동
+            //            } label: {
+            //                Text("메뉴 정보 등록하기")
+            //                    .semibold16()
+            //                    .foregroundStyle(Color("Button_Enable"))
+            //
+            //            }
         }
         .padding()
         .padding(.bottom, 200)
-       
+        .navigationBarBackButtonHidden(true)
+        
     }
 }
 
-//#Preview {
-//    BusinessRegistrationComplete()
-//}

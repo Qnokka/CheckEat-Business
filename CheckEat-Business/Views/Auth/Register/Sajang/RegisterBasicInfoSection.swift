@@ -1,5 +1,5 @@
 //
-//  JoinBasicInfoSection.swift
+//  RegisterBasicInfoSection.swift
 //  CheckEat-Business
 //
 //  Created by Hee  on 7/9/25.
@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-struct JoinBasicInfoSection: View {
+struct RegisterBasicInfoSection: View {
+    
+    //MARK: 아이디, 비밀번호 확인
     @Binding var id: String
     @Binding var password: String
     @Binding var passwordConfirm: String
@@ -15,9 +17,11 @@ struct JoinBasicInfoSection: View {
     @Binding var isPasswordConfirmVisible: Bool
     @Binding var isPasswordValid: Bool
     @Binding var isLengthValid: Bool
+    
+    @FocusState.Binding var fieldIsFocused: Bool
     @FocusState.Binding var isPasswordFocused: Bool
     @FocusState.Binding var isPasswordConfirmFocused: Bool
-    @FocusState.Binding var fieldIsFocused: Bool
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text("아이디")
@@ -55,13 +59,12 @@ struct JoinBasicInfoSection: View {
                 }
                 .font(.system(size: 14))
                 .focused($fieldIsFocused)
-
-                .focused($isPasswordFocused)
                 .frame(height: 36)
                 .onChange(of: password) { newVaule in
                     isPasswordValid = isValidPassword(newVaule)
                     isLengthValid = newVaule.count >= 8
                 }
+                .focused($isPasswordFocused)
                 Button {
                     isPasswordVisible.toggle()
                 } label: {
@@ -100,10 +103,9 @@ struct JoinBasicInfoSection: View {
                         SecureField("비밀번호를 한번더 입력해주세요", text: $passwordConfirm)
                     }
                 }
-                .focused($fieldIsFocused)
+                .focused($isPasswordConfirmFocused)
                 .font(.system(size: 14))
                 .padding(.top, 5)
-                .focused($isPasswordConfirmFocused)
                 .frame(height: 40)
                 Button {
                     isPasswordConfirmVisible.toggle()
@@ -149,4 +151,3 @@ struct JoinBasicInfoSection: View {
         return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: password)
     }
 }
-

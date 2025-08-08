@@ -7,18 +7,6 @@
 
 import SwiftUI
 
-enum BusinessType: String, CaseIterable, Identifiable {
-    case none = "업태를 선택하세요"
-    case food = "음식점"
-    case cafe = "카페"
-
-    var id: String { rawValue }
-
-    var description: String {
-        return rawValue
-    }
-}
-
 struct BusinessTypeDropDown: View {
     
     @Binding var selected: BusinessType

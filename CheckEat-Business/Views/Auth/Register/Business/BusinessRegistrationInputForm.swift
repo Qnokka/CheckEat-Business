@@ -17,8 +17,8 @@ struct BusinessRegistrationInputForm: View {
     @Binding var address: String                // 주소 - 이건 검증에서 필수 아님
     @Binding var phoneNumber: String            // 전화번호 - 이건 검증에서 필수 아님
     @Binding var storeNameKR: String            // 가게명 - 이건 검증에서 필수 아님
-    @Binding var storeNameEN: String?           // 가게명 (영문) - 이건 검증에서 필수 아님
-    @Binding var businessType: BusinessType     // 구분 : 음식점 또는 카페 - 이건 검증에서 필수 아님
+    @Binding var storeNameEN: String            // 가게명 (영문) - 이건 검증에서 필수 아님
+    @Binding var businessType: BusinessType     // 업태 : 음식점 또는 카페 - 이건 검증에서 필수 아님
 
     @FocusState.Binding var fieldIsFocused: Bool
     
@@ -78,14 +78,14 @@ struct BusinessRegistrationInputForm: View {
                 .padding(.bottom)
                 .focused($fieldIsFocused)
             
-            Text("영문 가게명 (선택)").semibold16()
-            UnderLinedTextField(placeholder: "OCR 스캔된 값", text: Binding(
-                get: { storeNameEN ?? "" },
-                set: { storeNameEN = $0.isEmpty ? nil : $0 }
-            ))
+            Text("영문 가게명").semibold16()
+            UnderLinedTextField(placeholder: "업체 정보에 노출될 영문 가게명 입력", text: $storeNameEN)
                 .regular14()
                 .padding(.bottom, 35)
                 .focused($fieldIsFocused)
+        }
+        .onTapGesture {
+            fieldIsFocused = false
         }
     }
 }

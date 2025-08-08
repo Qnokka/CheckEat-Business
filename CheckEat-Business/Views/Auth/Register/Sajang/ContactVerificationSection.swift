@@ -16,6 +16,7 @@ struct ContactVerificationSection: View {
     private let correctAuthCode = "1234"
     @State private var isVerificationCodeValid: Bool = false
     @FocusState.Binding var fieldIsFocused: Bool
+    
     var body: some View {
         VStack(alignment: .leading){
             Text("휴대폰 번호")
