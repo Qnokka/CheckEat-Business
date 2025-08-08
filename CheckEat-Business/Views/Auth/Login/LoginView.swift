@@ -10,14 +10,19 @@ import SwiftUI
 struct LoginView: View {
     
     //MARK: - userId,userPassword,testId,testPassword,loginError 삭제
+    
+    @EnvironmentObject var session: SessionManager
+    @StateObject private var viewModel: LoginViewModel
+    
+    init(session: SessionManager) {
+        _viewModel = StateObject(wrappedValue: LoginViewModel(session: session))
+    }
+    
     @State private var isPasswordVisible: Bool = false
     @State private var showFindId: Bool = false
     @State private var showFindPwd: Bool = false
-    @State private var showJoin: Bool = false
-    @State private var goToMyPage: Bool = false 
-
-    @StateObject private var viewModel = LoginViewModel()
-
+    @State private var showRegister: Bool = false
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -70,16 +75,11 @@ struct LoginView: View {
                         .padding(.bottom, 24)
                     
                     Button {
-                        //TODO: 로그인 인증 로직 구현
-                        //MARK: - 테스트 ID,PWD 부분 삭제
                         viewModel.login()
                     } label: {
                         Text("로그인")
                             .primaryButtonStyle()
                             .semibold16()
-                    }
-                    .fullScreenCover(isPresented: $viewModel.loginSuccess) {
-                        MyPageView()
                     }
                     
                     HStack {
@@ -91,7 +91,7 @@ struct LoginView: View {
                                 .foregroundStyle(.buttonOP50)
                         }
                         .fullScreenCover(isPresented: $showFindId) {
-                            FindIDView()
+                            FindIDView(showFindId: $showFindId, showFindPwd: $showFindPwd)
                         }
                         Text(" | ")
                             .foregroundStyle(.buttonOP50)
@@ -102,7 +102,7 @@ struct LoginView: View {
                                 .foregroundStyle(.buttonOP50)
                         }
                         .fullScreenCover(isPresented: $showFindPwd) {
-                            FindPwdView()
+                            FindPwdView(showFindPwd: $showFindPwd)
                         }
                         Spacer()
                     }
@@ -125,14 +125,14 @@ struct LoginView: View {
                         Text("아직 회원이 아니신가요?")
                             .regular14()
                         Button {
-                            showJoin = true
+                            showRegister = true
                         } label: {
                             Text("회원가입")
                                 .semibold14()
                                 .foregroundStyle(.buttonAuth)
                         }
-                        .fullScreenCover(isPresented: $showJoin) {
-                            JoinView()
+                        .fullScreenCover(isPresented: $showRegister) {
+                            RegisterView(showRegister: $showRegister)
                         }
                         Spacer()
                     }
