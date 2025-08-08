@@ -8,17 +8,18 @@
 import SwiftUI
 //MARK: 마이페이지 커스텀 더보기 메뉴 코드 뜯어보기
 struct MyPageMoreMenu: View {
-    @Binding var isPresented: Bool
+    
+    @Binding var showMoreMenu: Bool
     let actions: [(title: String, action: () -> Void)]
     let anchor: CGRect
     
     var body: some View {
-        if isPresented {
+        if showMoreMenu {
             VStack(spacing: 0) {
                 ForEach(actions.indices, id: \.self) { idx in
                     Button {
                         actions[idx].action()
-                        isPresented = false
+                        showMoreMenu = false
                     } label: {
                         Text(actions[idx].title)
                             .regular14()
@@ -45,7 +46,7 @@ struct MyPageMoreMenu: View {
                     .ignoresSafeArea()
                     .onTapGesture {
                         withAnimation {
-                            isPresented = false
+                            showMoreMenu = false
                         }
                     }
             )
