@@ -124,7 +124,7 @@ struct MyPageView: View {
             ManageBusinessHoursView(showManageBusinessHours: $showManageBusinessHours)
         }
         .fullScreenCover(isPresented: $showManageHoliday) {
-            DayOffManagementView(showManageHoliday: $showManageHoliday)
+            DayOffManagementView(showManageHoliday: $showManageHoliday, storeId: viewModel.selectedStoreId ?? -1)
         }
         .fullScreenCover(isPresented: $showManageLicense) {
             MyPageBusinessReRegistration(showManageLicense: $showManageLicense, businessName: $viewModel.businessName, storePhone: $storePhone, storeName: $storeName)
