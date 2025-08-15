@@ -87,7 +87,7 @@ struct DropdownOptionList: View {
             .frame(width: 77)
             .position(
                 x: position.x + 38.5,
-                y: position.y + 40 + dropdownSpacing
+                y: position.y + 10 + dropdownSpacing
             )
             
             .zIndex(1000)

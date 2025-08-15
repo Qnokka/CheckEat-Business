@@ -79,4 +79,5 @@ class RegisterSerivce: ObservableObject {
         .value()
         .eraseToAnyPublisher()
     }
+    
 }

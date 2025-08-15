@@ -13,7 +13,14 @@ struct BusinessRegistrationView: View {
     @Binding var showRegister: Bool
     //MARK: 하위 스택 경로
     @Binding var path: [RegisterRoute]
-    
+    //MARK: OCR 스캔용 앨범,카메라
+    @State private var showSourcePicker = false
+    @State private var showImagePicker = false
+    @State private var selectedSourceType: UIImagePickerController.SourceType = .camera
+    //MARK: 스캔이미지
+    @State private var scanImageName: UIImage?
+    //MARK: OCR 로딩뷰
+    @State private var isLoading: Bool = false
     var body: some View {
         VStack {
             HStack {
@@ -43,9 +50,7 @@ struct BusinessRegistrationView: View {
                 Text("정확성을 보장하지 않습니다.")
                     .foregroundColor(Color(.buttonOP50))
                 Button {
-                    //TODO: OCR 스캔 로직 구현
-                    //MARK: - 우선은 버튼 누르면 다음 화면으로 이동
-                    path.append(.businessScanResult)
+                    showSourcePicker = true
                 } label: {
                     Text("사업자 등록증 스캔하기")
                         .semibold16()
@@ -53,6 +58,35 @@ struct BusinessRegistrationView: View {
                         .padding(.vertical, 24)
                 }
             }
+            .actionSheet(isPresented: $showSourcePicker) {
+                ActionSheet(
+                    title: Text("이미지를 선택하세요"),
+                    buttons: [
+                        .default(Text("카메라로 촬영")) {
+                            selectedSourceType = .camera
+                            showImagePicker = true
+                        },
+                        .default(Text("앨범에서 선택")) {
+                            selectedSourceType = .photoLibrary
+                            showImagePicker = true
+                        },
+                        .cancel() {
+                            showSourcePicker = false
+                        }
+                    ]
+                )
+            }
+            .fullScreenCover(isPresented: $showImagePicker) {
+                CameraCaptureView(
+                    capturedImage: $scanImageName,
+                    onDismiss: {
+                        showImagePicker = false
+                    },
+                    sourceType: selectedSourceType
+                )
+                .ignoresSafeArea()
+            }
+
             .frame(maxHeight: .infinity, alignment: .top)
             
             Spacer()

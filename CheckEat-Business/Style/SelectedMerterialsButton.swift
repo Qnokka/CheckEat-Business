@@ -33,12 +33,10 @@ struct SelectedMerterialsButton: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .foregroundStyle(isIncluded ? .white : .black)
-            .background(isIncluded ? Color.black : Color.white)
+           .background(isIncluded ? Color.black : Color.gray.opacity(0.3))
             .clipShape(Capsule())
-            .overlay(
-                Capsule()
-                    .stroke(Color.black, lineWidth: 1)
-            )
+            .contentShape(Capsule())
+            .buttonStyle(.plain)
         }
     }
 }

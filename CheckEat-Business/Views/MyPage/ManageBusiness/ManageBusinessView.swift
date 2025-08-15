@@ -15,9 +15,11 @@ struct ManageBusinessView: View {
     //MARK: - ManageBusiness (업체정보 관리)
     @Binding var storeName: String
     @Binding var storePhone: String
+    @Binding var storeEnglishName: String
     
     // Temporary state variables for editing
     @State private var tempStoreName: String = ""
+    @State private var tempEnglishStoreName: String = ""
     @State private var tempStorePhone: String = ""
     
     //MARK: tapToDismissKeyboard와 동일 한 동작 수행
@@ -26,10 +28,13 @@ struct ManageBusinessView: View {
     //MARK: 수정 반영 성공, 실패에 따른 토스트
     @State private var showToast: Bool = false
     @State private var toastMessage: String = ""
-    
+    //MARK: 뷰모델
+    @ObservedObject var viewModel: MyPageViewModel
+      
     private var isFormValid: Bool {
         !tempStoreName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         && !tempStorePhone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        && !tempEnglishStoreName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     var body: some View {
@@ -62,6 +67,12 @@ struct ManageBusinessView: View {
                             .keyboardType(.phonePad)
                             .focused($fieldIsFocused)
                             .padding(.bottom)
+                        Text("영문 가게명")
+                            .semibold16()
+                        UnderLinedTextField(placeholder: "실제 노출될 영문 가게명을 적어주세요", text: $tempEnglishStoreName)
+                            .regular14()
+                            .focused($fieldIsFocused)
+                            .padding(.bottom)
                         
                         ZStack(alignment: .leading) {
                             RoundedRectangle(cornerRadius: 5)
@@ -85,17 +96,38 @@ struct ManageBusinessView: View {
                                 // Assign temp values back to bindings
                                 storeName = tempStoreName
                                 storePhone = tempStorePhone
-                                
+                                storeEnglishName = tempEnglishStoreName
                                 //TODO: 수정 내용 반영 로직 구현
                                 //MARK: 우선은 랜덤 값으로 지정
                                 
-                                let success = Bool.random()
-                                
-                                if success {
-                                    showManageBusiness = false
-                                } else {
-                                    toastMessage = "업체 정보 수정에 실패했습니다. 다시 시도해주세요."
+//                                let success = Bool.random()
+//                                
+//                                if success {
+//                                    showManageBusiness = false
+//                                } else {
+//                                    toastMessage = "업체 정보 수정에 실패했습니다. 다시 시도해주세요."
+                                // 선택된 스토어 ID 확인
+                                guard let stoId = viewModel.selectedStoreId else {
+                                    toastMessage = "선택된 가게가 없습니다. 먼저 가게를 선택해 주세요."
                                     showToast = true
+                                    return
+                                }
+                                
+                                let normalizedPhone = tempStorePhone.replacingOccurrences(of: "-", with: "")
+                                
+                                // 업데이트 호출
+                                viewModel.upDateStore(
+                                    stoId: stoId,
+                                    name: tempStoreName,
+                                    phone: normalizedPhone,
+                                    enStoreName: tempEnglishStoreName
+                                ) { success in
+                                    if success {
+                                        showManageBusiness = false
+                                    } else {
+                                        toastMessage = "업체 정보 수정에 실패했습니다. 다시 시도해주세요."
+                                        showToast = true
+                                    }
                                 }
                             } label: {
                                 Text("완료")
@@ -113,6 +145,7 @@ struct ManageBusinessView: View {
                     .onAppear {
                         tempStoreName = storeName
                         tempStorePhone = storePhone
+                        tempEnglishStoreName = storeEnglishName
                     }
                 }
                 .onTapGesture {

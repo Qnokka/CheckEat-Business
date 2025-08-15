@@ -24,7 +24,7 @@ struct MainTabView: View {
                     }
                 case .menu:
                     VStack(spacing: 0) {
-                        OCRScanResultView()
+                        OCRView()
                             .padding(.bottom, tabBarHeight)
                     }
                 case .myPage:

@@ -10,20 +10,24 @@ import SwiftUI
 struct MyPageView: View {
     
     //MARK: 사업자 정보 GET
-    @State var businessName: String = "우아한 형제들"
-    @State var storeName: String = "배달의 민족"
-    @State var businessEmail: String = "SAJANG@COMPANY.COM"
-    @State var storePhone: String = "02-333-4444"
+    @State var businessName: String = ""
+    @State var storeName: String = ""
+    @State var businessEmail: String = ""
+    @State var storePhone: String = ""
+    @State var storeEnglishName: String = ""
     
     //MARK: 더보기 메뉴 상태 값 (업체 삭제, 회원탈퇴)
     @State var showMoreMenu: Bool = false
     
     //MARK: [ManageBusiness] 업체 프로필 변경 모달 뷰 상태 값
     @State var showManageStoreProfileModal: Bool = false
+    @State var ShowChangeBusinessModal:Bool = false
     
     //MARK: 각 메뉴별 fullScreen 상태 값
     //업체정보 관리
     @State var showManageBusiness: Bool = false
+    //사업장 추가
+    @State var showAddBusiness: Bool = false
     //비밀번호 변경
     @State var showChangePasswordModal: Bool = false
     //메뉴 관리
@@ -40,6 +44,8 @@ struct MyPageView: View {
     @State var showDeleteBusiness: Bool = false
     //회원 탈퇴
     @State var showDeleteSajang: Bool = false
+    
+    @StateObject private var viewModel = MyPageViewModel()
     
     //MARK: [LanguageSetting] 디바이스의 언어 설정을 기반으로 초기 언어 세팅
     @State var selectedLanguage: String = {
@@ -59,14 +65,16 @@ struct MyPageView: View {
                 VStack(alignment: .leading) {
                     
                     MyPageHeaderView(
-                        business: $businessName,
-                        businessEmail: $businessEmail,
+                        businessName: $viewModel.businessName,
+                        businessEmail: $viewModel.businessEmail,
+                        certificationStatus: viewModel.certificationStatus,
                         showMoreMenu: $showMoreMenu,
-                        showManageStoreProfileModal: $showManageStoreProfileModal, showDeleteBusiness: $showDeleteBusiness, showDeleteSajang: $showDeleteSajang)
+                        showManageStoreProfileModal: $showManageStoreProfileModal, showChangeBusinessModal: $ShowChangeBusinessModal, showDeleteBusiness: $showDeleteBusiness, viewModel: viewModel)
                     
                     MyPageSectionContainerView(
                         showChangePasswordModal: $showChangePasswordModal,
                         showManageBusiness: $showManageBusiness,
+                        showAddBusiness: $showAddBusiness,
                         showMenuManagement: $showMenuManagement,
                         showManageBusinessHours: $showManageBusinessHours,
                         showManageHoliday: $showManageHoliday,
@@ -78,6 +86,7 @@ struct MyPageView: View {
                         //TODO: 로그인 버튼을 루트뷰로...
                         withAnimation {
                             session.logout()
+                            TokenManager.shared.clear()
                         }
                     } label: {
                         Text("로그아웃")
@@ -89,6 +98,14 @@ struct MyPageView: View {
                     .padding(.bottom, 35)
                 }
             }
+            .onAppear {
+                viewModel.myPageData()
+            }
+            .onChange(of: showManageBusiness) { isPresented in
+                if !isPresented {
+                    viewModel.myPageData()
+                }
+            }
             .navigationTitle("마이페이지")
             .navigationBarTitleDisplayMode(.inline)
         }
@@ -98,7 +115,7 @@ struct MyPageView: View {
                 .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $showManageBusiness) {
-            ManageBusinessView(showManageBusiness: $showManageBusiness, storeName: $storeName, storePhone: $storePhone)
+            ManageBusinessView(showManageBusiness: $showManageBusiness, storeName: $storeName, storePhone: $storePhone, storeEnglishName: $storeEnglishName, viewModel: viewModel)
         }
         .fullScreenCover(isPresented: $showMenuManagement) {
             MenuManagementView(showMenuManagement: $showMenuManagement)
@@ -110,17 +127,13 @@ struct MyPageView: View {
             DayOffManagementView(showManageHoliday: $showManageHoliday)
         }
         .fullScreenCover(isPresented: $showManageLicense) {
-            MyPageBusinessReRegistration(showManageLicense: $showManageLicense, businessName: $businessName, storePhone: $storePhone, storeName: $storeName)
+            MyPageBusinessReRegistration(showManageLicense: $showManageLicense, businessName: $viewModel.businessName, storePhone: $storePhone, storeName: $storeName)
         }
-        .fullScreenCover(isPresented: $showLanguageSetting) {
-            LanguageSettingView(showLanguageSetting: $showLanguageSetting, selectedLanguage: $selectedLanguage)
-        }
+        //        .fullScreenCover(isPresented: $showLanguageSetting) {
+        //            LanguageSettingView(showLanguageSetting: $showLanguageSetting, selectedLanguage: $selectedLanguage)
+        //        }
         .fullScreenCover(isPresented: $showDeleteBusiness) {
             BusinessDeleteView(showDeleteBusiness: $showDeleteBusiness, storeName: $storeName)
         }
     }
-}
-
-#Preview {
-    MyPageView()
 }

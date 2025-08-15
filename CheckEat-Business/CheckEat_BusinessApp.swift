@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 class SessionManager: ObservableObject {
     @Published var isLoggedIn = false
@@ -28,6 +29,8 @@ class AppTabViewModel: ObservableObject {
 
 @main
 struct CheckEat_BusinessApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     enum Tab {
         case home, menu, myPage

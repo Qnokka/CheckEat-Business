@@ -13,7 +13,7 @@ struct RegiMenuReCheckModalView: View {
     //MARK: Binding - status 참조
     @Binding var path: [MenuRoute]
     //MARK: OCR 스캔된 사진, 메뉴명 참조
-    @Binding var scanImageName: String
+    @Binding var scanImageName: UIImage?
     @Binding var scanMenuName: String
     //MARK: 추출된 재료+입력한 추가 재료 네이밍 담고 있음
     @Binding var finalMaterials: [String]
