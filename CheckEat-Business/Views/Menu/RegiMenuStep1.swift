@@ -13,7 +13,7 @@ struct RegiMenuStep1: View {
     //MARK: Binding - status 참조
     @Binding var path: [MenuRoute]
     //MARK: OCR 스캔된 사진, 메뉴명 참조
-    @Binding var scanImageName: String
+    @Binding var scanImageName: UIImage?
     @Binding var scanMenuName: String
     //MARK: 선택된 재료 네이밍 저장
     @Binding var selectedMarterialsID: Set<String>
@@ -21,6 +21,9 @@ struct RegiMenuStep1: View {
     @Binding var showMenuRegiResetPopUp: Bool
     //MARK: 메뉴 등록 완료 팝업 창 상태
     @Binding var showMenuRegiCompletePopUp: Bool
+    // MARK: 서버에서 확정된 foo_id 
+    var fooId: Int? = nil
+    @State private var allExtractedMaterials: [String] = []
     
     //MARK: 초기화 구문
     let onReset: () -> Void
@@ -31,13 +34,24 @@ struct RegiMenuStep1: View {
             let screenWidth = UIScreen.main.bounds.width
             let screenHeight = UIScreen.main.bounds.height
             
-            Image(scanImageName)
-                .frame(width: screenWidth, height: screenHeight*0.3)
-                .padding(.top, -8)
+            if let scanImageName = scanImageName {
+                Image(uiImage: scanImageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: screenWidth, height: screenHeight * 0.3)
+                    .padding(.top, -8)
+            } else {
+                Image(systemName: "photo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: screenWidth, height: screenHeight * 0.3)
+                    .padding(.top, -8)
+            }
+  
             
             Text(scanMenuName)
                 .bold18()
-                .padding(.top, -12)
+                .padding(.top, 10)
             
             Text("위 음식에 들어간 재료가 맞는지 확인해주세요.\n들어가지 않은 재료는 제외해주세요")
                 .multilineTextAlignment(.center)
@@ -49,7 +63,7 @@ struct RegiMenuStep1: View {
             // SelectedMerterials : 선택 토글 적용
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    let materials = dummyMaterials.first?.foo_material?.flatMap { $0.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) } } ?? []
+                    let materials = allExtractedMaterials
                     FlowLayout(data: materials, spacing: 10, alignment: .leading) { material in
                         SelectedMerterialsButton(
                             selectedMarterialsID: material,
@@ -77,12 +91,9 @@ struct RegiMenuStep1: View {
             .background(Color(uiColor: .systemBackground))
         }
         .padding(.horizontal)
-        .onAppear {
-            let materials = dummyMaterials.first?.foo_material?.flatMap { $0.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) } } ?? []
-            selectedMarterialsID = Set(materials)
-        }
         .navigationTitle("메뉴 등록")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -91,6 +102,9 @@ struct RegiMenuStep1: View {
                     Image("xmark")
                 }
             }
+        }
+        .onAppear {
+            allExtractedMaterials = Array(selectedMarterialsID).sorted()
         }
         .overlay {
             if showMenuRegiResetPopUp {

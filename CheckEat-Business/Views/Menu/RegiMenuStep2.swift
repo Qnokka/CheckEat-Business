@@ -13,15 +13,16 @@ struct RegiMenuStep2: View {
     //MARK: Binding - status 참조
     @Binding var path: [MenuRoute]
     //MARK: OCR 스캔된 사진, 메뉴명 참조
-    @Binding var scanImageName: String
+    @Binding var scanImageName: UIImage?
     @Binding var scanMenuName: String
     //MARK:  추출된 재료 네이밍 담고 있음
     @Binding var selectedMarterialsID: Set<String>
     @Binding var finalMaterials: [String]
+    // MARK: 서버에서 확정된 foo_id 
+    var fooId: Int? = nil
     //MARK:  추출된 재료 중 사용자가 선택한 네이밍만 담고 있음
     private var filteredMaterials: [String] {
-        guard let allMaterials = dummyMaterials.first?.foo_material?.flatMap({ $0.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } }) else { return [] }
-        return allMaterials.filter { selectedMarterialsID.contains($0) }
+        Array(selectedMarterialsID).sorted()
     }
     //MARK: 최종 재료 목록 업데이트 후 다음 창으로 전송
     func finalizeSelectionAndPush(to route: MenuRoute) {
@@ -35,6 +36,7 @@ struct RegiMenuStep2: View {
     @Binding var showMenuRegiResetPopUp: Bool
     //MARK: 초기화 구문
     let onReset: () -> Void
+    @ObservedObject var viewModel: OCRViewModel
     
     var body: some View {
         VStack(spacing: 12) {
@@ -42,13 +44,23 @@ struct RegiMenuStep2: View {
             let screenWidth = UIScreen.main.bounds.width
             let screenHeight = UIScreen.main.bounds.height
             
-            Image(scanImageName)
-                .frame(width: screenWidth, height: screenHeight*0.3)
-                .padding(.top, -8)
-            
+            if let scanImageName = scanImageName {
+                Image(uiImage: scanImageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: screenWidth, height: screenHeight * 0.3)
+                    .padding(.top, -8)
+            } else {
+                Image(systemName: "photo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: screenWidth, height: screenHeight * 0.3)
+                    .padding(.top, -8)
+            }
+              
             Text(scanMenuName)
                 .bold18()
-                .padding(.top, -12)
+                .padding(.top, 10)
             
             Text("누락된 재료나 육수/소스로 사용한 재료가 있다면 직접 입력해주세요.")
                 .multilineTextAlignment(.center)
@@ -99,6 +111,7 @@ struct RegiMenuStep2: View {
                 Button {
                     print("✅ 최종 재료 목록:", selectedMarterialsID)
                     finalizeSelectionAndPush(to: .registerMenuStep4)
+                    viewModel.saveSelected(fooId: fooId, selected: selectedMarterialsID)
                 } label: {
                     Text("입력 완료")
                         .semibold16()
@@ -109,7 +122,7 @@ struct RegiMenuStep2: View {
                     print("✅ 최종 재료 목록:", selectedMarterialsID)
                     finalizeSelectionAndPush(to: .registerMenuStep3)
                 } label: {
-                    Text("다음")
+                    Text("추가입력")
                         .semibold16()
                         .primaryButtonStyle()
                 }
@@ -153,3 +166,4 @@ struct RegiMenuStep2: View {
     }
 }
 
+    

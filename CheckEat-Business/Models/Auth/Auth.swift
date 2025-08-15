@@ -72,24 +72,19 @@ struct FindPwChangeResponse: Codable {
     let status: String
 }
 
-//MARK: - 회원가입
+//MARK: - 회원가입 1단계
 //회원가입 요청
 struct RegisterRequest: Codable {
     let log_Id: String
     let log_pwd: String
     let email: String
-    let allergy: String?
-    let nickname: String
-    let commonAllergies: [Int]?
-    let vegan: Int?
-    let isHalal: Int?
-    let ld_lang: String
+    let phone: String
 }
 //회원가입 응답
 struct RegisterResponse: Decodable {
     let message: String
-    let userId: String?
-    let status: Int
+    let status: String
+    let sa_id: Int
 }
 //아이디중복 응답
 struct IDUniqueResponse: Decodable {
@@ -117,6 +112,32 @@ struct CheckEmailTokenRequest: Codable {
 }
 //이메일인증 토큰확인 응답
 struct CheckEmailTokenResponse: Decodable {
+    let message: String
+    let status: String
+}
+
+//MARK: - 회원가입 2단계 사업자 인증
+
+//사업자등록증 확인 요청
+struct BusinessRegistrationRequest: Codable {
+    let b_no: String          // 사업자 등록번호 (필수)
+    let start_dt: String      // 개업일자 YYYYMMDD (필수)
+    let p_nm: String          // 대표자 성명 (필수)
+    let sa_id: Int            // 사장님 ID (필수)
+    let sto_name_en: String   // 가게 영문명 (필수)
+    let p_nm2: String?        // 외국인 대표자 한글명
+    let b_nm: String?         // 상호명
+    let b_sector: String?     // 주 업태명
+    let b_type: String?       // 주 종목
+    let b_adr: String?        // 사업장 주소
+    let sto_phone: String?    // 연락처
+    let sto_name: String?     // 가게명
+    let sto_latitude: String  // 위도
+    let sto_longitude: String // 경도
+}
+
+//사업자등록증 확인 응답
+struct BusinessRegistrationResponse: Codable {
     let message: String
     let status: String
 }

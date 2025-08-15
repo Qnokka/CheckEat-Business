@@ -36,6 +36,8 @@ struct MyPageChangePasswordModalView: View {
     @FocusState private var isNewPasswordFocused: Bool
     @FocusState private var isConfirmPasswordFocused: Bool
     
+    @StateObject private var viewModel = ChangePwdViewModel()
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -137,8 +139,12 @@ struct MyPageChangePasswordModalView: View {
             .padding(.bottom, 24)
             
             Button {
-                showChangePasswordCompleteModal = true
-                editable = (isLengthValid && isUpperLowerNumberSpecialValid && isPasswordAgreement)
+                guard isLengthValid, isUpperLowerNumberSpecialValid, isPasswordAgreement else { return }
+                    viewModel.newPwd = newPassword
+                    viewModel.changePwd {
+                        showChangePasswordCompleteModal = true
+                    }
+            editable = (isLengthValid && isUpperLowerNumberSpecialValid && isPasswordAgreement)
             } label: {
                 Text("변경하기")
                     .primaryButtonStyle(isEnabled: (isLengthValid && isUpperLowerNumberSpecialValid && isPasswordAgreement))

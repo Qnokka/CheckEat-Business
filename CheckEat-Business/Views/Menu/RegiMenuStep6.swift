@@ -13,7 +13,7 @@ struct RegiMenuStep6: View {
     //MARK: Binding - status 참조
     @Binding var path: [MenuRoute]
     //MARK: OCR 스캔된 사진, 메뉴명 참조
-    @Binding var scanImageName: String
+    @Binding var scanImageName: UIImage?
     @Binding var scanMenuName: String
     //MARK: 추출된 재료+입력한 추가 재료 네이밍 담고 있음
     @Binding var finalMaterials: [String]
@@ -42,13 +42,23 @@ struct RegiMenuStep6: View {
                 let screenWidth = UIScreen.main.bounds.width
                 let screenHeight = UIScreen.main.bounds.height
                 
-                Image(scanImageName)
-                    .frame(width: screenWidth, height: screenHeight*0.3)
-                    .padding(.top, -8)
+                if let scanImageName = scanImageName {
+                    Image(uiImage: scanImageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: screenWidth, height: screenHeight * 0.3)
+                        .padding(.top, -8)
+                } else {
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: screenWidth, height: screenHeight * 0.3)
+                        .padding(.top, -8)
+                }
                 
                 Text("\(scanMenuName)에 대한 식품 주의정보")
                     .bold18()
-                    .padding(.top, -12)
+                    .padding(.top, 10)
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {

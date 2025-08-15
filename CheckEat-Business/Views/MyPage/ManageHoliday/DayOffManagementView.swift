@@ -122,10 +122,46 @@ struct DayOffManagementView: View {
                                 .padding(.top, 15)
                             HStack {
                                 CheckBoxButtonBlack(isChecked: $holidaysChecked)
+                                    .onChange(of: holidaysChecked) { newValue in
+                                        if newValue {
+                                            // 당일만 휴무: 메인 날짜만 체크, 전/후일은 해제
+                                            lunarNewYearChecked = true
+                                            chuseokChecked = true
+                                            lunarNewYearChecked1 = false
+                                            lunarNewYearChecked2 = false
+                                            chuseokChecked1 = false
+                                            chuseokChecekd2 = false
+
+                                            // 전체 휴무와 충돌 방지
+                                            totalChecked = false
+                                        } else {
+                                            // 당일만 해제: 메인 날짜도 해제 (필요 시 유지하도록 바꿀 수 있음)
+                                            lunarNewYearChecked = false
+                                            chuseokChecked = false
+                                        }
+                                    }
                                 Text("설, 추석 당일만 휴무")
                                     .font(.system(size: 14, weight: .medium))
                                 CheckBoxButtonBlack(isChecked: $totalChecked)
                                     .padding(.leading, 20)
+                                //전체휴무 체크하면 다 선택되는거
+                                    .onChange(of: totalChecked) { newValue in
+                                        newYearChecked = newValue
+                                        lunarNewYearChecked = newValue
+                                        lunarNewYearChecked1 = newValue
+                                        lunarNewYearChecked2 = newValue
+                                        march1Checked = newValue
+                                        childernDayChecked = newValue
+                                        buddhaDayChecked = newValue
+                                        memorialChecked = newValue
+                                        nationalLiberationChecked = newValue
+                                        chuseokChecked = newValue
+                                        chuseokChecked1 = newValue
+                                        chuseokChecekd2 = newValue
+                                        nationalFoundationDayChecked = newValue
+                                        hangulDayChecked = newValue
+                                        christmasChecked = newValue
+                                    }
                                 Text("전체 휴무")
                                     .font(.system(size: 14, weight: .medium))
                             }
@@ -163,7 +199,24 @@ struct DayOffManagementView: View {
                 }
                 .padding(.leading, 15)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                
+                if isExpanded {
+                    Color.black.opacity(0.001)
+                        .ignoresSafeArea()
+                        .onTapGesture { isExpanded = false }
+                        .zIndex(999)
+
+                    DropdownOptionList(
+                        options: options,
+                        selectionOption: $selectionOption,
+                        isExpanded: $isExpanded,
+                        position: dropdownPosition,
+                        dropdownSpacing: dropdownSpacing
+                    )
+                    .zIndex(1000)
+                }
             }
+            
             .navigationTitle("휴무일 관리")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -178,14 +231,6 @@ struct DayOffManagementView: View {
             }
             
         }
-        if isExpanded {
-            DropdownOptionList(
-                options: options,
-                selectionOption: $selectionOption,
-                isExpanded: $isExpanded,
-                position: dropdownPosition,
-                dropdownSpacing: dropdownSpacing
-            )
-        }
+
     }
 }

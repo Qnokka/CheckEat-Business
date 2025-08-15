@@ -21,7 +21,7 @@ struct RegisterBasicInfoSection: View {
     @FocusState.Binding var fieldIsFocused: Bool
     @FocusState.Binding var isPasswordFocused: Bool
     @FocusState.Binding var isPasswordConfirmFocused: Bool
-    
+    @ObservedObject var viewModel: RegisterViewModel
     var body: some View {
         VStack(alignment: .leading) {
             Text("아이디")
@@ -35,6 +35,7 @@ struct RegisterBasicInfoSection: View {
                 }
                 Button {
                     //TODO: 아이디 중복 확인 로직 구현
+                    viewModel.checkIdUnique(id: id)
                 } label: {
                     Text("중복 확인")
                         .frame(width: 83, height: 34)

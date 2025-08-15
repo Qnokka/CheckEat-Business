@@ -14,12 +14,8 @@ class RegisterViewModel: ObservableObject {
     @Published var loginId: String = ""
     @Published var password: String = ""
     @Published var email: String = ""
-    @Published var nickName: String = ""
-    @Published var allergy: String = ""
-    @Published var selectedVeganLevel: VeganLevel = .none
-    @Published var selectedHalalStatus: HalaStatus = .no
-    @Published var selectedCommonAllergies: Set<Int> = []
-    @Published var selectedLanguage: LanguageSetting = .ko
+    @Published var phone: String = ""
+    @Published var languageCode: String = Locale.preferredLanguages.first?.components(separatedBy: "-").first ?? "ko"
     
     //이메일 인증 관련
     @Published var emailVerificationToken = ""
@@ -73,7 +69,7 @@ class RegisterViewModel: ObservableObject {
                       print("이메일 사용 가능 ✅")
                       completion()
                       self?.alertItem = AlertItem(title: "사용 가능", message: "이 이메일은 사용 가능합니다.", dissmissButton: .default(Text("확인")))
-                      self?.sendEmailToken(email: email, language: "ko")
+                      self?.sendEmailToken(email: email, language: self?.languageCode ?? "ko")
                   } else {
                       print("이메일 중복돰: \(response.message)")
                       self?.alertItem = AlertItem(title: "중복된 이메일 입니다", message: "이메일을 다시 확인 해주세요.", dissmissButton: .default(Text("확인")))
@@ -104,7 +100,7 @@ class RegisterViewModel: ObservableObject {
       }
       
       //이메일 인증 토큰 확인
-    func verifyEmailToken(email: String, token: String) {
+    func verifyEmailToken(email: String, token: String, completion: @escaping (Bool) -> Void)  {
           print("📨 인증 요청 - email: \(email), token: \(token)")
         
           RegisterSerivce.checkEmailToken(email: email, token: token)
@@ -130,17 +126,12 @@ class RegisterViewModel: ObservableObject {
       
       //회원가입
     func signUp(completion: @escaping (Bool) -> Void) {
-          print("📩 signUp 호출됨 - loginId: \(loginId), email: \(email), password: \(password), nickName: \(nickName)")
+          print("📩 signUp 호출됨 - loginId: \(loginId), email: \(email), password: \(password)")
           let request = RegisterRequest(
               log_Id: loginId,
               log_pwd: password,
               email: email,
-              allergy: allergy.isEmpty ? nil : allergy,
-              nickname: nickName,
-              commonAllergies: selectedCommonAllergies.isEmpty ? nil : Array(selectedCommonAllergies),
-              vegan: selectedVeganLevel.rawValue,
-              isHalal: selectedHalalStatus.rawValue,
-              ld_lang: selectedLanguage.rawValue
+              phone: phone
           )
           
           RegisterSerivce.signUp(request: request)
@@ -154,7 +145,7 @@ class RegisterViewModel: ObservableObject {
 
                   }
               } receiveValue: { response in
-                  if response.status == 201 {
+                  if response.status == "success" {
                       print("회원 가입이 완료되었습니다 ✅")
                       completion(true)
                   } else {

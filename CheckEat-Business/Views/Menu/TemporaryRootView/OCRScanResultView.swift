@@ -11,16 +11,12 @@ import SwiftUI
 struct OCRScanResultView: View {
     
     //FIXME: OCR 화면 추가 후 루트뷰 변경
-    @State var path: [MenuRoute] = []
+    @Binding var path: [MenuRoute]
     //FIXME: 스캔된 사진, 메뉴명 가져오는 걸로 변경
-    @State var scanImageName: String = "testImage"
-    @State var scanMenuName: String = "연어초밥"
+    @Binding var scanImageName: UIImage?
+    @Binding var scanMenuName: String
+    @Binding var extractedMaterials: Set<String>
     @State var originalScanMenuName: String = "연어초밥"
-    //MARK: 스캔된 메뉴명으로 추출된 재료 내용 담는 배열
-    @State var extractedMaterials: Set<String> = {
-        let materials = dummyMaterials.first?.foo_material ?? []
-        return Set(materials)
-    }()
     //MARK: 추출된 재료+입력한 추가 재료 네이밍 담을 배열
     @State var finalMaterials: [String] = []
     //MARK: 추가 입력 재료 내용 담는 배열
@@ -41,12 +37,31 @@ struct OCRScanResultView: View {
     @State var showMenuRegiResetPopUp: Bool = false
     
     @EnvironmentObject var session: SessionManager
+    @ObservedObject var viewModel: OCRViewModel
+    var foodId: Int?
+    
+    init(
+          viewModel: OCRViewModel,
+          path: Binding<[MenuRoute]>,
+          scanImageName: Binding<UIImage?>,
+          scanMenuName: Binding<String>,
+          extractedMaterials: Binding<Set<String>>,
+          foodId: Int? = nil
+      ) {
+          self.viewModel = viewModel
+          self._path = path
+          self._scanImageName = scanImageName
+          self._scanMenuName = scanMenuName
+          self._extractedMaterials = extractedMaterials
+          self.foodId = foodId
+      }
     
     //FIXME: OCR 루트뷰 추가 후 삭제
     @Environment(\.dismiss) private var dismiss
+
     
     func resetInputs() {
-        scanImageName = "testImage"
+        scanImageName = nil
         scanMenuName = ""
         menuName = ""
         price = ""
@@ -57,16 +72,24 @@ struct OCRScanResultView: View {
     }
     
     var body: some View {
-        NavigationStack(path: $path) {
+//        NavigationStack(path: $path) {
             //GeometryReader { geo in
             VStack(spacing: 12) {
                 
                 let screenWidth = UIScreen.main.bounds.width
                 let screenHeight = UIScreen.main.bounds.height
                 
-                Image(scanImageName)
-                    .frame(width: screenWidth, height: screenHeight*0.3)
-                
+                if let scanImageName = scanImageName {
+                    Image(uiImage: scanImageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: screenWidth, height: screenHeight * 0.3)
+                } else {
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: screenWidth, height: screenHeight * 0.3)
+                }
                 HStack {
                     Text("이 사진은")
                     Text(scanMenuName)
@@ -93,7 +116,7 @@ struct OCRScanResultView: View {
             }
             .safeAreaInset(edge: .bottom) {
                 Button {
-                    path.append(.registerMenuStep1)
+                    viewModel.confirm(ok: "ok")
                 } label: {
                     Text("다음")
                         .semibold16()
@@ -102,8 +125,11 @@ struct OCRScanResultView: View {
                 .padding(.horizontal)
                 .padding(.top, 8)
                 .padding(.bottom, 35)
+                .disabled(viewModel.isLoading)
                 .background(Color(uiColor: .systemBackground))
+
             }
+        
             .sheet(isPresented: $showPassivityModal) {
                 PassivityMenuModalView(
                     path: $path,
@@ -137,42 +163,45 @@ struct OCRScanResultView: View {
                     originalScanMenuName = scanMenuName
                 }
             }
+            .onChange(of: viewModel.confirmResult) { resp in
+                guard resp != nil else { return }
+                // 서버에서 받은 재료를 다음 스텝에 넘길 상태에 반영
+                extractedMaterials = Set(viewModel.ingredients)
+                // 다음 스텝으로 이동
+                path.append(.registerMenuStep1)
+            }
             .onChange(of: path) { newPath in
                 guard newPath.isEmpty else { return }
                 scanMenuName = originalScanMenuName
             }
-            //MARK: 뷰 스택 경로 지정
-            .navigationDestination(for: MenuRoute.self) { route in
-                switch route {
-                case .registerMenuStep1:
-                    // 재료 확인 및 선택 뷰
-                    RegiMenuStep1(path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, selectedMarterialsID: $extractedMaterials, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, showMenuRegiCompletePopUp: $showMenuRegiCompletePopUp, onReset: resetInputs)
-                case .registerMenuStep2:
-                    // 선택한 재료 목록 확인 뷰 (추가 입력/미입력으로 나뉨)
-                    RegiMenuStep2(path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, selectedMarterialsID: $extractedMaterials, finalMaterials: $finalMaterials, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, onReset: resetInputs)
-                case .registerMenuStep3:
-                    // 재료 추가 입력 뷰
-                    RegiMenuStep3(
-                        path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, selectedMarterialsID: $extractedMaterials, materials: $materials, broth: $broth, sauce: $sauce, finalMaterials: $finalMaterials, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, onReset: resetInputs
-                    )
-                case .registerMenuStep4:
-                    // 메뉴 가격 입력 뷰
-                    RegiMenuStep4(path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, finalMaterials: $finalMaterials, materials: $materials, broth: $broth, sauce: $sauce, price: $price, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, onReset: resetInputs)
-                case .registerMenuStep5:
-                    // 메뉴 정보 확인 및 수정 뷰
-                    RegiMenuStep5(path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, finalMaterials: $finalMaterials, materials: $materials, broth: $broth, sauce: $sauce, price: $price, menuName: $menuName, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, onReset: resetInputs)
-                    EmptyView()
-                case .registerMenuStep6:
-                    // 메뉴 정보 등록 뷰 (이전/메뉴등록으로 나뉨)
-                    RegiMenuStep6(path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, finalMaterials: $finalMaterials, materials: $materials, broth: $broth, sauce: $sauce, price: $price, menuName: $menuName, showRegiModal: $showRegiModal, showMenuRegiCompletePopUp: $showMenuRegiCompletePopUp, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, onReset: resetInputs)
-                default:
-                    EmptyView()
-                }
-            }
-        }
+//            //MARK: 뷰 스택 경로 지정
+//            .navigationDestination(for: MenuRoute.self) { route in
+//                switch route {
+//                case .registerMenuStep1:
+//                    // 재료 확인 및 선택 뷰
+//                    RegiMenuStep1(path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, selectedMarterialsID: $extractedMaterials, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, showMenuRegiCompletePopUp: $showMenuRegiCompletePopUp, onReset: resetInputs)
+//                case .registerMenuStep2:
+//                    // 선택한 재료 목록 확인 뷰 (추가 입력/미입력으로 나뉨)
+//                    RegiMenuStep2(path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, selectedMarterialsID: $extractedMaterials, finalMaterials: $finalMaterials, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, onReset: resetInputs)
+//                case .registerMenuStep3:
+//                    // 재료 추가 입력 뷰
+//                    RegiMenuStep3(
+//                        path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, selectedMarterialsID: $extractedMaterials, materials: $materials, broth: $broth, sauce: $sauce, finalMaterials: $finalMaterials, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, onReset: resetInputs
+//                    )
+//                case .registerMenuStep4:
+//                    // 메뉴 가격 입력 뷰
+//                    RegiMenuStep4(path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, finalMaterials: $finalMaterials, materials: $materials, broth: $broth, sauce: $sauce, price: $price, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, onReset: resetInputs)
+//                case .registerMenuStep5:
+//                    // 메뉴 정보 확인 및 수정 뷰
+//                    RegiMenuStep5(path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, finalMaterials: $finalMaterials, materials: $materials, broth: $broth, sauce: $sauce, price: $price, menuName: $menuName, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, onReset: resetInputs)
+//                case .registerMenuStep6:
+//                    // 메뉴 정보 등록 뷰 (이전/메뉴등록으로 나뉨)
+//                    RegiMenuStep6(path: $path, scanImageName: $scanImageName, scanMenuName: $scanMenuName, finalMaterials: $finalMaterials, materials: $materials, broth: $broth, sauce: $sauce, price: $price, menuName: $menuName, showRegiModal: $showRegiModal, showMenuRegiCompletePopUp: $showMenuRegiCompletePopUp, showMenuRegiResetPopUp: $showMenuRegiResetPopUp, onReset: resetInputs)
+//                default:
+//                    EmptyView()
+//                }
+//            }
+//        }
+ 
     }
-}
-
-#Preview {
-    OCRScanResultView()
 }

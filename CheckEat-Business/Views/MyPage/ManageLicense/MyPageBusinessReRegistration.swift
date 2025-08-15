@@ -37,7 +37,7 @@ struct MyPageBusinessReRegistration: View {
         NavigationStack(path: $path) {
             ScrollView {
                 BusinessReRegistrationFormView(
-                    businessNumber: $businessNumber,
+                    businessNumber: $businessNumber,             
                     businessName: $businessName,
                     businessOpen: $businessOpen,
                     sajangName: $sajangName,

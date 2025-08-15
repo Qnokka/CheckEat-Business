@@ -49,6 +49,8 @@ struct RegisterView: View {
     //MARK: 키보드 높이 상태
     @State private var keyboardHeight: CGFloat = 0
     
+    @StateObject private var registerViewModel = RegisterViewModel()
+    
     private var isFormValid: Bool {
         return !id.isEmpty && !password.isEmpty && !passwordConfirm.isEmpty && !email.isEmpty && !verificationCode.isEmpty && !phoneNumber.isEmpty && allChecked && isToSAgreeChecked && isAgeLimitChecked
     }
@@ -69,14 +71,14 @@ struct RegisterView: View {
                             isLengthValid: $isLengthValid,
                             fieldIsFocused: $fieldIsFocused,
                             isPasswordFocused: $isPasswordFocused,
-                            isPasswordConfirmFocused: $isPasswordConfirmFocused
+                            isPasswordConfirmFocused: $isPasswordConfirmFocused, viewModel: registerViewModel
                         )
                         ContactVerificationSection(
                             phoneNumber: $phoneNumber,
                             email: $email,
                             verificationCode: $verificationCode,
                             didSendCode: $didSendCode,
-                            fieldIsFocused: $fieldIsFocused
+                            viewModel: registerViewModel
                         )
                         registerAgreementSection
                     }
@@ -108,6 +110,13 @@ struct RegisterView: View {
                 .onTapGesture {
                     fieldIsFocused = false
                 }
+                .alert(item: $registerViewModel.alertItem) { alert in
+                    Alert(
+                        title: Text(alert.title),
+                        message: Text(alert.message),
+                        dismissButton: alert.dissmissButton
+                    )
+                }
                 .onAppear {
                     NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notification in
                         if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
@@ -137,8 +146,11 @@ struct RegisterView: View {
                     .background(Color.white)
                 }
                 .ignoresSafeArea(.keyboard, edges: .bottom)
+        
             }
+         
         }
+        
     }
     
     func updateAllCheckBox() {

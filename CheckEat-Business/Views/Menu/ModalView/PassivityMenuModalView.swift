@@ -40,10 +40,12 @@ struct PassivityMenuModalView: View {
             }
             .padding(.vertical, 12)
             
-            Text("메뉴 이름을 직접 입력해주세요.")
+            Text("음식 이름을 직접 입력해주세요.")
                 .padding(.bottom, 4)
                 .regular16()
-            TextFieldStyle(placeholder: "메뉴 이름", text: $tempName)
+            Text("입력하신 음식명을 바탕으로 재료가 추론되기때문에 보편적인 음식명을 입력해주세요")
+                .font(.system(size: 10, weight: .regular))
+            TextFieldStyle(placeholder: "음식 이름", text: $tempName)
                 .tapToDismissKeyboard()
             Button {
                 scanMenuName = tempName

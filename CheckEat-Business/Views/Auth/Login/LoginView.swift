@@ -11,17 +11,20 @@ struct LoginView: View {
     
     //MARK: - userId,userPassword,testId,testPassword,loginError 삭제
     
-    @EnvironmentObject var session: SessionManager
+//    @EnvironmentObject var session: SessionManager
     @StateObject private var viewModel: LoginViewModel
     
-    init(session: SessionManager) {
+    init(session: SessionManager, onSuccess: (() -> Void)? = nil) {
         _viewModel = StateObject(wrappedValue: LoginViewModel(session: session))
+        self.onSuccess = onSuccess
     }
     
     @State private var isPasswordVisible: Bool = false
     @State private var showFindId: Bool = false
     @State private var showFindPwd: Bool = false
     @State private var showRegister: Bool = false
+    
+    var onSuccess: (() -> Void)? = nil
     
     var body: some View {
         NavigationStack {
@@ -75,7 +78,9 @@ struct LoginView: View {
                         .padding(.bottom, 24)
                     
                     Button {
-                        viewModel.login()
+                        viewModel.login {
+                                onSuccess?()       
+                            }
                     } label: {
                         Text("로그인")
                             .primaryButtonStyle()
@@ -142,11 +147,9 @@ struct LoginView: View {
             }
             .ignoresSafeArea(.keyboard)
         }
+     
     }
     
     
+    
 }
-
-//#Preview {
-//    LoginView()
-//}
