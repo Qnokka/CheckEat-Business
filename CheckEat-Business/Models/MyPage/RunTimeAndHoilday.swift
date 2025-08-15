@@ -29,7 +29,13 @@ struct HolidaySuccessResponse: Decodable {
     let holiday: HolidayInfo
 }
 
-struct HolidayErrorResponse: Error, Decodable {
+struct RunTimeSuccessResponse: Decodable {
+    let message: String
+    let status: String
+    let holiday: HolidayInfo // RunTime으로 변경
+}
+
+struct ErrorResponse: Error, Decodable {
     let message: String
     let error: String
     let statusCode: Int

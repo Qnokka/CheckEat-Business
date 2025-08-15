@@ -121,7 +121,7 @@ struct MyPageView: View {
             MenuManagementView(showMenuManagement: $showMenuManagement)
         }
         .fullScreenCover(isPresented: $showManageBusinessHours) {
-            ManageBusinessHoursView(showManageBusinessHours: $showManageBusinessHours)
+            ManageBusinessHoursView(showManageBusinessHours: $showManageBusinessHours, storeId: viewModel.selectedStoreId ?? -1)
         }
         .fullScreenCover(isPresented: $showManageHoliday) {
             DayOffManagementView(showManageHoliday: $showManageHoliday, storeId: viewModel.selectedStoreId ?? -1)
