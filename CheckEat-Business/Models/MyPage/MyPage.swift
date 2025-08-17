@@ -14,13 +14,14 @@ struct MyPageResponse: Codable {
     let sa_certification: Int
     let sa_certi_status: Int
     let email: String
+    let sto_img: String
     let stores: [Store]
 }
 
 struct Store: Codable, Identifiable {
     let sto_id: Int
     let sto_name: String
-
+    
     var id: Int { sto_id }
 }
 
@@ -43,4 +44,23 @@ struct UpdateBusinessResponse: Codable {
     let sa_id: Int?
     let certification_status: Int?
     let certi_status: Int?
+}
+
+// 사업자 - 프로필 이미지 변경 응답
+struct UpdateSajangProfileSuccessResponse: Decodable {
+    let message: String
+    let imageUrl: String
+    let status: String
+    let sto_id: Int
+}
+
+struct UpdateSajangProfileErrorResponse: Error, Decodable {
+    let message: [String]  // 배열로 변경
+    let error: String
+    let statusCode: Int
+    
+    // 메시지를 문자열로 반환하는 계산 프로퍼티
+    var localizedDescription: String {
+        return message.joined(separator: ", ")
+    }
 }
