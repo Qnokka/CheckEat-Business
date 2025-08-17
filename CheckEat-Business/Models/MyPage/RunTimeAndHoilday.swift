@@ -32,7 +32,7 @@ struct HolidaySuccessResponse: Decodable {
 struct RunTimeSuccessResponse: Decodable {
     let message: String
     let status: String
-    let holiday: HolidayInfo // RunTime으로 변경
+    let holiday: HolidayInfo
 }
 
 struct ErrorResponse: Error, Decodable {
