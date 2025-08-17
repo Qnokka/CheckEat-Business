@@ -67,6 +67,7 @@ struct MyPageView: View {
                     MyPageHeaderView(
                         businessName: $viewModel.businessName,
                         businessEmail: $viewModel.businessEmail,
+                        storeImage: $viewModel.storeImage,
                         certificationStatus: viewModel.certificationStatus,
                         showMoreMenu: $showMoreMenu,
                         showManageStoreProfileModal: $showManageStoreProfileModal, showChangeBusinessModal: $ShowChangeBusinessModal, showDeleteBusiness: $showDeleteBusiness, viewModel: viewModel)
