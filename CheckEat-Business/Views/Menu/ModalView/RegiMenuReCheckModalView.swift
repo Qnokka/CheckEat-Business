@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 //MARK: - 메뉴 등록 재확인 모달
 struct RegiMenuReCheckModalView: View {
     
@@ -29,7 +30,9 @@ struct RegiMenuReCheckModalView: View {
     @Binding var showRegiModal: Bool
     //MARK: 메뉴 등록 완료 팝업 창 상태
     @Binding var showMenuRegiCompletePopUp: Bool
-    
+    //MARK: 뷰모델
+    @EnvironmentObject var ocrViewModel: OCRViewModel
+
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
             Text(menuName)
@@ -47,6 +50,10 @@ struct RegiMenuReCheckModalView: View {
             HStack(spacing: 12) {
                 Button {
                     showRegiModal = false
+                    ocrViewModel.regiestFood(
+                          price: price,
+                          menuName: menuName
+                      )
                 } label: {
                     Text("재검토")
                         .semibold16()
@@ -54,7 +61,10 @@ struct RegiMenuReCheckModalView: View {
                 }
                 Button {
                     showRegiModal = false
-                    showMenuRegiCompletePopUp = true
+                    ocrViewModel.regiestFood(
+                        price: price,
+                        menuName: menuName
+                    )
                 } label: {
                     Text("등록하기")
                         .semibold16()
@@ -62,6 +72,12 @@ struct RegiMenuReCheckModalView: View {
                 }
             }
             .padding(.top)
+            .onChange(of: ocrViewModel.saveFoodResponse) { resp in
+                guard let resp = resp else { return }
+                if resp.status == "success" {
+                    showMenuRegiCompletePopUp = true
+                }
+            }
         }
         .padding(.horizontal)
     }
