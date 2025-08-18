@@ -261,7 +261,7 @@ struct ManageBusinessHoursView: View {
                 // 모두 같은 시간으로 넣으면 됨
                 let holi_break: String?
                 if breakTimesSameAll.isEmpty {
-                    holi_break = nil
+                    holi_break = "NONE"
                 } else {
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "HH:mm"
@@ -284,7 +284,7 @@ struct ManageBusinessHoursView: View {
             case .weekdayWeekendDifferent:
                 let holi_break: String?
                 if breakTimesWeekday.isEmpty && breakTimesWeekend.isEmpty {
-                    holi_break = nil
+                    holi_break = "NONE"
                 } else {
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "HH:mm"
