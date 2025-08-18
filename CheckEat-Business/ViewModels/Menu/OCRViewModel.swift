@@ -23,6 +23,18 @@ class OCRViewModel: ObservableObject {
     // MARK: - 비건 판단 결과 (save-mt 응답)
     @Published var veganJudged: String? = nil
     @Published var veganStored: String? = nil
+    // MARK: - OCR 결과가 맞는지 여부
+    @Published var isOCRResultCorrect: Bool = true
+    // MARK: - 사용자가 수정한 음식명
+    @Published var userEditedFoodName: String = ""
+    // MARK: - 추출한 음식명 맞는지 여부에 따라 최종 사용할 음식명 반환
+    var finalFoodName: String {
+        if isOCRResultCorrect {
+            return ocrResult?.label ?? ""
+        } else {
+            return userEditedFoodName
+        }
+    }
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -56,7 +68,7 @@ class OCRViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     //cahceID를 전송하는 함수
-    func confirm(ok: String = "ok") {
+    func confirm(ok: String? = nil) {
         print("📡 confirm() 호출됨")
         
         guard let token = TokenManager.shared.getAccessToken() else {
@@ -67,11 +79,11 @@ class OCRViewModel: ObservableObject {
             print("❌ cacheId 없음")
             return
         }
-        guard let foodName = ocrResult?.label else {
+        let foodName = finalFoodName
+        guard !foodName.isEmpty else {
             print("❌ foodName 없음")
             return
         }
-
         let request = OcrUploadRequest(
             cacheId: cid,
             foodName: foodName,
@@ -115,36 +127,36 @@ class OCRViewModel: ObservableObject {
         confirmResult = nil
     }
     //메뉴등록페이지에서 재료선택후 입력완료 버튼시 요청
-        func saveSelected(fooId: Int?, selected: Set<String>) {
-            guard let fooId = fooId else {
-                print("❌ foo_id 없음")
-                return
-            }
-            guard let token = TokenManager.shared.getAccessToken() else {
-                print("❌ 토큰 없음")
-                return
-            }
-
-            let ingredients = Array(selected).sorted()
-            print("📦 서버로 보낼 foo_id: \(fooId)")
-            print("📦 서버로 보낼 ingredients: \(ingredients)")
-            let req = SaveMtRequest(foo_id: fooId, ingredients: ingredients)
-
-            OCRService.shared
-                .saveMt(request: req, accessToken: token)
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case let .failure(err) = completion {
-                        print("❌ save-mt 실패:", err)
-                    }
-                } receiveValue: { [weak self] resp in
-                    // 🔎 디버그: 디코딩된 전체 응답 덤프 + 비건 필드 별도 출력
-                    dump(resp)
-                    print("🥗 vegan.judged:", resp.vegan.judged)
-                    print("🥗 vegan.stored:", resp.vegan.stored ?? "nil")
-                    self?.veganJudged = resp.vegan.judged
-                    self?.veganStored = resp.vegan.stored
+    func saveSelected(fooId: Int?, selected: Set<String>) {
+        guard let fooId = fooId else {
+            print("❌ foo_id 없음")
+            return
+        }
+        guard let token = TokenManager.shared.getAccessToken() else {
+            print("❌ 토큰 없음")
+            return
+        }
+        
+        let ingredients = Array(selected).sorted()
+        print("📦 서버로 보낼 foo_id: \(fooId)")
+        print("📦 서버로 보낼 ingredients: \(ingredients)")
+        let req = SaveMtRequest(foo_id: fooId, ingredients: ingredients)
+        
+        OCRService.shared
+            .saveMt(request: req, accessToken: token)
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                if case let .failure(err) = completion {
+                    print("❌ save-mt 실패:", err)
                 }
-                .store(in: &cancellables)
+            } receiveValue: { [weak self] resp in
+                // 🔎 디버그: 디코딩된 전체 응답 덤프 + 비건 필드 별도 출력
+                dump(resp)
+                print("🥗 vegan.judged:", resp.vegan.judged)
+                print("🥗 vegan.stored:", resp.vegan.stored ?? "nil")
+                self?.veganJudged = resp.vegan.judged
+                self?.veganStored = resp.vegan.stored
+            }
+            .store(in: &cancellables)
     }
 }

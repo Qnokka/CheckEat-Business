@@ -77,9 +77,9 @@ struct MyPageBusinessReRegistration: View {
                 }
             }
             .navigationTitle("사업자 등록 관리")
-            .task {
-                myPageViewModel.updateBusiness(stoId: stoId)
-            }
+//            .task {
+//                myPageViewModel.updateBusiness(stoId: stoId)
+//            }
             .onReceive(myPageViewModel.$businessCertiState.compactMap { $0 }) { state in
                 switch state {
                 case .list(let items):

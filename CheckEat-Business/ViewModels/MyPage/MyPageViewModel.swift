@@ -224,54 +224,56 @@ class MyPageViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    //사업자등록증 관리페이지
-    func updateBusiness(stoId: Int) {
-        guard let accessToken = TokenManager.shared.getAccessToken() else {
-            print("❌ 억세스 토큰 없음")
-            return
-        }
-
-        let headers: HTTPHeaders = [
-            "Authorization": "Bearer \(accessToken)",
-            "Accept": "application/json"
-        ]
-
-        struct StoIdParam: Encodable { let sto_id: Int }
-        let body: StoIdParam? = stoId > 0 ? StoIdParam(sto_id: stoId) : nil
-
-
-        AF.request(MyPageAPI.updateBusinessURL,
-                   method: .post,
-                   parameters: body,
-                   encoder: JSONParameterEncoder.default,
-                   headers: headers)
-            .cURLDescription { print("🧵 cURL:\n\($0)") }
-            .validate()
-            .publishDecodable(type: BusinessCertiResponse.self)
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished: break
-                case .failure(let error):
-                    print("❌ 실패:", error.localizedDescription)
-                }
-            }, receiveValue: { [weak self] response in
-                guard let self = self else { return }
-                if let data = response.data, let raw = String(data: data, encoding: .utf8) {
-                    print("🧾 서버 원본 JSON 응답:", raw)
-                }
-
-                if let value = response.value {
-                    print("✅ 디코딩 성공")
-                    // ✅ 상태 매핑
-                    let mapped = self.mapBusinessCertiState(from: value, raw: response.data)
-                    self.businessCertiState = mapped
-                } else {
-                    print("❌ 디코딩 실패")
-                }
-            })
-            .store(in: &cancellables)
-    }
+    
+//    //사업자등록증 관리페이지
+//    func updateBusiness(stoId: Int) {
+//        guard let accessToken = TokenManager.shared.getAccessToken() else {
+//            print("❌ 억세스 토큰 없음")
+//            return
+//        }
+//
+//        let headers: HTTPHeaders = [
+//            "Authorization": "Bearer \(accessToken)",
+//            "Accept": "application/json"
+//        ]
+//
+//        struct StoIdParam: Encodable { let sto_id: Int }
+//        let body: StoIdParam? = stoId > 0 ? StoIdParam(sto_id: stoId) : nil
+//
+//
+//        AF.request(MyPageAPI.updateBusinessURL,
+//                   method: .post,
+//                   parameters: body,
+//                   encoder: JSONParameterEncoder.default,
+//                   headers: headers)
+//            .cURLDescription { print("🧵 cURL:\n\($0)") }
+//            .validate()
+//            .publishDecodable(type: BusinessCertiResponse.self)
+//            .receive(on: DispatchQueue.main)
+//            .sink(receiveCompletion: { completion in
+//                switch completion {
+//                case .finished: break
+//                case .failure(let error):
+//                    print("❌ 실패:", error.localizedDescription)
+//                }
+//            }, receiveValue: { [weak self] response in
+//                guard let self = self else { return }
+//                if let data = response.data, let raw = String(data: data, encoding: .utf8) {
+//                    print("🧾 서버 원본 JSON 응답:", raw)
+//                }
+//
+//                if let value = response.value {
+//                    print("✅ 디코딩 성공")
+//                    // ✅ 상태 매핑
+//                    let mapped = self.mapBusinessCertiState(from: value, raw: response.data)
+//                    self.businessCertiState = mapped
+//                } else {
+//                    print("❌ 디코딩 실패")
+//                }
+//            })
+//            .store(in: &cancellables)
+//    }
+    
  //사업자등록증 관리페이지 응답값 다른거별로 분기처리
     private func mapBusinessCertiState(from value: BusinessCertiResponse, raw: Data?) -> BusinessCertiState? {
         // 1) pending 등 success가 아닌 상태 우선 처리
