@@ -21,8 +21,7 @@ class OCRViewModel: ObservableObject {
     //MARK: - 푸드아이디
     @Published var confirmedFooId: Int?
     // MARK: - 비건 판단 결과 (save-mt 응답)
-    @Published var veganJudged: String? = nil
-    @Published var veganStored: String? = nil
+    @Published var veganStored: Int? = nil
     // MARK: - OCR 결과가 맞는지 여부
     @Published var isOCRResultCorrect: Bool = true
     // MARK: - 사용자가 수정한 음식명
@@ -155,14 +154,6 @@ class OCRViewModel: ObservableObject {
        print("🥗 vegan.stored:", resp.vegan.stored.map { String($0) } ?? "nil")
                     self?.veganStored = resp.vegan.stored
                 }
-            } receiveValue: { [weak self] resp in
-                // 🔎 디버그: 디코딩된 전체 응답 덤프 + 비건 필드 별도 출력
-                dump(resp)
-                print("🥗 vegan.judged:", resp.vegan.judged)
-                print("🥗 vegan.stored:", resp.vegan.stored ?? "nil")
-                self?.veganJudged = resp.vegan.judged
-                self?.veganStored = resp.vegan.stored
-            }
             .store(in: &cancellables)
     }
 }

@@ -7,51 +7,40 @@
 
 import SwiftUI
 
-struct MenuItem: Identifiable, Equatable {
-    let id: UUID
-    let menuImage: String
-    let menuName: String
-    let price: String
-    let allergInfo: String
-    let veganType: VeganType?
-}
-
 struct MenuManagementView: View {
+    
     let segments = ["전체", "일반", "비건"]
     @State private var selectedIndex: Int = 0
     @State private var search: String = ""
-    @State private var selectedItemForDeletion: MenuItem? = nil
-    @State private var selectedItemForEdit: MenuItem? = nil
+    
+    // MARK: 메뉴 관리 뷰 모델
+    @StateObject private var menuViewModel = MenuManagementViewModel()
+    // MARK: 메뉴 관리 페이지 바인딩 상태
     @Binding var showMenuManagement: Bool
+    // MARK: 선택된 스토어 아이디
+    let storeId: Int?
     
-    @State private var menuItems: [MenuItem] = [
-        MenuItem(id: UUID(), menuImage: "testImage", menuName: "연어초밥", price: "9,000원", allergInfo: "생선, 간장", veganType: .pesco),
-        MenuItem(id: UUID(), menuImage: "testImage", menuName: "비건버거", price: "11,000원", allergInfo: "콩, 밀", veganType: .vegan),
-        MenuItem(id: UUID(), menuImage: "testImage", menuName: "닭가슴살 샐러드", price: "10,000원", allergInfo: "닭고기, 달걀", veganType: .pollo),
-        MenuItem(id: UUID(), menuImage: "testImage", menuName: "토마토 파스타", price: "8,500원", allergInfo: "토마토, 밀", veganType: .lacto),
-        MenuItem(id: UUID(), menuImage: "testImage", menuName: "치즈 피자", price: "12,000원", allergInfo: "우유, 밀", veganType: .lactoovo),
-        MenuItem(id: UUID(), menuImage: "testImage", menuName: "돈까스", price: "15,000원", allergInfo: "돼지고기, 밀", veganType: nil),
-        MenuItem(id: UUID(), menuImage: "testImage", menuName: "달걀볶음밥", price: "7,000원", allergInfo: "달걀, 쌀", veganType: .ovo)
-    ]
-    
-    private var filteredMenuItems: [MenuItem] {
-        menuItems.filter { item in
+    // MARK: - 필터링된 음식 목록
+    private var filteredFoods: [StoreFood] {
+        menuViewModel.foods.filter { food in
             let matchesSearch = search.isEmpty ||
-                item.menuName.localizedCaseInsensitiveContains(search) ||
-                (item.veganType?.displayName ?? "").localizedCaseInsensitiveContains(search)
-
+            food.foo_name.localizedCaseInsensitiveContains(search) ||
+            (VeganType(rawValue: food.foo_vegan ?? 7)?.displayName ?? "").localizedCaseInsensitiveContains(search)
+            
             switch selectedIndex {
             case 0:
-                return matchesSearch //
+                return matchesSearch // 전체
             case 1:
-                return item.veganType == nil && matchesSearch // 일반
+                return (food.foo_vegan == nil || food.foo_vegan == 7) && matchesSearch // 일반
             case 2:
-                return item.veganType?.isVegan == true && matchesSearch
+                let veganType = VeganType(rawValue: food.foo_vegan ?? 7)
+                return veganType?.isVegan == true && matchesSearch // 비건
             default:
                 return matchesSearch
             }
         }
     }
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -69,95 +58,84 @@ struct MenuManagementView: View {
                     .frame(width: 400, height: 1)
                     .foregroundColor(Color(red: 0.85, green: 0.85, blue: 0.85))
                     .padding(.top, 10)
+                
+                // MARK: - 메뉴 목록 표시
                 ScrollView {
                     VStack(spacing: 20) {
-                        ForEach(filteredMenuItems, id: \.id) { item in
+                        ForEach(filteredFoods, id: \.foo_id) { storeFood in
                             MenuList(
-                                menuImage: item.menuImage,
-                                menuName: item.menuName,
-                                price: formattedPrice(item.price),
-                                allergInfo: item.allergInfo,
-                                veganType: item.veganType ?? .none,
+                                menuImage: storeFood.foo_img ?? "testImage",
+                                menuName: storeFood.foo_name,
+                                price: formattedPrice("\(storeFood.foo_price)"),
+                                allergInfo: storeFood.foo_material.joined(separator: ", "),
+                                veganType: VeganType(rawValue: storeFood.foo_vegan ?? 7) ?? .none,
                                 onEdit: {
-                                    selectedItemForEdit = item
+                                    // TODO: 편집 기능 구현
+                                    print("편집: \(storeFood.foo_id)")
                                 },
                                 onDelete: {
-                                    selectedItemForDeletion = item
+                                    // TODO: 삭제 기능 구현
+                                    print("삭제: \(storeFood.foo_id)")
                                 }
                             )
                         }
-                            .padding(.horizontal)
-                        }
+                        .padding(.horizontal)
                     }
-                    .padding(.top, 16)
                 }
-                .overlay(content: {
-                    Group {
-                        if let item = selectedItemForDeletion {
-                            ZStack {
-                                Color.black.opacity(0.4)
-                                    .ignoresSafeArea()
-                                MenuDeleteModal(
-                                    menuName: item.menuName,
-                                    onClose: {
-                                        if let index = menuItems.firstIndex(where: { $0.id == item.id }) {
-                                            menuItems.remove(at: index)
-                                        }
-                                        selectedItemForDeletion = nil
-                                    },
-                                    onCancel: {
-                                        selectedItemForDeletion = nil
-                                    }
-                                )
-                            }
-                        }
-                    }
-                })
-                .fullScreenCover(item: $selectedItemForEdit) { item in
-                    MenuEditView(
-                        menuName: item.menuName,
-                        price: item.price,
-                        menuImage: item.menuImage,
-                        allergInfo: item.allergInfo,
-                        veganType: item.veganType ?? VeganType.none,
-                        //서버에서 전송할때 여기서수정
-                        onEditDone: { updatedItem in
-                            if let index = menuItems.firstIndex(where: { $0.id == item.id }) {
-                                var correctedItem = updatedItem
-                                if correctedItem.veganType == VeganType.none {
-                                    correctedItem = MenuItem(
-                                        id: correctedItem.id,
-                                        menuImage: correctedItem.menuImage,
-                                        menuName: correctedItem.menuName,
-                                        price: correctedItem.price,
-                                        allergInfo: correctedItem.allergInfo,
-                                        veganType: nil
-                                    )
+                .padding(.top, 16)
+            }
+            
+            // MARK: - 모달들 (추후 구현)
+            /*
+            .overlay(content: {
+                Group {
+                    if let item = selectedItemForDeletion {
+                        ZStack {
+                            Color.black.opacity(0.4)
+                                .ignoresSafeArea()
+                            MenuDeleteModal(
+                                menuName: item.menuName,
+                                onClose: {
+                                    // 삭제 로직
+                                },
+                                onCancel: {
+                                    selectedItemForDeletion = nil
                                 }
-                                menuItems[index] = correctedItem
-                            }
-                            selectedItemForEdit = nil
-                            
-                        }
-                    )
-                }
-                    .navigationTitle("메뉴 관리")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button {
-                                showMenuManagement = false
-                            } label: {
-                                Image(systemName: "chevron.backward")
-                                    .foregroundStyle(.black)
-                            }
+                            )
                         }
                     }
-
+                }
+            })
+            .fullScreenCover(item: $selectedItemForEdit) { item in
+                MenuEditView(
+                    // 편집 로직
+                )
+            }
+            */
+            
+            .navigationTitle("메뉴 관리")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showMenuManagement = false
+                    } label: {
+                        Image(systemName: "chevron.backward")
+                            .foregroundStyle(.black)
+                    }
+                }
+            }
+            .onAppear {
+                guard let storeId = storeId else {
+                    print("❌ 선택된 가게 ID가 없습니다")
+                    return
+                }
+                menuViewModel.loadMenuList(storeId: storeId)
             }
         }
     }
-
+    
+    // MARK: - 가격 포맷팅
     private func formattedPrice(_ price: String) -> String {
         let digits = price.filter { $0.isNumber }
         if let number = Int(digits) {
@@ -167,20 +145,5 @@ struct MenuManagementView: View {
             return formatter.string(from: NSNumber(value: number))! + "원"
         }
         return price
-    }
-
-
-//#Preview {
-//    MenuManagementView()
-//}
-
-extension VeganType {
-    var isVegan: Bool {
-        switch self {
-        case .vegan, .lacto, .ovo, .lactoovo, .pesco, .pollo:
-            return true
-        case .none:
-            return false
-        }
     }
 }
