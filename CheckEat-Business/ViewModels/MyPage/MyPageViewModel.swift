@@ -67,7 +67,7 @@ class MyPageViewModel: ObservableObject {
                     self.stores = value.stores
                     self.businessName = value.stores.first?.sto_name ?? ""
                     self.businessEmail = value.email
-                    self.storeImage = value.sto_img
+                    self.storeImage = value.sto_img ?? ""
                     self.certificationStatus = value.sa_certification
                     // 선택된 가게가 아직 없다면 첫 가게를 기본 선택으로 설정
                     if self.selectedStoreId == nil {
