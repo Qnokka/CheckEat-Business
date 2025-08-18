@@ -104,6 +104,12 @@ struct RegiMenuStep5: View {
                             selectedStoreName: $selectedStoreName
                         )
                         .padding(.top, 20)
+                        .onChange(of: selectedStoreId) { newValue in
+                            ocrViewModel.selectedStoreId = newValue
+                        }
+                        .onChange(of: selectedStoreName) { newValue in
+                            ocrViewModel.selectedStoreName = newValue
+                        }
                         if !selectedStoreName.isEmpty {
                             HStack(spacing: 6) {
                                 Text("선택된 가게:")
@@ -150,6 +156,9 @@ struct RegiMenuStep5: View {
             if myPageViewModel.modalStores.isEmpty {
                 myPageViewModel.storeModal()
             }
+            
+            ocrViewModel.selectedStoreId = selectedStoreId
+            ocrViewModel.selectedStoreName = selectedStoreName
         }
         .navigationTitle("메뉴 등록")
         .navigationBarTitleDisplayMode(.inline)

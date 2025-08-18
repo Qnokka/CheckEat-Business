@@ -44,3 +44,27 @@ struct SaveMtResponse: Decodable {
         let stored: Int?
     }
 }
+//메뉴등록 최종 요청
+struct SaveFoodRequest: Codable {
+    let foo_id: String
+    let foo_name: String
+    let foo_price: String
+    let foo_vegan: String
+    let sto_id: Int
+}
+//메뉴등록 최종 응답
+// 메뉴등록 최종 응답
+struct SaveFoodResponse: Decodable, Equatable {
+    let message: String
+    let status: String
+    let food: Food
+
+    struct Food: Decodable, Equatable {
+        let foo_id: Int
+        let foo_name: String
+        let foo_price: Int
+        let foo_vegan: Int   
+        let foo_img: String
+        let foo_store_id: Int
+    }
+}

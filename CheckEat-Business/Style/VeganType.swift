@@ -41,6 +41,23 @@ extension VeganType {
         self = VeganType(rawValue: stored) ?? .none
     }
     
+    // 서버로 보낼 Int 코드
+       var serverCode: Int {
+           switch self {
+           case .pollo:    return 1
+           case .pesco:    return 2
+           case .lacto:    return 3
+           case .ovo:      return 4
+           case .lactoovo: return 5
+           case .vegan:    return 6
+           case .none:     return 7   // null → 비건이 아닙니다 → 서버엔 7로
+           }
+       }
+    /// 서버 전송용 문자열 코드 ("1" ~ "7")
+    var serverCodeString: String {
+        String(serverCode)
+    }
+  
     var displayName: String? {
         switch self {
         case .vegan:    return "비건"

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 //MARK: - 통합 정보 (수정 불가)
 struct RegiMenuStep6: View {
     
