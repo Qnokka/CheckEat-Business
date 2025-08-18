@@ -15,6 +15,8 @@ struct PassivityMenuModalView: View {
     //MARK: 스캔 메뉴명 바인딩
     @Binding var scanMenuName: String
     @Binding var showPassivityModal: Bool
+    //MARK: 뷰 모델 추가
+    @ObservedObject var viewModel: OCRViewModel
     //MARK: 스캔 메뉴명 새로 입력 - 해당 값으로 변경하기 위함
     @State private var tempName: String = ""
     @Environment(\.dismiss) private var dismiss
@@ -45,24 +47,31 @@ struct PassivityMenuModalView: View {
                 .regular16()
             Text("입력하신 음식명을 바탕으로 재료가 추론되기때문에 보편적인 음식명을 입력해주세요")
                 .font(.system(size: 10, weight: .regular))
-            TextFieldStyle(placeholder: "음식 이름", text: $tempName)
+            TextFieldStyle(placeholder: viewModel.ocrResult?.label ?? "음식 이름", text: $tempName)
                 .tapToDismissKeyboard()
             Button {
-                scanMenuName = tempName
+                let cleanedName = tempName.trimmingCharacters(in: .whitespacesAndNewlines)
+                viewModel.userEditedFoodName = cleanedName
+                scanMenuName = cleanedName
                 showPassivityModal = false
-                path.append(.registerMenuStep1)
+                viewModel.confirm()
             } label: {
                 Text("다음")
                     .semibold16()
                     .primaryButtonStyle(isEnabled: isScanMenuNameValid)
             }
-            .disabled(!isScanMenuNameValid)
+            .disabled(!isScanMenuNameValid || viewModel.isLoading)
             .padding(.top)
             .padding(.bottom, 8)
         }
         .padding(.horizontal)
+        .onChange(of: viewModel.confirmResult) { result in
+            if result != nil {
+                path.append(.registerMenuStep1)
+            }
+        }
         .onAppear {
-            tempName = ""
+            tempName = viewModel.ocrResult?.label ?? ""
         }
     }
 }
