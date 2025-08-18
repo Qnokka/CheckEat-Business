@@ -20,7 +20,7 @@ struct OcrFoodResponse: Decodable, Equatable{
 struct OcrUploadRequest: Codable {
     let cacheId: String
     let foodName: String
-    let ok: String
+    let ok: String?
 }
 //스캔 음식이 맞았을때 응답
 struct OcrUploadResponse: Codable, Equatable {

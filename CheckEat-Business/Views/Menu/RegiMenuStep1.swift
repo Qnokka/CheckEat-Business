@@ -28,6 +28,8 @@ struct RegiMenuStep1: View {
     //MARK: 초기화 구문
     let onReset: () -> Void
     
+    @ObservedObject var viewModel: OCRViewModel
+    
     var body: some View {
         VStack(spacing: 12) {
             

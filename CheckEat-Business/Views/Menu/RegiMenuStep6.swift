@@ -66,7 +66,7 @@ struct RegiMenuStep6: View {
                 
                 Text("\(scanMenuName)에 대한 식품 주의정보")
                     .bold18()
-                    .padding(.top, 10)
+                    .padding(.vertical, 10)
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {
