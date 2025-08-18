@@ -11,6 +11,8 @@ struct DayOffManagementView: View {
     
     //MARK: 스크린 상태 값
     @Binding var showManageHoliday: Bool
+    let storeId: Int
+    @StateObject private var viewModel = ManageStoreTimeViewModel()
     
     @State private var hasDayOff = true
     let options = ["매주", "격주", "매월"]
@@ -101,71 +103,36 @@ struct DayOffManagementView: View {
                         .padding(.horizontal, 3)
                     if hasDayOff {
                         VStack(alignment: .leading) {
-                            Text("정기 휴무일이 있나요?")
-                                .semibold14()
-                                .padding(.top, 15)
-                            HStack(spacing: 5) {
-                                CustomDropdown(selectionOption: $selectionOption, isExpanded: $isExpanded, dropdownPosition: $dropdownPosition, options: options)
-                                ForEach(days, id: \.self) { day in
-                                    WeekButton(day: day, isSelected: selectedDays.contains(day)) {
-                                        if selectedDays.contains(day) {
-                                            selectedDays.remove(day)
-                                        } else {
-                                            selectedDays.insert(day)
-                                        }
-                                    }
-                                }
-                            }
-                            .padding(.top, 10)
-                            Text("공휴일 중 휴무일이 있나요?")
-                                .semibold14()
-                                .padding(.top, 15)
-                            HStack {
-                                CheckBoxButtonBlack(isChecked: $holidaysChecked)
-                                    .onChange(of: holidaysChecked) { newValue in
-                                        if newValue {
-                                            // 당일만 휴무: 메인 날짜만 체크, 전/후일은 해제
-                                            lunarNewYearChecked = true
-                                            chuseokChecked = true
-                                            lunarNewYearChecked1 = false
-                                            lunarNewYearChecked2 = false
-                                            chuseokChecked1 = false
-                                            chuseokChecekd2 = false
-
-                                            // 전체 휴무와 충돌 방지
-                                            totalChecked = false
-                                        } else {
-                                            // 당일만 해제: 메인 날짜도 해제 (필요 시 유지하도록 바꿀 수 있음)
-                                            lunarNewYearChecked = false
-                                            chuseokChecked = false
-                                        }
-                                    }
-                                Text("설, 추석 당일만 휴무")
-                                    .font(.system(size: 14, weight: .medium))
-                                CheckBoxButtonBlack(isChecked: $totalChecked)
-                                    .padding(.leading, 20)
-                                //전체휴무 체크하면 다 선택되는거
-                                    .onChange(of: totalChecked) { newValue in
-                                        newYearChecked = newValue
-                                        lunarNewYearChecked = newValue
-                                        lunarNewYearChecked1 = newValue
-                                        lunarNewYearChecked2 = newValue
-                                        march1Checked = newValue
-                                        childernDayChecked = newValue
-                                        buddhaDayChecked = newValue
-                                        memorialChecked = newValue
-                                        nationalLiberationChecked = newValue
-                                        chuseokChecked = newValue
-                                        chuseokChecked1 = newValue
-                                        chuseokChecekd2 = newValue
-                                        nationalFoundationDayChecked = newValue
-                                        hangulDayChecked = newValue
-                                        christmasChecked = newValue
-                                    }
-                                Text("전체 휴무")
-                                    .font(.system(size: 14, weight: .medium))
-                            }
-                            .padding(.top, 10)
+                            RegularHolidaySelector(
+                                selectionOption: $selectionOption,
+                                isExpanded: $isExpanded,
+                                dropdownPosition: $dropdownPosition,
+                                options: options,
+                                days: days,
+                                selectedDays: $selectedDays
+                            )
+                            .padding(.top, 15)
+                            
+                            PublicHolidayModeToggles(
+                                holidaysChecked: $holidaysChecked,
+                                totalChecked: $totalChecked,
+                                newYearChecked: $newYearChecked,
+                                lunarNewYearChecked: $lunarNewYearChecked,
+                                lunarNewYearChecked1: $lunarNewYearChecked1,
+                                lunarNewYearChecked2: $lunarNewYearChecked2,
+                                march1Checked: $march1Checked,
+                                childernDayChecked: $childernDayChecked,
+                                buddhaDayChecked: $buddhaDayChecked,
+                                memorialChecked: $memorialChecked,
+                                nationalLiberationChecked: $nationalLiberationChecked,
+                                chuseokChecked: $chuseokChecked,
+                                chuseokChecked1: $chuseokChecked1,
+                                chuseokChecekd2: $chuseokChecekd2,
+                                nationalFoundationDayChecked: $nationalFoundationDayChecked,
+                                hangulDayChecked: $hangulDayChecked,
+                                christmasChecked: $christmasChecked
+                            )
+                            .padding(.top, 15)
                             HolidaySelectionGridView(
                                 newYearChecked: $newYearChecked,
                                 lunarNewYearChecked: $lunarNewYearChecked,
@@ -186,8 +153,53 @@ struct DayOffManagementView: View {
                         }
                     }
                     Button {
-                        //TODO: 실제 로직 구현
-                        showManageHoliday = false
+                        let dayOrder = ["월","화","수","목","금","토","일"]
+                        let sortedDays = selectedDays.sorted {
+                            (dayOrder.firstIndex(of: $0) ?? 999) < (dayOrder.firstIndex(of: $1) ?? 999)
+                        }
+                        let dayString = sortedDays.map { "\($0)요일" }.joined(separator: ", ")
+                        let holi_regular: String? = (hasDayOff && !sortedDays.isEmpty) ? "\(selectionOption) \(dayString)" : nil
+                        
+                        let holidayPairs: [(String, Bool)] = [
+                            ("신정", newYearChecked),
+                            ("설날", lunarNewYearChecked),
+                            ("설 전날", lunarNewYearChecked1),
+                            ("설 다음날", lunarNewYearChecked2),
+                            ("삼일절", march1Checked),
+                            ("어린이날", childernDayChecked),
+                            ("석가탄신일", buddhaDayChecked),
+                            ("현충일", memorialChecked),
+                            ("광복절", nationalLiberationChecked),
+                            ("추석", chuseokChecked),
+                            ("추석 전날", chuseokChecked1),
+                            ("추석 다음날", chuseokChecekd2),
+                            ("개천절", nationalFoundationDayChecked),
+                            ("한글날", hangulDayChecked),
+                            ("크리스마스", christmasChecked)
+                        ]
+                        let selectedPublic = holidayPairs.filter { $0.1 }.map { $0.0 }
+                        let holi_public: String? = selectedPublic.isEmpty ? nil : selectedPublic.joined(separator: ", ")
+                        
+                        let preview = [holi_regular ?? "", holi_public ?? ""].filter { !$0.isEmpty }.joined(separator: " / ")
+                        print("➡️ 전송된 데이터: \(preview)")
+                        
+                        viewModel.saveHoliday(
+                            sto_id: storeId,
+                            holi_regular: holi_regular,
+                            holi_public: holi_public
+                        ) { result in
+                            switch result {
+                            case .success(let res):
+                                print("✅ 저장 성공: \(res.message)")
+                                showManageHoliday = false
+                            case .failure(let err):
+                                if err.statusCode == 403 {
+                                    //TODO: 해당 매장에 대한 권한이 없습니다 안내 문구 출력
+                                    print("❌ 권한 없음: 다른 사업자가 다른 가게에 접근 시도")
+                                }
+                                print("❌ 저장 실패: \(err.localizedDescription)")
+                            }
+                        }
                     } label: {
                         Text("완료")
                             .semibold16()
@@ -205,7 +217,7 @@ struct DayOffManagementView: View {
                         .ignoresSafeArea()
                         .onTapGesture { isExpanded = false }
                         .zIndex(999)
-
+                    
                     DropdownOptionList(
                         options: options,
                         selectionOption: $selectionOption,
@@ -229,8 +241,6 @@ struct DayOffManagementView: View {
                     }
                 }
             }
-            
         }
-
     }
 }

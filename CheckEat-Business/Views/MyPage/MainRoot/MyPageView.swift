@@ -70,6 +70,7 @@ struct MyPageView: View {
                     MyPageHeaderView(
                         businessName: $viewModel.businessName,
                         businessEmail: $viewModel.businessEmail,
+                        storeImage: $viewModel.storeImage,
                         certificationStatus: viewModel.certificationStatus,
                         showMoreMenu: $showMoreMenu,
                         showManageStoreProfileModal: $showManageStoreProfileModal, showChangeBusinessModal: $ShowChangeBusinessModal, showDeleteBusiness: $showDeleteBusiness, viewModel: viewModel)
@@ -131,10 +132,10 @@ struct MyPageView: View {
             MenuManagementView(showMenuManagement: $showMenuManagement)
         }
         .fullScreenCover(isPresented: $showManageBusinessHours) {
-            ManageBusinessHoursView(showManageBusinessHours: $showManageBusinessHours)
+            ManageBusinessHoursView(showManageBusinessHours: $showManageBusinessHours, storeId: viewModel.selectedStoreId ?? -1)
         }
         .fullScreenCover(isPresented: $showManageHoliday) {
-            DayOffManagementView(showManageHoliday: $showManageHoliday)
+            DayOffManagementView(showManageHoliday: $showManageHoliday, storeId: viewModel.selectedStoreId ?? -1)
         }
         .fullScreenCover(isPresented: $showManageLicense) {
             MyPageBusinessReRegistration(showManageLicense: $showManageLicense, businessName: $viewModel.businessName, storePhone: $storePhone, storeName: $storeName, stoId: viewModel.selectedStoreId ?? 0, myPageViewModel: viewModel, registerViewModel: registerViewModel

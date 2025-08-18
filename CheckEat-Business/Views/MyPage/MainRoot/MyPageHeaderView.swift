@@ -7,12 +7,14 @@
 
 import SwiftUI
 import Combine
+import SDWebImageSwiftUI
 
 struct MyPageHeaderView: View {
     
     //MARK: 메인에서 호출하는 헤더 뷰
     @Binding var businessName: String
     @Binding var businessEmail: String
+    @Binding var storeImage: String
     let certificationStatus: Int
     
     //MARK: 더보기 메뉴 상태 값 (업체 삭제, 회원탈퇴)
@@ -42,19 +44,37 @@ struct MyPageHeaderView: View {
                     Button {
                         showManageStoreProfileModal = true
                     } label: {
-                        Image(systemName: "person.crop.circle")
-                            .resizable()
-                            .frame(width: 60, height: 60)
-                            .padding(.trailing, 10)
+                        if storeImage.isEmpty {
+                            Image(systemName: "person.crop.circle")
+                                .resizable()
+                                .frame(width: 70, height: 70)
+                                .padding(.trailing, 12)
+                        } else {
+                            WebImage(url: URL(string: storeImage))
+                                .onSuccess { _, _, cacheType in
+                                    print("📸 이미지 로드 완료 - 캐시 타입: \(cacheType)")
+                                }
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 80, height: 80)
+                                .clipShape(Circle())
+                                .padding(.trailing, 12)
+                        }
                     }
                     .foregroundStyle(.primary)
                     .sheet(isPresented: $showManageStoreProfileModal) {
                         ManageStoreProfileModalView(
                             business: $businessName,
                             businessEmail: $businessEmail,
-                            showManageCompantProfileModal: $showManageStoreProfileModal)
-                        .presentationDetents([.fraction(0.4)])
-                        .presentationDragIndicator(.visible)
+                            storeImage: $storeImage,
+                            showManageCompantProfileModal: $showManageStoreProfileModal,
+                            storeId: viewModel.selectedStoreId ?? -1) {
+                                Task {
+                                    await refreshMyPageDataAsync()
+                                }
+                            }
+                            .presentationDetents([.fraction(0.4)])
+                            .presentationDragIndicator(.visible)
                     }
                     
                     VStack(alignment: .leading, spacing: 8) {
@@ -80,12 +100,13 @@ struct MyPageHeaderView: View {
                                 Image("More")
                             }
                         }
+                        .padding(.top, 8)
                         Text(businessEmail)
                             .regular16()
                             .foregroundColor(.black)
                     }
                 }
-                .padding(.vertical, 35)
+                .padding(.vertical, 24)
                 .padding(.horizontal)
                 
                 //MARK: 중간 구분선
@@ -106,35 +127,50 @@ struct MyPageHeaderView: View {
                 )
             }
         }
-                .alert("회원탈퇴", isPresented: $showWithdrawAlert) {
-                    Button("탈퇴", role: .destructive) {
-                        deleteViewModel.withdrawUser()
-                            .receive(on: DispatchQueue.main)
-                            .sink(receiveCompletion: { completion in
-                                switch completion {
-                                case .finished:
-                                    TokenManager.shared.clear()
-                                    goToLogin = true
-                                case .failure(let error):
-                                    print("❌ 탈퇴 실패: \(error.localizedDescription)")
-                                }
-                            }, receiveValue: { })
-                            .store(in: &cancellables)
-                    }
-                    Button("취소", role: .cancel) { }
-                } message: {
-                    Text("정말 회원 탈퇴하시겠습니까?\n탈퇴 시 모든 데이터가 삭제됩니다.")
-                }
+        .alert("회원탈퇴", isPresented: $showWithdrawAlert) {
+            Button("탈퇴", role: .destructive) {
+                deleteViewModel.withdrawUser()
+                    .receive(on: DispatchQueue.main)
+                    .sink(receiveCompletion: { completion in
+                        switch completion {
+                        case .finished:
+                            TokenManager.shared.clear()
+                            goToLogin = true
+                        case .failure(let error):
+                            print("❌ 탈퇴 실패: \(error.localizedDescription)")
+                        }
+                    }, receiveValue: { })
+                    .store(in: &cancellables)
+            }
+            Button("취소", role: .cancel) { }
+        } message: {
+            Text("정말 회원 탈퇴하시겠습니까?\n탈퇴 시 모든 데이터가 삭제됩니다.")
+        }
         
-                .fullScreenCover(isPresented: $goToLogin) {
-                    LoginView(session: session, onSuccess: { goToLogin = false })
-                }
-                .sheet(isPresented: $showChangeBusinessModal) {
-                    ShowChangeBusinessModal(viewModel: viewModel) { selected in
-                        businessName = selected.sto_name
-                    }
-                    .presentationDetents([.fraction(0.4)])
-                    .presentationDragIndicator(.visible)
-                }
+        .fullScreenCover(isPresented: $goToLogin) {
+            LoginView(session: session, onSuccess: { goToLogin = false })
+        }
+        .sheet(isPresented: $showChangeBusinessModal) {
+            ShowChangeBusinessModal(viewModel: viewModel) { selected in
+                businessName = selected.sto_name
+            }
+            .presentationDetents([.fraction(0.4)])
+            .presentationDragIndicator(.visible)
+        }
+    }
+    
+    // MARK: - API 재호출 함수
+    private func refreshMyPageDataAsync() async {
+        do {
+            await viewModel.myPageData()
+            
+            await MainActor.run {
+                print("✅ 마이페이지 데이터 새로고침 완료")
+            }
+        } catch {
+            await MainActor.run {
+                print("❌ 마이페이지 데이터 새로고침 실패: \(error)")
+            }
+        }
     }
 }
