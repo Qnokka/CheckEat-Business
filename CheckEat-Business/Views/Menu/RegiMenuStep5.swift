@@ -31,6 +31,12 @@ struct RegiMenuStep5: View {
     //MARK: OCR/재료 저장 결과(비건 판정) 공유
     @EnvironmentObject var ocrViewModel: OCRViewModel
     
+    // MARK:  가게 선택
+    @EnvironmentObject var myPageViewModel: MyPageViewModel
+    @Binding var selectedStoreId: Int?
+    @Binding var selectedStoreName: String
+    @State private var showStoreRequiredAlert = false
+    
     private var isNextButtonEnabled: Bool {
         !price.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
@@ -39,6 +45,7 @@ struct RegiMenuStep5: View {
     @Binding var showMenuRegiResetPopUp: Bool
     //MARK: 초기화 구문
     let onReset: () -> Void
+    
     
     var body: some View {
         ScrollView {
@@ -88,27 +95,25 @@ struct RegiMenuStep5: View {
                         .focused($isInputFocused)
                         
                         Text("비건 구분")
+                        veganBadgeView(stored: ocrViewModel.veganStored)
                         
-                        if let judged = ocrViewModel.veganJudged {
-                            if let veganType = VeganType(serverJudged: judged) {
-                                // 비건 계열: 기존 뱃지 스타일로 표시
-                                Text(veganType.displayName ?? "")
-                                    .medium14()
-                                    .foregroundStyle(veganType.textColor)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(veganType.backgroundColor)
-                                    .clipShape(Capsule())
-                            } else {
-                                // 비건이 아닙니다(또는 미매핑): 검정 글씨 + 회색 배경으로 표시
-                                Text(judged)
-                                    .medium14()
-                                    .foregroundStyle(Color.black)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(Color.gray.opacity(0.2))
-                                    .clipShape(Capsule())
+                        // 메뉴 등록할 가게 선택
+                        StoreDropDown(
+                            viewModel: myPageViewModel,
+                            selectedStoreId: $selectedStoreId,
+                            selectedStoreName: $selectedStoreName
+                        )
+                        .padding(.top, 20)
+                        if !selectedStoreName.isEmpty {
+                            HStack(spacing: 6) {
+                                Text("선택된 가게:")
+                                Text(selectedStoreName)
+                                    .semibold14()
+                                    .lineLimit(1)
+                                    .truncationMode(.tail)
                             }
+                            .regular14()
+                            .foregroundStyle(.secondary)
                         }
                         
                     }
@@ -121,6 +126,10 @@ struct RegiMenuStep5: View {
                 Button {
                     if menuName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                         menuName = scanMenuName
+                    }
+                    guard selectedStoreId != nil else {
+                        showStoreRequiredAlert = true
+                        return
                     }
                     path.append(.registerMenuStep6)
                 } label: {
@@ -137,8 +146,18 @@ struct RegiMenuStep5: View {
         .onTapGesture {
             isInputFocused = false
         }
+        .onAppear {
+            if myPageViewModel.modalStores.isEmpty {
+                myPageViewModel.storeModal()
+            }
+        }
         .navigationTitle("메뉴 등록")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("가게 선택 필요", isPresented: $showStoreRequiredAlert) {
+            Button("확인", role: .cancel) { }
+        } message: {
+            Text("메뉴를 등록할 가게를 먼저 선택해 주세요.")
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -165,5 +184,29 @@ struct RegiMenuStep5: View {
                 .zIndex(1)
             }
         }
+    }
+}
+
+@ViewBuilder
+private func veganBadgeView(stored: Int?) -> some View {
+    let type: VeganType = {
+        if let s = stored { return VeganType(stored: s) } else { return .none }
+    }()
+    if type != .none {
+        Text(type.displayName ?? "")
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(type.textColor)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(type.backgroundColor)
+            .clipShape(Capsule())
+    } else {
+        Text("비건이 아닙니다")
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(Color.black)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Color.gray.opacity(0.2))
+            .clipShape(Capsule())
     }
 }

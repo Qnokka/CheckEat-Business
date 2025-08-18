@@ -22,8 +22,7 @@ struct StoreDropDown: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("가게 선택")
-                .semibold16()
+            Text("메뉴 등록할 가게 선택")
 
             Button {
                 withAnimation { showOptions.toggle() }
@@ -69,9 +68,6 @@ struct StoreDropDown: View {
                                         .foregroundColor(.black)
                                         .lineLimit(1)
                                         .truncationMode(.tail)
-                                    Text("ID: #\(item.sto_id)")
-                                        .font(.caption2)
-                                        .foregroundColor(.gray)
                                 }
                                 Spacer()
                             }

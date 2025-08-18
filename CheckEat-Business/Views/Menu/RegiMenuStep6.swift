@@ -32,10 +32,14 @@ struct RegiMenuStep6: View {
     
     //MARK: 메뉴 등록 리셋 팝업 표시 바인딩
     @Binding var showMenuRegiResetPopUp: Bool
-
-    // MARK: - 비건 판정 공유 (Step2 → Step6)
+    
+    // MARK: 비건 판정 공유 (Step2 → Step6)
     @EnvironmentObject var ocrViewModel: OCRViewModel
-
+    
+    //MARK: step5에서 받은 스토어아이디(최종등록용)
+    @Binding var selectedStoreId: Int?
+    @Binding var selectedStoreName: String
+    
     //MARK: 초기화 구문
     let onReset: () -> Void
     
@@ -81,30 +85,39 @@ struct RegiMenuStep6: View {
                         .padding(.bottom, 8)
                         
                         Text("비건 구분")
-
-                        if let judged = ocrViewModel.veganJudged {
-                            if let veganType = VeganType(serverJudged: judged) {
-                                // 비건 계열 → 기존 컬러 배지로 표시
-                                Text(veganType.displayName ?? "")
-                                    .regular14()
-                                    .foregroundStyle(veganType.textColor)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(veganType.backgroundColor)
-                                    .clipShape(Capsule())
-                                    .padding(.bottom, 8)
+                        
+                        // nil 이거나 .none 이면 동일하게 "비건이 아닙니다"
+                        let veganType: VeganType = {
+                            if let stored = ocrViewModel.veganStored {
+                                return VeganType(stored: stored)
                             } else {
-                                // 비건이 아닙니다(또는 미매핑) → 검정 글씨 + 회색 배경
-                                Text(judged)
-                                    .regular14()
-                                    .foregroundStyle(Color.black)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(Color.gray.opacity(0.2))
-                                    .clipShape(Capsule())
-                                    .padding(.bottom, 8)
+                                return .none
                             }
+                        }()
+                        
+                        if veganType != .none {
+                            // 비건 계열
+                            Text(veganType.displayName ?? "")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(veganType.textColor)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(veganType.backgroundColor)
+                                .clipShape(Capsule())
+                        } else {
+                            // 비건 아님 (stored == nil 또는 none 매핑)
+                            Text("비건이 아닙니다")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Color.black)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(Color.gray.opacity(0.2))
+                                .clipShape(Capsule())
                         }
+                        Text("선택한 가게명")
+                        Text(selectedStoreName)
+                            .regular14()
+                        
                         
                         Text("알레르기 유발 재료")
                         if !finalMaterials.isEmpty {
@@ -199,6 +212,24 @@ struct RegiMenuStep6: View {
                 .transition(.opacity)
                 .zIndex(1)
             }
+        }
+        .sheet(isPresented: $showRegiModal) {
+            RegiMenuReCheckModalView(
+                path: $path,
+                scanImageName: $scanImageName,
+                scanMenuName: $scanMenuName,
+                finalMaterials: $finalMaterials,
+                materials: $materials,
+                broth: $broth,
+                sauce: $sauce,
+                price: $price,
+                menuName: $menuName,
+                showRegiModal: $showRegiModal,
+                showMenuRegiCompletePopUp: $showMenuRegiCompletePopUp
+            )
+            .environmentObject(ocrViewModel)
+            .presentationDetents([.height(325)])
+            .presentationDragIndicator(.visible)
         }
     }
 }

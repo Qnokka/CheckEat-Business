@@ -118,9 +118,18 @@ struct OCRScanResultView: View {
                 Button {
                     viewModel.confirm(ok: "ok")
                 } label: {
-                    Text("다음")
-                        .semibold16()
-                        .primaryButtonStyle()
+                    ZStack {
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                                .scaleEffect(1.0)
+                                .accessibilityLabel("로딩 중")
+                        } else {
+                            Text("다음")
+                                .semibold16()
+                        }
+                    }
+                    .primaryButtonStyle()
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)

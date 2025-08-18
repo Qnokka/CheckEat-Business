@@ -41,7 +41,6 @@ struct SaveMtResponse: Decodable {
     let vegan: VeganInfo
 
     struct VeganInfo: Decodable {
-        let judged: String
-        let stored: String?
+        let stored: Int?
     }
 }

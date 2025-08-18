@@ -11,50 +11,26 @@ extension VeganType {
     init?(index: Int) {
         switch index {
         case 0: self = .none
-        case 1: self = .vegan
-        case 2: self = .lacto
-        case 3: self = .ovo
-        case 4: self = .lactoovo
-        case 5: self = .pesco
-        case 6: self = .pollo
+        case 1: self = .pollo
+        case 2: self = .pesco
+        case 3: self = .lacto
+        case 4: self = .ovo
+        case 5: self = .lactoovo
+        case 6: self = .vegan
         default: return nil
         }
     }
-    
-    /// 서버 판정 문자열("비건", "락토베지테리언", ... / "비건이 아닙니다" 등)을 VeganType으로 매핑
-    /// 비비건 문구면 .none 반환(=비건 아님 표시)
-    init?(serverJudged: String) {
-        let s = serverJudged
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .lowercased()
-            .replacingOccurrences(of: " ", with: "")
 
-        // 비비건/미해당 표현: .none 으로 매핑
-        if s.contains("아니") {
-            self = .none
+    // 서버 stored 값(Int? = 1~6 or null)을 VeganType으로 매핑
+    init(stored: Int?) {
+        guard let stored = stored else {
+            self = .none // null → 비건이 아닙니다
             return
         }
-        if s.contains("미해당") || s.contains("non") {
-            return nil
-        }
-
-        switch s {
-        case "비건", "비건입니다", "vegan":
-            self = .vegan
-        case "락토", "락토베지테리언", "lacto", "lactovegetarian":
-            self = .lacto
-        case "오보", "오보베지테리언", "ovo", "ovovegetarian":
-            self = .ovo
-        case "락토오보", "락토오보베지테리언", "lactoovo", "lacto-ovo":
-            self = .lactoovo
-        case "페스코", "페스코베지테리언", "pesco", "pescovegetarian":
-            self = .pesco
-        case "폴로", "폴로베지테리언", "pollo", "pollovegetarian":
-            self = .pollo
-        default:
-            return nil
-        }
+        self = VeganType(index: stored) ?? .none
     }
+    
+
     
     var displayName: String? {
         switch self {

@@ -18,6 +18,7 @@ struct OCRView: View {
     @State private var selectedSourceType: UIImagePickerController.SourceType = .camera
 
     @StateObject private var viewModel = OCRViewModel()
+    @StateObject private var myPageViewModel = MyPageViewModel()
     //MARK: OCR 로딩뷰
     @State private var isLoading: Bool = false
     @State private var menuPath: [MenuRoute] = []
@@ -32,6 +33,9 @@ struct OCRView: View {
     @State private var showRegiModal: Bool = false
     @State private var showMenuRegiCompletePopUp: Bool = false
     @State private var showMenuRegiResetPopUp: Bool = false
+    
+    @State private var selectedStoreId: Int? = nil
+    @State private var selectedStoreName: String = ""
     
     func resetInputs() {
         scanImageName = nil
@@ -215,6 +219,8 @@ struct OCRView: View {
                         sauce: $sauce,
                         price: $price,
                         menuName: $menuName,
+                        selectedStoreId: $selectedStoreId,
+                        selectedStoreName: $selectedStoreName,
                         showMenuRegiResetPopUp: $showMenuRegiResetPopUp,
                         onReset: resetInputs
                     )
@@ -232,6 +238,8 @@ struct OCRView: View {
                         showRegiModal: $showRegiModal,
                         showMenuRegiCompletePopUp: $showMenuRegiCompletePopUp,
                         showMenuRegiResetPopUp: $showMenuRegiResetPopUp,
+                        selectedStoreId: $selectedStoreId,
+                        selectedStoreName: $selectedStoreName,
                         onReset: resetInputs
                     )
                 default:
@@ -240,5 +248,6 @@ struct OCRView: View {
             }
         }
         .environmentObject(viewModel)
+        .environmentObject(myPageViewModel)
     }
 }
