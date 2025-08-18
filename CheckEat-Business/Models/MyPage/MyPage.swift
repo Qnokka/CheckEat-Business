@@ -72,6 +72,7 @@ struct BusinessCertiResponse: Decodable {
     let businessCertis: [BusinessCerti]?
     let businessCerti: BusinessCerti?
     let store: Store?
+}
 
 // 사업자 - 프로필 이미지 변경 응답
 struct UpdateSajangProfileSuccessResponse: Decodable {
