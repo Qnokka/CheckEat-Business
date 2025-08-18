@@ -28,6 +28,9 @@ struct RegiMenuStep5: View {
     //MARK: 키보드 dismiss
     @FocusState private var isInputFocused: Bool
     
+    //MARK: OCR/재료 저장 결과(비건 판정) 공유
+    @EnvironmentObject var ocrViewModel: OCRViewModel
+    
     private var isNextButtonEnabled: Bool {
         !price.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
@@ -86,15 +89,26 @@ struct RegiMenuStep5: View {
                         
                         Text("비건 구분")
                         
-                        if let veganIndex = dummyMaterials.first?.foo_vegan,
-                           let veganType = VeganType(index: veganIndex) {
-                            Text(veganType.displayName ?? "")
-                                .medium14()
-                                .foregroundStyle(veganType.textColor)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(veganType.backgroundColor)
-                                .clipShape(Capsule())
+                        if let judged = ocrViewModel.veganJudged {
+                            if let veganType = VeganType(serverJudged: judged) {
+                                // 비건 계열: 기존 뱃지 스타일로 표시
+                                Text(veganType.displayName ?? "")
+                                    .medium14()
+                                    .foregroundStyle(veganType.textColor)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(veganType.backgroundColor)
+                                    .clipShape(Capsule())
+                            } else {
+                                // 비건이 아닙니다(또는 미매핑): 검정 글씨 + 회색 배경으로 표시
+                                Text(judged)
+                                    .medium14()
+                                    .foregroundStyle(Color.black)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(Color.gray.opacity(0.2))
+                                    .clipShape(Capsule())
+                            }
                         }
                         
                     }

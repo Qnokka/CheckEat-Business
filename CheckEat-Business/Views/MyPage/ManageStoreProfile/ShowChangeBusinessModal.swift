@@ -32,6 +32,7 @@ struct ShowChangeBusinessModal: View {
                 List(viewModel.modalStores) { store in
                     Button {
                         onSelect(store)
+                        viewModel.selectedStoreId = store.sto_id
                         dismiss()
                     } label: {
                         Text(store.sto_name)

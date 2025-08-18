@@ -16,11 +16,13 @@ struct ManageBusinessView: View {
     @Binding var storeName: String
     @Binding var storePhone: String
     @Binding var storeEnglishName: String
+    @Binding var storeAddress: String
     
     // Temporary state variables for editing
     @State private var tempStoreName: String = ""
     @State private var tempEnglishStoreName: String = ""
     @State private var tempStorePhone: String = ""
+    @State private var tempStoreAddress: String = ""
     
     //MARK: tapToDismissKeyboard와 동일 한 동작 수행
     @FocusState private var fieldIsFocused: Bool
@@ -53,7 +55,7 @@ struct ManageBusinessView: View {
                         .multilineTextAlignment(.center)
                         .padding(.vertical, 35)
                         
-                        Text("가게명")
+                        Text("가게명(실제노출 가게명)")
                             .semibold16()
                         UnderLinedTextField(placeholder: "실제 노출될 가게명을 적어주세요", text: $tempStoreName)
                             .regular14()
@@ -70,6 +72,12 @@ struct ManageBusinessView: View {
                         Text("영문 가게명")
                             .semibold16()
                         UnderLinedTextField(placeholder: "실제 노출될 영문 가게명을 적어주세요", text: $tempEnglishStoreName)
+                            .regular14()
+                            .focused($fieldIsFocused)
+                            .padding(.bottom)
+                        Text("주소명(실제노출 주소명)")
+                            .semibold16()
+                        UnderLinedTextField(placeholder: "실제 노출될 주소를 적어주세요", text: $tempStoreAddress)
                             .regular14()
                             .focused($fieldIsFocused)
                             .padding(.bottom)
@@ -93,15 +101,15 @@ struct ManageBusinessView: View {
                         
                         VStack {
                             Button {
-                                // Assign temp values back to bindings
                                 storeName = tempStoreName
                                 storePhone = tempStorePhone
                                 storeEnglishName = tempEnglishStoreName
+                                storeAddress = tempStoreAddress
                                 //TODO: 수정 내용 반영 로직 구현
                                 //MARK: 우선은 랜덤 값으로 지정
                                 
 //                                let success = Bool.random()
-//                                
+//
 //                                if success {
 //                                    showManageBusiness = false
 //                                } else {
@@ -143,9 +151,34 @@ struct ManageBusinessView: View {
                     }
                     .padding(.horizontal)
                     .onAppear {
+                        // 1) 기존 값으로
                         tempStoreName = storeName
                         tempStorePhone = storePhone
                         tempEnglishStoreName = storeEnglishName
+                        tempStoreAddress = storeAddress
+
+                        // 2) 선택된 스토어 아이디로 업체 정보 조회
+                        if let stoId = viewModel.selectedStoreId {
+                            viewModel.checkBusinessPage(stoId: stoId)
+                        } else {
+                            toastMessage = "선택된 가게가 없습니다. 먼저 가게를 선택해 주세요."
+                            showToast = true
+                        }
+                    }
+                    .onReceive(viewModel.$businessCertiState.compactMap { $0 }) { state in
+                        switch state {
+                        case .single(let store, let certi):
+                            tempStoreName = store.sto_name
+                            tempStoreAddress = certi.bs_address
+    
+                        case .list:
+                            break
+                        case .unlinked(let store, _):
+                            tempStoreName = store.sto_name
+                            tempStoreAddress = ""
+                        case .pending:
+                            break
+                        }
                     }
                 }
                 .onTapGesture {

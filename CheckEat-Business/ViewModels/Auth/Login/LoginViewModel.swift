@@ -30,7 +30,7 @@ class LoginViewModel: ObservableObject {
         AF.request(AuthAPI.loginURL, method: .post, parameters: loginData, encoder: JSONParameterEncoder.default)
             .responseString { resp in
                 let code = resp.response?.statusCode ?? -1
-                print("🗒️ RAW(\(code)):", resp.value ?? "<no body>")
+//                print("🗒️ RAW(\(code)):", resp.value ?? "<no body>")
 
                 // 실패(비 2xx) 응답일 때만 메시지 표시
                 guard !(200...299).contains(code) else { return }

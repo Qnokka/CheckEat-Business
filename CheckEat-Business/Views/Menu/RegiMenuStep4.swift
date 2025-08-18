@@ -26,6 +26,9 @@ struct RegiMenuStep4: View {
     //MARK: 키보드 dismiss
     @FocusState private var isInputFocused: Bool
     
+    //MARK: OCR/재료 저장 결과(비건 판정) 공유
+    @EnvironmentObject var ocrViewModel: OCRViewModel
+    
     private var isNextButtonEnabled: Bool {
         !price.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
@@ -63,7 +66,7 @@ struct RegiMenuStep4: View {
                     .regular16()
                     .foregroundStyle(.buttonOP50)
                     .padding(.bottom, 8)
-                
+
                 VStack(alignment: .leading) {
                     Text("가격")
                     TextFieldStyle(

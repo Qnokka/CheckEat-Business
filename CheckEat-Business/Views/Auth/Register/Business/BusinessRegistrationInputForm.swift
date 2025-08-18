@@ -19,8 +19,10 @@ struct BusinessRegistrationInputForm: View {
     @Binding var storeNameKR: String            // 가게명 - 이건 검증에서 필수 아님
     @Binding var storeNameEN: String            // 가게명 (영문) - 이건 검증에서 필수 아님
     @Binding var businessType: BusinessType     // 업태 : 음식점 또는 카페 - 이건 검증에서 필수 아님
-
+    
+    @ObservedObject var viewModel: RegisterViewModel
     @FocusState.Binding var fieldIsFocused: Bool
+    @State private var showAddressVerifiedAlert = false
     
     var body: some View {
         Group {
@@ -53,19 +55,39 @@ struct BusinessRegistrationInputForm: View {
                 get: { ownerNameKR ?? "" },
                 set: { ownerNameKR = $0.isEmpty ? nil : $0 }
             ))
-                .regular14()
-                .padding(.bottom)
-                .focused($fieldIsFocused)
+            .regular14()
+            .padding(.bottom)
+            .focused($fieldIsFocused)
             
             BusinessTypeDropDown(selected: $businessType)
                 .padding(.bottom, 24)
             
-            Text("주소").semibold16()
-            UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $address )
-                .regular14()
-                .padding(.bottom)
-                .focused($fieldIsFocused)
+            Text("주소(실제 노출될 주소)")
+                .semibold16()
+            ZStack(alignment: .trailing) {
+                UnderLinedTextField(placeholder: "OCR 스캔된 값", text: $address)
+                    .regular14()
+                    .focused($fieldIsFocused)
+                
+                Button {
+                    viewModel.address = address  // OCR - 입력한 주소를 뷰모델에 넣기
+                    viewModel.geocodeWithVWorld() // 위경도 요청
+                } label: {
+                    Text("인증")
+                        .frame(width: 83, height: 34)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.black)
+                        .background(Color("Button_soft"))
+                        .cornerRadius(5)
+                }
+            }
             
+            Text(address)
+                .font(.footnote)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
+            .padding(.bottom, 10)
             Text("전화번호").semibold16()
             UnderLinedTextField(placeholder: "업체 정보에 노출될 전화번호 입력", text: $phoneNumber )
                 .regular14()
@@ -87,5 +109,21 @@ struct BusinessRegistrationInputForm: View {
         .onTapGesture {
             fieldIsFocused = false
         }
+        .onChange(of: viewModel.storeLatitude) { _ in
+            confirmIfGeocoded()
+        }
+        .onChange(of: viewModel.storeLongitude) { _ in
+            confirmIfGeocoded()
+        }
+        .alert("주소 확인 완료", isPresented: $showAddressVerifiedAlert) {
+            Button("확인", role: .cancel) {}
+        } message: {
+            Text("위치가 확인되었습니다.")
+        }
+    }
+    private func confirmIfGeocoded() {
+        let latOK = !(viewModel.storeLatitude.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        let lngOK = !(viewModel.storeLongitude.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        showAddressVerifiedAlert = latOK && lngOK
     }
 }
