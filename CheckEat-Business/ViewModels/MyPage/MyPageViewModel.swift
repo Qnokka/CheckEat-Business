@@ -224,7 +224,8 @@ class MyPageViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    //사업자등록증 관리페이지
+
+//    //사업자등록증 관리페이지
 //    func updateBusiness(stoId: Int) {
 //        guard let accessToken = TokenManager.shared.getAccessToken() else {
 //            print("❌ 억세스 토큰 없음")
@@ -272,6 +273,7 @@ class MyPageViewModel: ObservableObject {
 //            })
 //            .store(in: &cancellables)
 //    }
+
  //사업자등록증 관리페이지 응답값 다른거별로 분기처리
     private func mapBusinessCertiState(from value: BusinessCertiResponse, raw: Data?) -> BusinessCertiState? {
         // 1) pending 등 success가 아닌 상태 우선 처리

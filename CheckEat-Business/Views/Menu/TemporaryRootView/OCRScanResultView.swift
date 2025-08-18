@@ -105,6 +105,7 @@ struct OCRScanResultView: View {
                     .padding(.bottom, 8)
                 
                 Button {
+                    viewModel.isOCRResultCorrect = false
                     showPassivityModal = true
                 } label: {
                     Text("직접 입력")
@@ -143,7 +144,8 @@ struct OCRScanResultView: View {
                 PassivityMenuModalView(
                     path: $path,
                     scanMenuName: $scanMenuName,
-                    showPassivityModal: $showPassivityModal)
+                    showPassivityModal: $showPassivityModal,
+                    viewModel: viewModel)
                 .presentationDetents([.fraction(0.4)])
                 .presentationDragIndicator(.visible)
             }
@@ -173,10 +175,13 @@ struct OCRScanResultView: View {
                 }
             }
             .onChange(of: viewModel.confirmResult) { resp in
-                guard resp != nil else { return }
-                // 서버에서 받은 재료를 다음 스텝에 넘길 상태에 반영
-                extractedMaterials = Set(viewModel.ingredients)
-                // 다음 스텝으로 이동
+                guard let resp = resp,
+                      !resp.ingredients.isEmpty else {
+                    print("🔍 입력 받은 명칭으로 재료명 추출 중...")
+                    return
+                }
+                
+                extractedMaterials = Set(resp.ingredients)
                 path.append(.registerMenuStep1)
             }
             .onChange(of: path) { newPath in

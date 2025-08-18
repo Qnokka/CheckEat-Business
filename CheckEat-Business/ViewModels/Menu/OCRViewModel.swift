@@ -21,7 +21,20 @@ class OCRViewModel: ObservableObject {
     //MARK: - 푸드아이디
     @Published var confirmedFooId: Int?
     // MARK: - 비건 판단 결과 (save-mt 응답)
+
     @Published var veganStored: Int? = nil
+    // MARK: - OCR 결과가 맞는지 여부
+    @Published var isOCRResultCorrect: Bool = true
+    // MARK: - 사용자가 수정한 음식명
+    @Published var userEditedFoodName: String = ""
+    // MARK: - 추출한 음식명 맞는지 여부에 따라 최종 사용할 음식명 반환
+    var finalFoodName: String {
+        if isOCRResultCorrect {
+            return ocrResult?.label ?? ""
+        } else {
+            return userEditedFoodName
+        }
+    }
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -55,7 +68,7 @@ class OCRViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     //cahceID를 전송하는 함수
-    func confirm(ok: String = "ok") {
+    func confirm(ok: String? = nil) {
         print("📡 confirm() 호출됨")
         
         guard let token = TokenManager.shared.getAccessToken() else {
@@ -66,11 +79,11 @@ class OCRViewModel: ObservableObject {
             print("❌ cacheId 없음")
             return
         }
-        guard let foodName = ocrResult?.label else {
+        let foodName = finalFoodName
+        guard !foodName.isEmpty else {
             print("❌ foodName 없음")
             return
         }
-
         let request = OcrUploadRequest(
             cacheId: cid,
             foodName: foodName,
@@ -114,6 +127,7 @@ class OCRViewModel: ObservableObject {
         confirmResult = nil
     }
     //메뉴등록페이지에서 재료선택후 입력완료 버튼시 요청
+
         func saveSelected(fooId: Int?, selected: Set<String>) {
             guard let fooId = fooId else {
                 print("❌ foo_id 없음")
@@ -141,7 +155,5 @@ class OCRViewModel: ObservableObject {
                     dump(resp)
        print("🥗 vegan.stored:", resp.vegan.stored.map { String($0) } ?? "nil")
                     self?.veganStored = resp.vegan.stored
-                }
-                .store(in: &cancellables)
     }
 }

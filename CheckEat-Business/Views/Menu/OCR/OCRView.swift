@@ -169,7 +169,8 @@ struct OCRView: View {
                         showMenuRegiResetPopUp: $showMenuRegiResetPopUp,
                         showMenuRegiCompletePopUp: $showMenuRegiCompletePopUp,
                         fooId: viewModel.confirmedFooId,
-                        onReset: resetInputs
+                        onReset: resetInputs,
+                        viewModel: viewModel
                     )
                 case .registerMenuStep2:
                     RegiMenuStep2(
