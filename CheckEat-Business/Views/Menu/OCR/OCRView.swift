@@ -239,5 +239,6 @@ struct OCRView: View {
                 }
             }
         }
+        .environmentObject(viewModel)
     }
 }

@@ -14,6 +14,8 @@ struct RegisterView: View {
     //MARK: 하위 스택 경로
     @State var path: [RegisterRoute] = []
     
+    @State private var isSigningUp: Bool = false
+    
     //MARK: 회원가입 입력 필드
     @State private var id: String = ""                  //아이디
     @State private var password: String = ""            //비밀번호
@@ -49,7 +51,7 @@ struct RegisterView: View {
     //MARK: 키보드 높이 상태
     @State private var keyboardHeight: CGFloat = 0
     
-    @StateObject private var registerViewModel = RegisterViewModel()
+    @ObservedObject var viewModel: RegisterViewModel
     
     private var isFormValid: Bool {
         return !id.isEmpty && !password.isEmpty && !passwordConfirm.isEmpty && !email.isEmpty && !verificationCode.isEmpty && !phoneNumber.isEmpty && allChecked && isToSAgreeChecked && isAgeLimitChecked
@@ -71,19 +73,19 @@ struct RegisterView: View {
                             isLengthValid: $isLengthValid,
                             fieldIsFocused: $fieldIsFocused,
                             isPasswordFocused: $isPasswordFocused,
-                            isPasswordConfirmFocused: $isPasswordConfirmFocused, viewModel: registerViewModel
+                            isPasswordConfirmFocused: $isPasswordConfirmFocused, viewModel: viewModel
                         )
                         ContactVerificationSection(
                             phoneNumber: $phoneNumber,
                             email: $email,
                             verificationCode: $verificationCode,
                             didSendCode: $didSendCode,
-                            viewModel: registerViewModel
+                            viewModel: viewModel
                         )
                         registerAgreementSection
                     }
                     
-                    .padding(.bottom, keyboardHeight)
+                    .padding(.bottom, keyboardHeight + 15) 
                     .navigationTitle("회원가입")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
@@ -99,9 +101,11 @@ struct RegisterView: View {
                     .navigationDestination(for: RegisterRoute.self) { route in
                         switch route {
                         case .businessScan:
-                            BusinessRegistrationView(showRegister: $showRegister, path: $path)
+                            if let saId = viewModel.saId {
+                                BusinessRegistrationView(showRegister: $showRegister, path: $path, saId: saId, viewModel: viewModel)
+                            }
                         case .businessScanResult:
-                            BusinessRegistrationScanResult(showRegister: $showRegister, path: $path)
+                            BusinessRegistrationScanResult(showRegister: $showRegister, path: $path, viewModel: viewModel)
                         case .registerComplete:
                             BusinessRegistrationComplete(showRegister: $showRegister, path: $path)
                         }
@@ -110,7 +114,7 @@ struct RegisterView: View {
                 .onTapGesture {
                     fieldIsFocused = false
                 }
-                .alert(item: $registerViewModel.alertItem) { alert in
+                .alert(item: $viewModel.alertItem) { alert in
                     Alert(
                         title: Text(alert.title),
                         message: Text(alert.message),
@@ -134,13 +138,36 @@ struct RegisterView: View {
                 .safeAreaInset(edge: .bottom) {
                     VStack(spacing: 12) {
                         Button {
-                            path.append(.businessScan)
+                            fieldIsFocused = false
+                            
+                            viewModel.loginId = id
+                            viewModel.password = password
+                            viewModel.email = email
+                            viewModel.phone = phoneNumber
+                            
+                            isSigningUp = true
+                            
+                            viewModel.signUp { success in
+                                isSigningUp = false
+                                if success {
+                                    path.append(.businessScan)
+                                } else {
+                                  print("가입 실패")
+                                }
+                            }
                         } label: {
-                            Text("다음")
-                                .semibold16()
-                                .primaryButtonStyle(isEnabled: isFormValid)
+                            Group {
+                                if isSigningUp {
+                                    ProgressView()
+                                        .progressViewStyle(.circular)
+                                } else {
+                                    Text("다음")
+                                        .semibold16()
+                                }
+                            }
+                            .primaryButtonStyle(isEnabled: isFormValid && !isSigningUp)
                         }
-                        .disabled(!isFormValid)
+                        .disabled(!isFormValid || isSigningUp)
                     }
                     .padding()
                     .background(Color.white)

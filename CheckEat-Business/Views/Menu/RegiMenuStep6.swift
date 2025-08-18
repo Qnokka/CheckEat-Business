@@ -32,6 +32,10 @@ struct RegiMenuStep6: View {
     
     //MARK: 메뉴 등록 리셋 팝업 표시 바인딩
     @Binding var showMenuRegiResetPopUp: Bool
+
+    // MARK: - 비건 판정 공유 (Step2 → Step6)
+    @EnvironmentObject var ocrViewModel: OCRViewModel
+
     //MARK: 초기화 구문
     let onReset: () -> Void
     
@@ -77,17 +81,29 @@ struct RegiMenuStep6: View {
                         .padding(.bottom, 8)
                         
                         Text("비건 구분")
-                        
-                        if let veganIndex = dummyMaterials.first?.foo_vegan,
-                           let veganType = VeganType(index: veganIndex) {
-                            Text(veganType.displayName ?? "")
-                                .regular14()
-                                .foregroundStyle(veganType.textColor)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(veganType.backgroundColor)
-                                .clipShape(Capsule())
-                                .padding(.bottom, 8)
+
+                        if let judged = ocrViewModel.veganJudged {
+                            if let veganType = VeganType(serverJudged: judged) {
+                                // 비건 계열 → 기존 컬러 배지로 표시
+                                Text(veganType.displayName ?? "")
+                                    .regular14()
+                                    .foregroundStyle(veganType.textColor)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(veganType.backgroundColor)
+                                    .clipShape(Capsule())
+                                    .padding(.bottom, 8)
+                            } else {
+                                // 비건이 아닙니다(또는 미매핑) → 검정 글씨 + 회색 배경
+                                Text(judged)
+                                    .regular14()
+                                    .foregroundStyle(Color.black)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(Color.gray.opacity(0.2))
+                                    .clipShape(Capsule())
+                                    .padding(.bottom, 8)
+                            }
                         }
                         
                         Text("알레르기 유발 재료")

@@ -20,6 +20,9 @@ class OCRViewModel: ObservableObject {
     @Published var ingredients: [String] = []
     //MARK: - 푸드아이디
     @Published var confirmedFooId: Int?
+    // MARK: - 비건 판단 결과 (save-mt 응답)
+    @Published var veganJudged: String? = nil
+    @Published var veganStored: String? = nil
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -134,8 +137,13 @@ class OCRViewModel: ObservableObject {
                     if case let .failure(err) = completion {
                         print("❌ save-mt 실패:", err)
                     }
-                } receiveValue: { resp in
-                    print("📥 save-mt 응답 status:", resp.status)
+                } receiveValue: { [weak self] resp in
+                    // 🔎 디버그: 디코딩된 전체 응답 덤프 + 비건 필드 별도 출력
+                    dump(resp)
+                    print("🥗 vegan.judged:", resp.vegan.judged)
+                    print("🥗 vegan.stored:", resp.vegan.stored ?? "nil")
+                    self?.veganJudged = resp.vegan.judged
+                    self?.veganStored = resp.vegan.stored
                 }
                 .store(in: &cancellables)
     }

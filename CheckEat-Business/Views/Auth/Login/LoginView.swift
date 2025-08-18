@@ -137,7 +137,7 @@ struct LoginView: View {
                                 .foregroundStyle(.buttonAuth)
                         }
                         .fullScreenCover(isPresented: $showRegister) {
-                            RegisterView(showRegister: $showRegister)
+                            RegisterView(showRegister: $showRegister, viewModel: RegisterViewModel())
                         }
                         Spacer()
                     }

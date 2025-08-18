@@ -20,7 +20,7 @@ class DeleteStoreViewModel: ObservableObject {
         }
         let headers: HTTPHeaders = ["Authorization": "Bearer \(accessToken)"]
         
-        AF.request(MyPageAPI.deleteStore, method: .post, headers: headers)
+        AF.request(MyPageAPI.deleteStoreURL, method: .post, headers: headers)
             .validate()
             .publishDecodable(type: DeleteStoreResponse.self)
             .sink { completion in

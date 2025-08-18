@@ -9,6 +9,13 @@ import Foundation
 import Combine
 import Alamofire
 
+enum BusinessCertiState {
+    case list([BusinessCerti])                         // sto_id 없이: 목록
+    case single(store: Store, certi: BusinessCerti) // sto_id 포함: 단건
+    case unlinked(store: Store, message: String)    // sto_id 포함 + 미연결
+    case pending(message: String)                             // 인증 대기/미완료
+}
+
 class MyPageViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
@@ -24,6 +31,8 @@ class MyPageViewModel: ObservableObject {
     @Published var businessEmail: String = ""
     @Published var certificationStatus: Int = 0
 
+    @Published var businessCertiState: BusinessCertiState?
+    
     //마이페이지 들어갈때 띄우는데이터
     func myPageData() {
         guard let accessToken = TokenManager.shared.getAccessToken() else {
@@ -121,7 +130,7 @@ class MyPageViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+    //업체정보관리 정보 업데이트 페이지
     func upDateStore(stoId: Int, name: String, phone: String, enStoreName: String, completion: @escaping (Bool) -> Void) {
         guard let accessToken = TokenManager.shared.getAccessToken() else {
             print("❌ 억세스 토큰 없음")
@@ -168,5 +177,118 @@ class MyPageViewModel: ObservableObject {
                     }
                     .store(in: &cancellables)
     }
-    
+    //업체정보관리 페이지 데이터 불러오기
+    func checkBusinessPage(stoId: Int) {
+        guard let accessToken = TokenManager.shared.getAccessToken() else {
+            print("❌ 억세스 토큰 없음")
+            return
+        }
+
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)",
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        ]
+
+        struct StoIdParam: Encodable { let sto_id: Int }
+        let body = StoIdParam(sto_id: stoId)
+
+     
+        AF.request(MyPageAPI.storeCheckURL,
+                   method: .post,
+                   parameters: body,
+                   encoder: JSONParameterEncoder.default,
+                   headers: headers)
+            .validate()
+            .publishDecodable(type: BusinessCertificationResponse.self)
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                if case .failure(let err) = completion {
+                    print("❌ 조회 실패:", err.localizedDescription)
+                }
+            } receiveValue: { [weak self] resp in
+                guard let self = self else { return }
+
+                if let data = resp.data, let raw = String(data: data, encoding: .utf8) {
+                    print("🧾 Raw JSON(조회 응답):", raw)
+                }
+
+                if let value = resp.value {
+            
+                    self.businessCertiState = .single(store: value.store, certi: value.businessCerti)
+                } else {
+                    print("❌ 디코딩 실패(조회)")
+                }
+            }
+            .store(in: &cancellables)
+    }
+    //사업자등록증 관리페이지
+    func updateBusiness(stoId: Int) {
+        guard let accessToken = TokenManager.shared.getAccessToken() else {
+            print("❌ 억세스 토큰 없음")
+            return
+        }
+
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)",
+            "Accept": "application/json"
+        ]
+
+        struct StoIdParam: Encodable { let sto_id: Int }
+        let body: StoIdParam? = stoId > 0 ? StoIdParam(sto_id: stoId) : nil
+
+
+        AF.request(MyPageAPI.updateBusinessURL,
+                   method: .post,
+                   parameters: body,
+                   encoder: JSONParameterEncoder.default,
+                   headers: headers)
+            .cURLDescription { print("🧵 cURL:\n\($0)") }
+            .validate()
+            .publishDecodable(type: BusinessCertiResponse.self)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .finished: break
+                case .failure(let error):
+                    print("❌ 실패:", error.localizedDescription)
+                }
+            }, receiveValue: { [weak self] response in
+                guard let self = self else { return }
+                if let data = response.data, let raw = String(data: data, encoding: .utf8) {
+                    print("🧾 서버 원본 JSON 응답:", raw)
+                }
+
+                if let value = response.value {
+                    print("✅ 디코딩 성공")
+                    // ✅ 상태 매핑
+                    let mapped = self.mapBusinessCertiState(from: value, raw: response.data)
+                    self.businessCertiState = mapped
+                } else {
+                    print("❌ 디코딩 실패")
+                }
+            })
+            .store(in: &cancellables)
+    }
+ //사업자등록증 관리페이지 응답값 다른거별로 분기처리
+    private func mapBusinessCertiState(from value: BusinessCertiResponse, raw: Data?) -> BusinessCertiState? {
+        // 1) pending 등 success가 아닌 상태 우선 처리
+        if value.status.lowercased() != "success" {
+            return .pending(message: value.message ?? "사업자 등록증 인증이 완료되지 않았습니다.")
+        }
+        // 2) 정상 success 분기
+        if let list = value.businessCertis {
+            return .list(list)
+        }
+        if let certi = value.businessCerti, let store = value.store {
+            return .single(store: store, certi: certi)
+        }
+        if let store = value.store, let msg = value.message {
+            return .unlinked(store: store, message: msg)
+        }
+        if let raw = raw, let rawStr = String(data: raw, encoding: .utf8) {
+            print("🟦 Raw JSON(예상외 형식):", rawStr)
+        }
+        return nil
+    }
 }

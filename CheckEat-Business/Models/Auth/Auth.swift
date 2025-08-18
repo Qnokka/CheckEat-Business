@@ -75,7 +75,7 @@ struct FindPwChangeResponse: Codable {
 //MARK: - 회원가입 1단계
 //회원가입 요청
 struct RegisterRequest: Codable {
-    let log_Id: String
+    let log_id: String
     let log_pwd: String
     let email: String
     let phone: String
@@ -118,7 +118,50 @@ struct CheckEmailTokenResponse: Decodable {
 
 //MARK: - 회원가입 2단계 사업자 인증
 
-//사업자등록증 확인 요청
+//사업자등록증 OCR업로드후 응답
+struct BusinessOCRResponse: Codable, Equatable {
+    let b_no: String
+    let b_nm: String
+    let p_nm: String
+    let start_dt: String
+    let b_adr: String
+    let corp_no: String
+    let b_sector: String
+    let b_type: String
+}
+// VWorld 주소→좌표 응답 (lat/lng만 필요)
+struct VWorldGeocodeResponse: Decodable {
+    let response: Response
+    
+    struct Response: Decodable {
+        let status: String
+        let result: Result?
+    }
+    
+    struct Result: Decodable {
+        let crs: String
+        let point: Point
+    }
+    
+    struct Point: Decodable {
+        let x: String   // lng
+        let y: String   // lat
+        
+        var lat: Double? { Double(y) }
+        var lng: Double? { Double(x) }
+    }
+    
+    //위도/경도 튜플로 꺼내기
+    var latLng: (lat: Double, lng: Double)? {
+        guard response.status == "OK",
+              let p = response.result?.point,
+              let lat = p.lat, let lng = p.lng
+        else { return nil }
+        return (lat, lng)
+    }
+}
+
+//사업자등록증 최종 가입 확인 요청
 struct BusinessRegistrationRequest: Codable {
     let b_no: String          // 사업자 등록번호 (필수)
     let start_dt: String      // 개업일자 YYYYMMDD (필수)
