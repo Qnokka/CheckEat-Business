@@ -1,5 +1,5 @@
 //
-//  MenuList.swift
+//  VeganType.swift
 //  CheckEat-Business
 //
 //  Created by Hee  on 7/21/25.
@@ -7,17 +7,8 @@
 
 import SwiftUI
 
-enum VeganType: String, CaseIterable {
-    case vegan
-    case lacto
-    case ovo
-    case lactoovo
-    case pesco
-    case pollo
-    case none
-}
-
 struct MenuList: View {
+    
     let menuImage: String
     let menuName: String
     let price: String

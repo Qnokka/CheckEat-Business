@@ -65,7 +65,7 @@ class MyPageViewModel: ObservableObject {
                 if let value = response.value {
                     self.myPage = value
                     self.stores = value.stores
-                    self.businessName = value.stores.first?.sto_name ?? ""
+                    self.businessName = value.stores.first?.sto_name ?? "사업장을 등록해주세요"
                     self.businessEmail = value.email
                     self.storeImage = value.sto_img ?? ""
                     self.certificationStatus = value.sa_certification

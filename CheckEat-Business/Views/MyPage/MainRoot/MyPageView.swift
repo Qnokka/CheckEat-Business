@@ -129,7 +129,7 @@ struct MyPageView: View {
             ManageBusinessView(showManageBusiness: $showManageBusiness, storeName: $storeName, storePhone: $storePhone, storeEnglishName: $storeEnglishName, storeAddress: $storeAddress, viewModel: viewModel)
         }
         .fullScreenCover(isPresented: $showMenuManagement) {
-            MenuManagementView(showMenuManagement: $showMenuManagement)
+            MenuManagementView(showMenuManagement: $showMenuManagement, storeId: viewModel.selectedStoreId)
         }
         .fullScreenCover(isPresented: $showManageBusinessHours) {
             ManageBusinessHoursView(showManageBusinessHours: $showManageBusinessHours, storeId: viewModel.selectedStoreId ?? -1)

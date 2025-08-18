@@ -68,5 +68,23 @@ final class OCRService {
         .value()
         .eraseToAnyPublisher()
     }
+    //메뉴등록에서 최종 등록
+    func saveFood(request: SaveFoodRequest, accessToken: String) -> AnyPublisher<SaveFoodResponse, AFError> {
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)"
+        ]
+
+        return AF.request(
+            OCRAPI.regiestFoodURL,
+            method: .post,
+            parameters: request,
+            encoder: JSONParameterEncoder.default,
+            headers: headers
+        )
+        .validate()
+        .publishDecodable(type: SaveFoodResponse.self)
+        .value()
+        .eraseToAnyPublisher()
+    }
 
 }
