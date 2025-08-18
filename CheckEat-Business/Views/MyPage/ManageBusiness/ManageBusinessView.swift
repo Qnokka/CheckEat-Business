@@ -121,7 +121,7 @@ struct ManageBusinessView: View {
                                     return
                                 }
                                 
-                                let normalizedPhone = tempStorePhone.replacingOccurrences(of: "-", with: "")
+                                let normalizedPhone = tempStorePhone.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
                                 
                                 // 업데이트 호출
                                 viewModel.upDateStore(
@@ -168,8 +168,16 @@ struct ManageBusinessView: View {
                     .onReceive(viewModel.$businessCertiState.compactMap { $0 }) { state in
                         switch state {
                         case .single(let store, let certi):
-                            tempStoreName = store.sto_name
-                            tempStoreAddress = certi.bs_address
+                            // 우선순위: businessCerti의 하위 stores(=certiStores) → 상위 store/certi
+                            if let item = certi.certiStores?.first {
+                                tempStoreName = item.stoName
+                                tempEnglishStoreName = item.stoNameEn ?? tempEnglishStoreName
+                                tempStoreAddress = item.stoAddress ?? certi.bsAddress
+                                tempStorePhone = item.stoPhone ?? tempStorePhone
+                            } else {
+                                tempStoreName = store.sto_name
+                                tempStoreAddress = certi.bsAddress
+                            }
     
                         case .list:
                             break

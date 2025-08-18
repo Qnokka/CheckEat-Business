@@ -85,18 +85,18 @@ struct MyPageBusinessReRegistration: View {
                 case .list(let items):
                     // 목록이 오면 이 화면에서는 첫 항목으로 프리필(필요 시 사용자 선택 UX 추가)
                     if let first = items.first {
-                        self.businessNumber = first.bs_no
-                        self.businessName   = first.bs_name
-                        self.typeofBusiness = first.bs_type ?? ""
-                        self.storeAddress   = first.bs_address
+                        self.businessNumber = first.bsNo
+                        self.businessName   = first.bsName
+                        self.typeofBusiness = first.bsType ?? ""
+                        self.storeAddress   = first.bsAddress
                     }
                 case .single(let store, let certi):
                     // 정확히 선택된 sto_id의 단건 응답
                     self.storeName      = store.sto_name
-                    self.businessNumber = certi.bs_no
-                    self.businessName   = certi.bs_name
-                    self.typeofBusiness = certi.bs_type ?? ""
-                    self.storeAddress   = certi.bs_address
+                    self.businessNumber = certi.bsNo
+                    self.businessName   = certi.bsName
+                    self.typeofBusiness = certi.bsType ?? ""
+                    self.storeAddress   = certi.bsAddress
                 case .unlinked(_, _), .pending(_):
                     clearAllFields()
                 }

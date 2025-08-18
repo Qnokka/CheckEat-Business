@@ -14,13 +14,14 @@ struct MyPageResponse: Codable {
     let sa_certification: Int
     let sa_certi_status: Int
     let email: String
-    let sto_img: String
+    let sto_img: String?
     let stores: [Store]
 }
 
 struct Store: Codable, Identifiable {
     let sto_id: Int
     let sto_name: String
+    let sto_image: String?
     
     var id: Int { sto_id }
 }
@@ -32,7 +33,7 @@ struct UpdateStoreRequest: Codable {
     let sto_phone: String
     let sto_name_en: String
 //    let sto_address: String
-//    let sto_latitude: String
+//    let sto_latitude: String        
 //    let sto_longitude: String
 }
 struct UpdateStoreResponse: Decodable {
@@ -40,20 +41,56 @@ struct UpdateStoreResponse: Decodable {
     let status: String
 }
 
-//업체정보관리 페이지 입장 응답
+//업체정보관리 페이지 입장 응답 (stores 키 충돌 방지: certiStores로 매핑)
 struct BusinessCertificationResponse: Codable {
     let status: String
     let store: Store
     let businessCerti: BusinessCerti
+
+    enum CodingKeys: String, CodingKey {
+        case status
+        case store
+        case businessCerti
+    }
 }
+
 struct BusinessCerti: Codable {
-    let bs_id: Int
-    let bs_no: String
-    let bs_name: String
-    let bs_type: String
-    let bs_address: String
-    let bs_sa_id: Int
-    let stores: [Store]? 
+    let bsId: Int
+    let bsNo: String
+    let bsName: String
+    let bsType: String
+    let bsAddress: String
+    let bsSaId: Int
+    let certiStores: [BusinessCertiStore]? // JSON 키 "stores" → certiStores 로 매핑
+
+    enum CodingKeys: String, CodingKey {
+        case bsId = "bs_id"
+        case bsNo = "bs_no"
+        case bsName = "bs_name"
+        case bsType = "bs_type"
+        case bsAddress = "bs_address"
+        case bsSaId = "bs_sa_id"
+        case certiStores = "stores"
+    }
+}
+
+// businessCerti 내부 stores 항목 (상위 Store와 필드 구성이 다름)
+struct BusinessCertiStore: Codable, Identifiable {
+    let stoId: Int
+    let stoName: String
+    let stoNameEn: String?
+    let stoAddress: String?
+    let stoPhone: String?
+
+    var id: Int { stoId }
+
+    enum CodingKeys: String, CodingKey {
+        case stoId = "sto_id"
+        case stoName = "sto_name"
+        case stoNameEn = "sto_name_en"
+        case stoAddress = "sto_address"
+        case stoPhone = "sto_phone"
+    }
 }
 
 //사업자등록증 관리 페이지 응답
@@ -92,3 +129,4 @@ struct UpdateSajangProfileErrorResponse: Error, Decodable {
         return message.joined(separator: ", ")
     }
 }
+
