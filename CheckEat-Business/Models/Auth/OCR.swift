@@ -5,6 +5,7 @@
 //  Created by Hee  on 8/4/25.
 //
 
+//MARK: 메뉴등록 OCR
 
 //OCR 푸드 인식 응답 - 첫번째 스텝
 struct OcrFoodResponse: Decodable, Equatable{
@@ -37,4 +38,10 @@ struct SaveMtResponse: Decodable {
     let message: String
     let status: String
     let foo_id: Int
+    let vegan: VeganInfo
+
+    struct VeganInfo: Decodable {
+        let judged: String
+        let stored: String?
+    }
 }

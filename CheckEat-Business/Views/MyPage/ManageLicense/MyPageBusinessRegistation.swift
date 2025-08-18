@@ -26,9 +26,14 @@ struct MyPageBusinessRegistation: View {
     @Binding var storePhone: String
     @Binding var storeName: String
     @Binding var storeNameEn: String
+
+    // 서버 전송용 문자열(typeofBusiness)과 UI 드롭다운(enum) 동기화를 위한 로컬 상태
+    @State private var businessTypeEnum: BusinessType = .none
     
     @State private var tempStoreName: String = ""
     @State private var tempStorePhone: String = ""
+    
+    @ObservedObject var regiesterViewModel: RegisterViewModel
     
     private var isFormValid: Bool {
         return
@@ -64,12 +69,12 @@ struct MyPageBusinessRegistation: View {
                         businessOpen: $businessOpen,
                         sajangName: $sajangName,
                         sajangNameForeigner: $sajangNameForeigner,
-                        typeofBusiness: $typeofBusiness,
                         storeAddress: $storeAddress,
                         storePhone: $tempStorePhone,
                         storeName: $tempStoreName,
                         storeNameEn: $storeNameEn,
-                        fieldIsFocused: $fieldIsFocused
+                        fieldIsFocused: $fieldIsFocused, businessType: $businessTypeEnum,
+                        viewModel: regiesterViewModel
                     )
                     
                     VStack(alignment: .center) {
@@ -77,17 +82,22 @@ struct MyPageBusinessRegistation: View {
                             //TODO: api 실제 처리 로직...성공시에만 넘어가도록
                             storeName = tempStoreName
                             storePhone = tempStorePhone
+                            regiesterViewModel.regisgterBusinessFinal()
                             parentsPath.append(.scanComplete)
                         } label: {
                             Text("완료")
                                 .semibold16()
-                                .primaryButtonStyle(isEnabled:isFormValid)
+                                .primaryButtonStyle(isEnabled:true)
                         }
-                        .disabled(!isFormValid)
                         .padding(.vertical, 24)
                         Button {
                             //TODO: OCR 스캔 (다시)
-                            parentsPath.removeLast()
+                            if !parentsPath.isEmpty {
+                                parentsPath.removeLast()
+                            } else {
+                                // Path가 비어있으면 스캔 화면으로 진입
+                                parentsPath.append(.scan)
+                            }
                         } label: {
                             Text("스캔 다시하기")
                                 .semibold16()
@@ -103,11 +113,20 @@ struct MyPageBusinessRegistation: View {
                 .onAppear {
                     tempStoreName = storeName
                     tempStorePhone = storePhone
+                    // 문자열(typeofBusiness) → enum 초기 동기화
+                    businessTypeEnum = BusinessType(rawValue: typeofBusiness) ?? .none
                 }
                 .onDisappear {
                     tempStoreName = storeName
                     tempStorePhone = storePhone
                 }
+                .onChange(of: businessTypeEnum) { newValue in
+                    // enum → 문자열(typeofBusiness) 동기화 (서버 전송용)
+                    typeofBusiness = newValue.rawValue
+                }
+            }
+            .safeAreaInset(edge: .top) {
+                Color.clear.frame(height: 40) // 상단 여유 공간
             }
         }
         .navigationTitle("사업자 정보 확인")

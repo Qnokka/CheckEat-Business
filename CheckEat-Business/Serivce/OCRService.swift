@@ -8,12 +8,12 @@
 import Alamofire
 import Combine
 import UIKit
-// MARK: - OCRService
+// MARK: OCRService - 메뉴등록 부분
 final class OCRService {
 
     static let shared = OCRService()
     
-    //OCR 처음 불러올때 이미지 스캔해서 서버에 전송하는 함수
+    //OCR 처음 불러올때 이미지 스캔해서 서버에 전송하는 함수 - 음식
     func sendImageToAzureOCR(imageData: Data, accessToken: String) -> AnyPublisher<OcrFoodResponse, AFError> {
         let headers: HTTPHeaders = [
             "Authorization": "Bearer \(accessToken)"
@@ -51,7 +51,7 @@ final class OCRService {
         .value()
         .eraseToAnyPublisher()
     }
-    //메뉴등록페이지에                          서 재료선택후 바로 입력완료 눌렀을때 호출
+    //메뉴등록페이지에서 재료선택후 바로 입력완료 눌렀을때 호출
     func saveMt(request: SaveMtRequest, accessToken: String) -> AnyPublisher<SaveMtResponse, AFError> {
         let headers: HTTPHeaders = [
             "Authorization": "Bearer \(accessToken)"
@@ -68,4 +68,5 @@ final class OCRService {
         .value()
         .eraseToAnyPublisher()
     }
+
 }

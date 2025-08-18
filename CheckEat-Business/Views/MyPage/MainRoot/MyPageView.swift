@@ -12,6 +12,7 @@ struct MyPageView: View {
     //MARK: 사업자 정보 GET
     @State var businessName: String = ""
     @State var storeName: String = ""
+    @State var storeAddress: String = ""
     @State var businessEmail: String = ""
     @State var storePhone: String = ""
     @State var storeEnglishName: String = ""
@@ -22,6 +23,8 @@ struct MyPageView: View {
     //MARK: [ManageBusiness] 업체 프로필 변경 모달 뷰 상태 값
     @State var showManageStoreProfileModal: Bool = false
     @State var ShowChangeBusinessModal:Bool = false
+    
+    @StateObject private var registerViewModel = RegisterViewModel()
     
     //MARK: 각 메뉴별 fullScreen 상태 값
     //업체정보 관리
@@ -67,6 +70,7 @@ struct MyPageView: View {
                     MyPageHeaderView(
                         businessName: $viewModel.businessName,
                         businessEmail: $viewModel.businessEmail,
+                        storeImage: $viewModel.storeImage,
                         certificationStatus: viewModel.certificationStatus,
                         showMoreMenu: $showMoreMenu,
                         showManageStoreProfileModal: $showManageStoreProfileModal, showChangeBusinessModal: $ShowChangeBusinessModal, showDeleteBusiness: $showDeleteBusiness, viewModel: viewModel)
@@ -104,6 +108,13 @@ struct MyPageView: View {
             .onChange(of: showManageBusiness) { isPresented in
                 if !isPresented {
                     viewModel.myPageData()
+                    registerViewModel.saId = viewModel.myPage?.sa_id
+                }
+            }
+            .onChange(of: showManageLicense) { isPresented in
+                if isPresented {
+                    // ✅ 재등록 진입 직전에 sa_id 주입
+                    registerViewModel.saId = viewModel.myPage?.sa_id
                 }
             }
             .navigationTitle("마이페이지")
@@ -115,19 +126,20 @@ struct MyPageView: View {
                 .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $showManageBusiness) {
-            ManageBusinessView(showManageBusiness: $showManageBusiness, storeName: $storeName, storePhone: $storePhone, storeEnglishName: $storeEnglishName, viewModel: viewModel)
+            ManageBusinessView(showManageBusiness: $showManageBusiness, storeName: $storeName, storePhone: $storePhone, storeEnglishName: $storeEnglishName, storeAddress: $storeAddress, viewModel: viewModel)
         }
         .fullScreenCover(isPresented: $showMenuManagement) {
             MenuManagementView(showMenuManagement: $showMenuManagement)
         }
         .fullScreenCover(isPresented: $showManageBusinessHours) {
-            ManageBusinessHoursView(showManageBusinessHours: $showManageBusinessHours)
+            ManageBusinessHoursView(showManageBusinessHours: $showManageBusinessHours, storeId: viewModel.selectedStoreId ?? -1)
         }
         .fullScreenCover(isPresented: $showManageHoliday) {
-            DayOffManagementView(showManageHoliday: $showManageHoliday)
+            DayOffManagementView(showManageHoliday: $showManageHoliday, storeId: viewModel.selectedStoreId ?? -1)
         }
         .fullScreenCover(isPresented: $showManageLicense) {
-            MyPageBusinessReRegistration(showManageLicense: $showManageLicense, businessName: $viewModel.businessName, storePhone: $storePhone, storeName: $storeName)
+            MyPageBusinessReRegistration(showManageLicense: $showManageLicense, businessName: $viewModel.businessName, storePhone: $storePhone, storeName: $storeName, stoId: viewModel.selectedStoreId ?? 0, myPageViewModel: viewModel, registerViewModel: registerViewModel
+            )
         }
         //        .fullScreenCover(isPresented: $showLanguageSetting) {
         //            LanguageSettingView(showLanguageSetting: $showLanguageSetting, selectedLanguage: $selectedLanguage)

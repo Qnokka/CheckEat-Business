@@ -59,24 +59,15 @@ struct HomeMainView: View {
                             .padding(.top, 24)
                             .padding(.bottom, 8)
                             
-                            HalalInfoCardView {
+                            HalalCertificationCardView {
                                 path.append("halal")
                             }
                             
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("할랄 음식이란?")
-                                    .semibold16()
-                                    .foregroundStyle(.correct)
-                                Text("할랄 음식은 이슬람 율법에 따라 허용된 음식으로, 돼지고기·알코올 금지, 정해진 도축 빙식을 준수힙니다.")
-                                    .regular14()
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(16)
-                            .background(Color.white)
-                            .cornerRadius(12)
-                            .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 2)
+                            HalalInfoCardView()
                             
                             VeganInfoCardView()
+                            
+                            AllergenInfoCardView()
                             
                             ReviewSummaryCardView(reviews: dummyReviews) {
                                 path.append("review")
@@ -102,7 +93,7 @@ struct HomeMainView: View {
     }
 }
 
-struct HalalInfoCardView: View {
+struct HalalCertificationCardView: View {
     var onTap: () -> Void
     
     var body: some View {
@@ -130,13 +121,63 @@ struct HalalInfoCardView: View {
     }
 }
 
+struct HalalInfoCardView: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("할랄 음식이란?")
+                .semibold16()
+                .foregroundStyle(.correct)
+            Text("할랄 음식은 이슬람 율법에 따라 허용된 음식으로, 돼지고기·알코올 금지, 정해진 도축 빙식을 준수힙니다.")
+                .regular14()
+        }
+        .frame(maxWidth: .infinity)
+        .padding(16)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 2)
+    }
+}
+
 struct VeganInfoCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("비건 음식이란?")
                 .semibold16()
-                .foregroundStyle(.buttonEnable)
+                .foregroundStyle(.correct)
             Text("비건은 채식(Vegetarian)이라는 큰 카테고리 안에 속하며, 그중에서도 동물성 원재료를 전혀 사용하지 않는 가장 엄격한 제한식을 의미합니다.")
+                .regular14()
+        }
+        .frame(maxWidth: .infinity)
+        .padding(16)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 2)
+    }
+}
+
+struct AllergenInfoCardView: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("사업주님의 세심한 관리를 부탁드립니다")
+                .semibold16()
+                .foregroundStyle(.buttonEnable)
+            
+            Group {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Circle()
+                        .fill(Color.secondary.opacity(0.6))
+                        .frame(width: 5, height: 5)
+                        .padding(.top, 3)
+                    Text("육수용 재료·소스에 들어간 재료도 알레르기를 유발할 수 있으니 모든 원재료를 꼼꼼히 기재해주세요.")
+                }
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Circle()
+                        .fill(Color.secondary.opacity(0.6))
+                        .frame(width: 5, height: 5)
+                        .padding(.top, 3)
+                    Text("조리 도구·과정의 2차 오염으로도 반응이 나타나오니 작업대/칼/도마 분리 등 관리에 각별히 유의해주세요.")
+                }
+            }
                 .regular14()
         }
         .frame(maxWidth: .infinity)
@@ -194,6 +235,7 @@ struct ReviewSummaryCardView: View {
         }
     }
 }
+
 //#Preview {
 //    HomeMainView()
 //}
