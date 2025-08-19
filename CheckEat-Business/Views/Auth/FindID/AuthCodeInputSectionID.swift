@@ -31,9 +31,10 @@ struct AuthCodeInputSectionID: View {
         VStack(alignment: .leading) {
             Text("인증코드")
                 .semibold16()
-            UnderLinedTextField(placeholder: "인증코드를 입력해주세요", text: $authCode)
+            AuthCodeTextField(placeholder: "인증코드를 입력해주세요", text: $authCode)
                 .regular14()
                 .focused($fieldIsFocused)
+                .disableAutocorrection(true)
             
             if authCodeIsValid == false && !viewModel.alertMessage.isEmpty {
                 Text(viewModel.alertMessage)

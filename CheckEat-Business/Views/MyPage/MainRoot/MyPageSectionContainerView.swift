@@ -32,7 +32,7 @@ struct MyPageSectionContainerView: View {
             showManageBusinessHours = true
         case "휴무일 관리":
             showManageHoliday = true
-        case "사업자등록증 관리":
+        case "사업자등록증 새로등록":
             showManageLicense = true
         case "언어 설정":
             showLanguageSetting = false

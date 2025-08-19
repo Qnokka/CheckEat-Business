@@ -10,7 +10,7 @@ struct MenuDeleteModal: View {
     var menuName: String
     var onClose: () -> Void
     var onCancel: () -> Void
-    @State private var showComplete = false
+    var onDelete: () -> Void
     var body: some View {
         VStack(alignment: .center) {
             Text(menuName)
@@ -40,8 +40,8 @@ struct MenuDeleteModal: View {
                 }
                 .padding()
                 Button {
+                    onDelete()
                     onClose()
-                    showComplete = true
                 } label: {
                     Text("삭제하기")
                         .foregroundStyle(Color.white)

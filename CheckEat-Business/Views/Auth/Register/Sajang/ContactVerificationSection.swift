@@ -26,6 +26,9 @@ struct ContactVerificationSection: View {
                 .font(.system(size: 14, weight: .semibold))
                 .padding(.top, 10)
             UnderLinedTextField(placeholder: "휴대폰번호를 입력해 주세요.", text: $phoneNumber)
+                .keyboardType(.phonePad)
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
                 .regular14()
                 .padding(.top, 5)
                 .focused($fieldIsFocused)
@@ -34,6 +37,9 @@ struct ContactVerificationSection: View {
                 .padding(.top, 10)
             ZStack(alignment: .trailing) {
                 UnderLinedTextField(placeholder: "이메일을 입력해 주세요", text: $email)
+                    .keyboardType(.emailAddress)
+                    .textInputAutocapitalization(.never)
+                    .disableAutocorrection(true)
                     .regular14()
                     .padding(.top, 5)
                     .onChange(of: email) { newValue in
@@ -64,13 +70,15 @@ struct ContactVerificationSection: View {
                     .font(.system(size: 14, weight: .semibold))
                     .padding(.top, 10)
                 ZStack(alignment: .trailing) {
-                    UnderLinedTextField(placeholder: "인증코드를 입력해 주세요.", text: $verificationCode)
+                    AuthCodeTextField(placeholder: "인증코드를 입력해 주세요.", text: $verificationCode)
                         .regular14()
                         .padding(.top, 5)
+                        .textInputAutocapitalization(.never)
                         .onChange(of: verificationCode) { newValue in
                             isVerificationCodeValid = (newValue == correctAuthCode)
                         }
                         .focused($fieldIsFocused)
+                        .disableAutocorrection(true)
                     Button {
                         //인증코드 인증부분
                         viewModel.verifyEmailToken(email: email, token: verificationCode) { isSuccess in
