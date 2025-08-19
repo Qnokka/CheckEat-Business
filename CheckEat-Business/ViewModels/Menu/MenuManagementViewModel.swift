@@ -64,4 +64,77 @@ class MenuManagementViewModel: ObservableObject {
             }
         }
     }
+    // 단일 메뉴 삭제
+    func deleteFood(fooId: Int) {
+        guard let accessToken = TokenManager.shared.getAccessToken() else {
+            print("❌ 억세스 토큰 없음")
+            return
+        }
+
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)",
+            "Accept": "application/json"
+        ]
+
+        let req = DeleteFoodRequest(foo_id: String(fooId))
+
+        AF.request(
+            ManageMenuAPI.deleteMenuURL,
+            method: .post,
+            parameters: req,
+            encoder: JSONParameterEncoder.default,
+            headers: headers
+        )
+        .responseDecodable(of: DeleteFoodResponse.self) { response in
+            switch response.result {
+            case .success(let menuResponse):
+                print("🗑️ 단일 메뉴 삭제 응답: status=\(menuResponse.status), foo_id=\(menuResponse.foo_id)")
+                if !menuResponse.message.isEmpty {
+                    print("📝 message: \(menuResponse.message)")
+                }
+                if menuResponse.status == "success" {
+                    DispatchQueue.main.async {
+                        self.foods.removeAll { $0.foo_id == menuResponse.foo_id }
+                        self.isLoading = false
+                    }
+                } else {
+                    print("⚠️ 서버 응답 오류: \(menuResponse.status)")
+                }
+            case .failure(let error):
+                print("❌ 단일 메뉴 삭제 실패:", error)
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                    self.errorMessage = "메뉴 삭제에 실패했습니다"
+                }
+            }
+        }
+    }
+    //메뉴 수정
+    func menuEdit(stoId: Int, fooId: Int, fooName: String?, fooPrice: String?, fooMeterial: [String]?, fooVegan: Int) {
+        guard let accessToken = TokenManager.shared.getAccessToken() else {
+            print("❌ 억세스 토큰 없음")
+            return
+        }
+
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)",
+            "Accept": "application/json"
+        ]
+        let req = UpdateMenuInfoRequest(sto_id: stoId, foo_id: fooId, foo_name: fooName, foo_price: fooPrice, foo_meterial: fooMeterial, foo_vegan: fooVegan)
+        
+        AF.request(
+            ManageMenuAPI.menuEditURL,
+            method: .post,
+            parameters: req,
+            encoder: JSONParameterEncoder.default,
+            headers: headers
+        )
+        .responseDecodable(of: UpdateMenuInfoResponse.self) { response in
+//            switch response.result {
+//            case .success(let menu):
+//            case .failure(let error):
+//            }
+        }
+        
+    }
 }

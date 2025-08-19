@@ -19,17 +19,38 @@ struct MenuList: View {
     
     @State private var showMoreMenu = false
     @State private var showEditMenu: Bool = false
-
+    
     var body: some View {
         ZStack(alignment: .topLeading) {
             VStack(spacing: 0) {
                 VStack(spacing: 0) {
                     ZStack(alignment: .topLeading) {
-                        Image(menuImage)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 362, height: 145)
-                            .clipped()
+                        Group {
+                            if menuImage == "testImage" {
+                                Image(menuImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 362, height: 145)
+                                    .clipped()
+                            } else {
+                                AsyncImage(url: URL(string: menuImage)) { image in
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 362, height: 145)
+                                        .clipped()
+                                } placeholder: {
+                                    ZStack {
+                                        Rectangle()
+                                            .fill(Color.gray.opacity(0.2))
+                                            .frame(width: 362, height: 145)
+                                        Image(systemName: "fork.knife")
+                                            .foregroundStyle(.gray)
+                                            .font(.title)
+                                    }
+                                }
+                            }
+                        }
                         if let vegan = veganType.displayName {
                             Text(vegan)
                                 .font(.system(size: 13, weight: .semibold))

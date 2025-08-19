@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct MenuManagementView: View {
     
     let segments = ["전체", "일반", "비건"]
@@ -74,7 +75,7 @@ struct MenuManagementView: View {
                                     print("편집: \(storeFood.foo_id)")
                                 },
                                 onDelete: {
-                                    // TODO: 삭제 기능 구현
+                                    menuViewModel.deleteFood(fooId: storeFood.foo_id)
                                     print("삭제: \(storeFood.foo_id)")
                                 }
                             )

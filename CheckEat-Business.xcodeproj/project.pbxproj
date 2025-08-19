@@ -15,9 +15,22 @@
 		2CA36DBD2E17B68A0022D13C /* CheckEat-Business.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CheckEat-Business.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3976BAA22E5405AE00EF0491 /* Exceptions for "CheckEat-Business" folder in "CheckEat-Business" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2CA36DBC2E17B68A0022D13C /* CheckEat-Business */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2CA36DBF2E17B68A0022D13C /* CheckEat-Business */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3976BAA22E5405AE00EF0491 /* Exceptions for "CheckEat-Business" folder in "CheckEat-Business" target */,
+			);
 			path = "CheckEat-Business";
 			sourceTree = "<group>";
 		};
@@ -269,11 +282,11 @@
 				DEVELOPMENT_TEAM = 8YXQMG6LKS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CheckEat-Business/Info.plist";
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 권한을 요청합니다. 허용하시겠습니까?";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "사진 권한을 요청합니다. 허용하시겠습니까?";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -303,11 +316,11 @@
 				DEVELOPMENT_TEAM = 8YXQMG6LKS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CheckEat-Business/Info.plist";
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 권한을 요청합니다. 허용하시겠습니까?";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "사진 권한을 요청합니다. 허용하시겠습니까?";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
