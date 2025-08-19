@@ -62,16 +62,22 @@ struct ChangePasswordView: View {
                             UnderLinedTextField(placeholder: "새로운 비밀번호를 입력해주세요", isSecure: true, text: $newPassword)
                                 .focused($isNewPasswordFocused)
                                 .textContentType(.newPassword)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
                         }
                     }
                     
-                    Button {
-                        isNewPasswordVisible.toggle()
-                    } label: {
-                        Image(systemName: isNewPasswordVisible ? "eye" : "eye.slash")
-                            .foregroundColor(.gray)
-                            .padding(8)
-                            .contentShape(Rectangle())
+                    .overlay(alignment: .trailing) {
+                        Button {
+                            isConfirmPasswordVisible.toggle()
+                        } label: {
+                            Image(systemName: isConfirmPasswordVisible ? "eye" : "eye.slash")
+                                .frame(width: 16, height: 16)
+                                .foregroundColor(.buttonOP50)
+                                .padding(.bottom, 30)
+                                .padding(.trailing, 8)
+                                .contentShape(Rectangle())
+                        }
                     }
                 }
                 .regular14()
@@ -109,16 +115,22 @@ struct ChangePasswordView: View {
                             UnderLinedTextField(placeholder: "비밀번호를 한 번 더 입력해주세요", isSecure: true, text: $confirmPassword)
                                 .focused($isConfirmPasswordFocused)
                                 .textContentType(.newPassword)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
                         }
                     }
                     
-                    Button {
-                        isConfirmPasswordVisible.toggle()
-                    } label: {
-                        Image(systemName: isConfirmPasswordVisible ? "eye" : "eye.slash")
-                            .foregroundColor(.gray)
-                            .padding(8)
-                            .contentShape(Rectangle())
+                    .overlay(alignment: .trailing) {
+                        Button {
+                            isConfirmPasswordVisible.toggle()
+                        } label: {
+                            Image(systemName: isConfirmPasswordVisible ? "eye" : "eye.slash")
+                                .frame(width: 16, height: 16)
+                                .foregroundColor(.buttonOP50)
+                                .padding(.bottom, 30)
+                                .padding(.trailing, 8)
+                                .contentShape(Rectangle())
+                        }
                     }
                 }
                 .regular14()

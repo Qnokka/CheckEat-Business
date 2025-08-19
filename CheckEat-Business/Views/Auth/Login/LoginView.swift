@@ -38,6 +38,7 @@ struct LoginView: View {
                         .semibold16()
                     UnderLinedTextField(placeholder: "아이디를 입력해주세요", text: $viewModel.loginId)
                         .regular14()
+                        .keyboardType(.asciiCapable)
                         .autocorrectionDisabled(true)
                         .textInputAutocapitalization(.never)
                         .padding(.bottom)
@@ -60,17 +61,19 @@ struct LoginView: View {
                             }
                         }
                         .padding(.bottom)
-                        
-                        Button {
-                            isPasswordVisible.toggle()
-                        } label: {
-                            Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
-                                .foregroundColor(.gray)
-                                .padding(8)
-                                .contentShape(Rectangle())
+                        .overlay(alignment: .trailing) {
+                            Button {
+                                isPasswordVisible.toggle()
+                            } label: {
+                                Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
+                                    .frame(width: 16, height: 16)
+                                    .foregroundColor(.buttonOP50)
+                                    .padding(.bottom, 30)
+                                    .padding(.trailing, 8)
+                                    .contentShape(Rectangle())
+                            }
                         }
                     }
-                    .regular14()
                     //MARK: - 에러메세지 수정부분
                     Text(viewModel.alertMessage)
                         .regular12()
@@ -117,6 +120,7 @@ struct LoginView: View {
                     
                     Spacer()
                 }
+                .regular14()
                 .padding()
                 .navigationTitle("")
                 .navigationBarHidden(true)

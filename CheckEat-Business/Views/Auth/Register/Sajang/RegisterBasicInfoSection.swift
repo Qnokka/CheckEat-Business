@@ -33,6 +33,9 @@ struct RegisterBasicInfoSection: View {
                         .font(.system(size: 14))
                         .focused($fieldIsFocused)
                 }
+                .keyboardType(.asciiCapable)
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
                 Button {
                     //TODO: 아이디 중복 확인 로직 구현
                     viewModel.checkIdUnique(id: id)
@@ -65,6 +68,8 @@ struct RegisterBasicInfoSection: View {
                     isPasswordValid = isValidPassword(newVaule)
                     isLengthValid = newVaule.count >= 8
                 }
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
                 .focused($isPasswordFocused)
                 Button {
                     isPasswordVisible.toggle()
@@ -104,6 +109,8 @@ struct RegisterBasicInfoSection: View {
                         SecureField("비밀번호를 한번더 입력해주세요", text: $passwordConfirm)
                     }
                 }
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
                 .focused($isPasswordConfirmFocused)
                 .font(.system(size: 14))
                 .padding(.top, 5)
@@ -141,6 +148,7 @@ struct RegisterBasicInfoSection: View {
                 .padding(.top, 5)
             }
         }
+        .tapToDismissKeyboard()
         .padding(.horizontal)
         .onTapGesture {
             fieldIsFocused = false
