@@ -93,7 +93,7 @@ struct MyPageHeaderView: View {
                                     Text("인증된 사업자").semibold12().foregroundStyle(.correct)
                                 }
                             }
-                            Spacer()
+//                            Spacer()
                             Button {
                                 withAnimation { showMoreMenu.toggle() }
                             } label: {

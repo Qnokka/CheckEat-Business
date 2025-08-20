@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct MenuList: View {
     
@@ -25,32 +26,38 @@ struct MenuList: View {
             VStack(spacing: 0) {
                 VStack(spacing: 0) {
                     ZStack(alignment: .topLeading) {
-                        Group {
-                            if menuImage == "testImage" {
-                                Image(menuImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 362, height: 145)
-                                    .clipped()
-                            } else {
-                                AsyncImage(url: URL(string: menuImage)) { image in
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
+                    if menuImage == "testImage" {
+                        Image(menuImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 362, height: 145)
+                            .clipped()
+                    } else if let url = URL(string: menuImage), !menuImage.isEmpty {
+                        KFImage.url(url)
+                            .placeholder {
+                                ZStack {
+                                    Rectangle()
+                                        .fill(Color.gray.opacity(0.2))
                                         .frame(width: 362, height: 145)
-                                        .clipped()
-                                } placeholder: {
-                                    ZStack {
-                                        Rectangle()
-                                            .fill(Color.gray.opacity(0.2))
-                                            .frame(width: 362, height: 145)
-                                        Image(systemName: "fork.knife")
-                                            .foregroundStyle(.gray)
-                                            .font(.title)
-                                    }
+                                    Image(systemName: "fork.knife")
+                                        .foregroundColor(.gray)
+                                        .font(.title)
                                 }
                             }
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 362, height: 145)
+                            .clipped()
+                    } else {
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(width: 362, height: 145)
+                            Image(systemName: "fork.knife")
+                                .foregroundColor(.gray)
+                                .font(.title)
                         }
+                    }
                         if let vegan = veganType.displayName {
                             Text(vegan)
                                 .font(.system(size: 13, weight: .semibold))
@@ -126,6 +133,3 @@ struct MenuList: View {
         }
     }
 }
-//#Preview {
-//    MenuList(menuImage: "testImage", menuName: "연어초밥", price: "9,000원", allergInfo: "난류(가금류) | 우유 | 메밀 | 땅콩 | 대두 | 밀 | 고등어 | 게 | 새우 | 돼지고기 | 복숭아 | 토마토 | 아황산류 | 호두 | 닭고기 | 쇠고기 | 오징어 | 조개류 | 잣", veganType: .pollo, onEdit: {print("수정")}, onDelete: {print("삭제")})
-//}
