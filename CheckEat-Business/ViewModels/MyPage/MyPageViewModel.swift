@@ -49,11 +49,13 @@ class MyPageViewModel: ObservableObject {
                    parameters: nil,
                    encoding: JSONEncoding.default,
                    headers: headers)
+//            .cURLDescription { print("🧵 cURL:\n\($0)") }
             .validate()
             .publishDecodable(type: MyPageResponse.self)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 guard let self = self else { return }
+                
                 switch completion {
                 case .finished:
                     break
@@ -62,6 +64,13 @@ class MyPageViewModel: ObservableObject {
                 }
             } receiveValue: { [weak self] response in
                 guard let self = self else { return }
+                if let http = response.response {
+                           print("🔎 statusCode:", http.statusCode)
+                           print("🔎 headers:", http.headers)
+                       }
+                       if let data = response.data, let raw = String(data: data, encoding: .utf8) {
+                           print("🧾 Raw JSON(mypage):", raw)
+                       }
                 if let value = response.value {
                     self.myPage = value
                     self.stores = value.stores

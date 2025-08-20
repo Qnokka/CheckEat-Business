@@ -50,10 +50,6 @@ struct RegiMenuReCheckModalView: View {
             HStack(spacing: 12) {
                 Button {
                     showRegiModal = false
-                    ocrViewModel.regiestFood(
-                          price: price,
-                          menuName: menuName
-                      )
                 } label: {
                     Text("재검토")
                         .semibold16()
